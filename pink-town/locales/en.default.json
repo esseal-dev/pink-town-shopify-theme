@@ -1,0 +1,136 @@
+{
+  "404": {
+    "title": "404",
+    "not_found": "Page not found.",
+    "back_to_shopping": "Back to shopping"
+  },
+  "blog": {
+    "article_comments": "Comments",
+    "article_metadata_html": "{{ date }} by {{ author }}",
+    "comment_form_body": "Comment",
+    "comment_form_email": "Email",
+    "comment_form_name": "Name",
+    "comment_form_submit": "Post",
+    "comment_form_title": "Add a comment"
+  },
+  "cart": {
+    "checkout": "Checkout",
+    "title": "Cart",
+    "update": "Update",
+    "remove": "Remove",
+    "your_bag": "Your bag",
+    "empty_message": "Your bag is feeling a little plain.",
+    "start_shopping": "Start shopping",
+    "delivery_estimate": "Estimated delivery in 3–6 days",
+    "secure_note": "🔒 Secure checkout · 30-day happy returns",
+    "promo_placeholder": "Promo or gift code",
+    "promo_code": "Promo code",
+    "apply": "Apply",
+    "total": "Total",
+    "decrease": "Decrease quantity",
+    "increase": "Increase quantity",
+    "view_bag": "View bag"
+  },
+  "customers": {
+    "login": {
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "title": "Login"
+    }
+  },
+  "collections": {
+    "title": "Collections"
+  },
+  "gift_card": {
+    "add_to_apple_wallet": "Add to Apple Wallet",
+    "card": "Gift card",
+    "expired": "This gift card has expired",
+    "expires_on": "Expires on {{ expires_on }}",
+    "use_at_checkout": "Use this gift card at checkout"
+  },
+  "general": {
+    "accessibility": {
+      "skip_to_content": "Skip to content",
+      "close": "Close",
+      "account": "Account",
+      "nav_left": "Main navigation",
+      "nav_right": "Secondary navigation",
+      "prev": "Previous",
+      "next": "Next"
+    }
+  },
+  "newsletter": {
+    "email_placeholder": "your@email.com",
+    "email_label": "Email address"
+  },
+  "password": {
+    "title": "This shop is private",
+    "password": "Password",
+    "enter": "Enter"
+  },
+  "products": {
+    "add_to_cart": "Add to bag",
+    "sold_out": "Sold out",
+    "save_pct": "Save {{ pct }}%",
+    "tag_bestseller": "Bestseller",
+    "tag_new": "New",
+    "save_to_wishlist": "Save to wishlist"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search articles, pages, or products",
+    "submit": "Search",
+    "no_results_html": "No results found for {{ terms }}",
+    "results_for_html": "{{ count }} results found for {{ terms }}"
+  },
+  "sections": {
+    "hero": {
+      "image_placeholder": "Product image",
+      "from_price": "From $18",
+      "reviews_count": "12k reviews"
+    },
+    "featured_collections": {
+      "pieces": "pieces",
+      "shop_now": "Shop now",
+      "example_count": "24",
+      "example_name": "New collection",
+      "example_blurb": "Add your collections in the theme editor"
+    },
+    "best_sellers": {
+      "no_products": "No products found.",
+      "select_collection": "Select a collection in the theme editor to show products.",
+      "filter_label": "Filter by collection",
+      "filter_all": "All",
+      "onboarding_name_1": "Étoile Pearl Drops",
+      "onboarding_name_2": "Fairy Heart Pendant",
+      "onboarding_name_3": "Celestia Charm Bracelet",
+      "onboarding_name_4": "Aurora Stacking Rings",
+      "onboarding_name_5": "Sugar Cloud Studs",
+      "onboarding_name_6": "Moonbeam Tennis Necklace",
+      "onboarding_name_7": "Petal Signet Ring",
+      "onboarding_name_8": "Ribbon Bow Anklet",
+      "onboarding_category_1": "Earrings",
+      "onboarding_category_2": "Necklaces",
+      "onboarding_category_3": "Bracelets",
+      "onboarding_category_4": "Rings",
+      "onboarding_category_5": "Earrings",
+      "onboarding_category_6": "Necklaces",
+      "onboarding_category_7": "Rings",
+      "onboarding_category_8": "Anklets",
+      "onboarding_price_1": "$24",
+      "onboarding_was_1": "$68",
+      "onboarding_price_2": "$29",
+      "onboarding_was_2": "$82",
+      "onboarding_price_3": "$32",
+      "onboarding_was_3": "$95",
+      "onboarding_price_4": "$22",
+      "onboarding_was_4": "$60"
+    },
+    "reviews": {
+      "from_count": "from {{ count }} reviews",
+      "stars_label": "out of 5 stars",
+      "verified": "Verified"
+    }
+  }
+}

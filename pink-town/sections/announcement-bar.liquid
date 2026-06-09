@@ -1,0 +1,61 @@
+{% if section.blocks.size > 0 %}
+  <div class="pt-anno" role="status" aria-live="polite">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+    <div class="pt-anno-track">
+      {%- for block in section.blocks -%}
+        <span class="pt-anno-msg" data-on="0" {{ block.shopify_attributes }}>
+          {{- block.settings.text | escape -}}
+        </span>
+      {%- endfor -%}
+    </div>
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+  </div>
+{% endif %}
+
+{% stylesheet %}
+  .pt-anno {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    background: linear-gradient(90deg, var(--pt-accent-deep), var(--pt-accent));
+    color: #fff; font-size: 12.5px; letter-spacing: .04em; height: 38px;
+    font-family: var(--pt-font-body);
+  }
+  .pt-anno-track { position: relative; height: 1.3em; min-width: 320px; text-align: center; overflow: hidden; }
+  .pt-anno-msg {
+    position: absolute; inset: 0; opacity: 0;
+    transition: opacity .6s, transform .6s;
+    transform: translateY(40%); white-space: nowrap;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .pt-anno-msg[data-on="1"] { opacity: 1; transform: translateY(0); }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.announcement_bar.name",
+  "max_blocks": 5,
+  "blocks": [
+    {
+      "type": "message",
+      "name": "t:sections.announcement_bar.blocks.message.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "t:labels.text",
+          "default": "Free shipping on orders over $35"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.announcement_bar.name",
+      "blocks": [
+        { "type": "message", "settings": { "text": "Fantasy looks at a fraction of the price" } },
+        { "type": "message", "settings": { "text": "Tarnish-free, nickel-free & always sparkling" } },
+        { "type": "message", "settings": { "text": "Complimentary gift wrap on every order" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

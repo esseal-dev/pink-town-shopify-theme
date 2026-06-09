@@ -1,0 +1,113 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "layout": "split",
+        "eyebrow": "Imitation fine jewelry",
+        "heading": "Little luxuries, <em>big</em> sparkle.",
+        "subheading": "Unique, dreamy jewelry that looks like a fortune and costs like a treat. Wear it everywhere — it won’t tarnish, fade, or fuss.",
+        "cta_primary_text": "Shop the collection",
+        "cta_secondary_text": "Explore looks",
+        "editorial_tag": "Spring drop — ‘Soft Focus’",
+        "show_stats": true,
+        "stat_1_value": "70%",
+        "stat_1_label": "less than the real thing",
+        "stat_2_value": "4.9★",
+        "stat_2_label": "12k+ happy reviews",
+        "stat_3_value": "∞",
+        "stat_3_label": "tarnish-free shine"
+      }
+    },
+    "featured-collections": {
+      "type": "featured-collections",
+      "settings": {
+        "eyebrow": "Shop by mood",
+        "heading": "Collections to fall for"
+      }
+    },
+    "best-sellers": {
+      "type": "best-sellers",
+      "settings": {
+        "eyebrow": "Loved by thousands",
+        "heading": "Best sellers",
+        "products_count": 8,
+        "view_all_text": "View all jewelry"
+      }
+    },
+    "reviews": {
+      "type": "reviews",
+      "blocks": {
+        "review-1": {
+          "type": "review",
+          "settings": {
+            "name": "Mia R.",
+            "handle": "@miawears",
+            "stars": 5,
+            "text": "Genuinely cannot believe these are under $30. The pearl drops look like the designer pair I saved for and never bought."
+          }
+        },
+        "review-2": {
+          "type": "review",
+          "settings": {
+            "name": "Sofía L.",
+            "handle": "@sof.jpg",
+            "stars": 5,
+            "text": "Wore the charm bracelet every single day for two months — showered, swam, the whole thing. Still sparkling. Obsessed."
+          }
+        },
+        "review-3": {
+          "type": "review",
+          "settings": {
+            "name": "Hana K.",
+            "handle": "@hanakoto",
+            "stars": 5,
+            "text": "Bought a stack for my little sister’s birthday and now we’re both hooked. Packaging is so cute it’s gift-ready."
+          }
+        }
+      },
+      "block_order": ["review-1", "review-2", "review-3"],
+      "settings": {
+        "eyebrow": "The reviews are in",
+        "heading": "Worn & adored",
+        "rating": "4.9",
+        "review_count": "12,400+"
+      }
+    },
+    "instagram": {
+      "type": "instagram",
+      "blocks": {
+        "post-1": { "type": "post", "settings": { "likes": "2.4k" } },
+        "post-2": { "type": "post", "settings": { "likes": "1.9k" } },
+        "post-3": { "type": "post", "settings": { "likes": "3.1k" } },
+        "post-4": { "type": "post", "settings": { "likes": "982" } },
+        "post-5": { "type": "post", "settings": { "likes": "4.6k" } },
+        "post-6": { "type": "post", "settings": { "likes": "1.2k" } }
+      },
+      "block_order": ["post-1", "post-2", "post-3", "post-4", "post-5", "post-6"],
+      "settings": {
+        "hashtag": "#PinkTownGirls",
+        "heading": "Tag us & get featured",
+        "handle": "@pinktown.jewels"
+      }
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "heading": "Get 15% off your first treat",
+        "subheading": "Join the PinkTown list for early drops, secret sales & a little sparkle in your inbox.",
+        "button_text": "Unlock 15% off",
+        "success_message": "You’re in! Check your inbox for the code HELLO15 ✨",
+        "fine_print": "No spam, just sparkle. Unsubscribe anytime."
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "featured-collections",
+    "best-sellers",
+    "reviews",
+    "instagram",
+    "newsletter"
+  ]
+}

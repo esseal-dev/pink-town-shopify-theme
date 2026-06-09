@@ -1,0 +1,175 @@
+{
+  "general": {
+    "404": "Not found",
+    "article": "Article",
+    "block": "Block",
+    "blog": "Blog",
+    "cart": "Cart",
+    "collection": "Collection",
+    "collections": "Collections",
+    "collection_card": "Collection card",
+    "collections_grid": "Collections grid",
+    "colors": "Colors",
+    "column": "Column",
+    "content": "Content",
+    "custom_section": "Custom section",
+    "fonts": "Fonts",
+    "footer": "Footer",
+    "group": "Group",
+    "header": "Header",
+    "layout": "Layout",
+    "main": "Main",
+    "page": "Page",
+    "password": "Password",
+    "primary": "Primary",
+    "product": "Product",
+    "row": "Row",
+    "search": "Search",
+    "secondary": "Secondary",
+    "section": "Section",
+    "settings": "Settings",
+    "sidebar": "Sidebar",
+    "text": "Text",
+    "theme": "Theme",
+    "typography": "Typography",
+    "announcement_bar": "Announcement bar",
+    "hero": "Hero",
+    "featured_collections": "Featured collections",
+    "best_sellers": "Best sellers",
+    "reviews": "Reviews",
+    "instagram": "Instagram gallery",
+    "newsletter": "Newsletter"
+  },
+  "labels": {
+    "alignment": "Alignment",
+    "background": "Background",
+    "foreground": "Foreground",
+    "grid_gap": "Grid spacing",
+    "grid_item_width": "Grid item width",
+    "input_corner_radius": "Input corner radius",
+    "layout_direction": "Layout direction",
+    "menu": "Menu",
+    "customer_account_menu": "Customer account menu",
+    "padding": "Padding",
+    "page_margin": "Page margin",
+    "page_width": "Page width",
+    "show_payment_icons": "Show payment icons",
+    "text_style": "Text style",
+    "text": "Text",
+    "image": "Image",
+    "image_2": "Second image (centered layout)",
+    "eyebrow": "Eyebrow text",
+    "heading": "Heading",
+    "subheading": "Subheading",
+    "layout": "Hero layout",
+    "cta_primary_text": "Primary button text",
+    "cta_primary_url": "Primary button link",
+    "cta_secondary_text": "Secondary button text",
+    "cta_secondary_url": "Secondary button link",
+    "view_all_url": "View all button link",
+    "editorial_tag": "Editorial tag (top corner)",
+    "show_stats": "Show stats",
+    "stat_1_value": "Stat 1 — value",
+    "stat_1_label": "Stat 1 — label",
+    "stat_2_value": "Stat 2 — value",
+    "stat_2_label": "Stat 2 — label",
+    "stat_3_value": "Stat 3 — value",
+    "stat_3_label": "Stat 3 — label",
+    "collections": "Collections",
+    "collection": "Collection",
+    "filter_collections": "Collection filters",
+    "products_count": "Number of products",
+    "view_all_text": "View all button text",
+    "rating": "Overall rating",
+    "review_count": "Review count",
+    "author_name": "Reviewer name",
+    "author_handle": "Reviewer handle",
+    "stars": "Star rating",
+    "hashtag": "Hashtag",
+    "instagram_handle": "Instagram handle",
+    "likes": "Like count",
+    "url": "Link URL",
+    "button_text": "Button text",
+    "fine_print": "Fine print",
+    "success_message": "Success message",
+    "tagline": "Brand tagline",
+    "copyright_text": "Copyright text",
+    "instagram_url": "Instagram URL",
+    "tiktok_url": "TikTok URL",
+    "pinterest_url": "Pinterest URL"
+  },
+  "options": {
+    "alignment": {
+      "left": "Left",
+      "center": "Center",
+      "right": "Right"
+    },
+    "direction": {
+      "horizontal": "Horizontal",
+      "vertical": "Vertical"
+    },
+    "page_width": {
+      "narrow": "Narrow",
+      "wide": "Wide"
+    },
+    "size": {
+      "large": "Large",
+      "small": "Small"
+    },
+    "text_style": {
+      "title": "Title",
+      "subtitle": "Subtitle",
+      "normal": "Normal text"
+    },
+    "hero_layout": {
+      "split": "Split",
+      "centered": "Centered",
+      "editorial": "Editorial"
+    }
+  },
+  "sections": {
+    "announcement_bar": {
+      "name": "Announcement bar",
+      "blocks": {
+        "message": {
+          "name": "Message"
+        }
+      }
+    },
+    "hero": {
+      "name": "Hero"
+    },
+    "featured_collections": {
+      "name": "Featured collections"
+    },
+    "best_sellers": {
+      "name": "Best sellers"
+    },
+    "reviews": {
+      "name": "Reviews",
+      "blocks": {
+        "review": {
+          "name": "Review"
+        }
+      }
+    },
+    "instagram": {
+      "name": "Instagram gallery",
+      "blocks": {
+        "post": {
+          "name": "Post"
+        }
+      }
+    },
+    "newsletter": {
+      "name": "Newsletter"
+    },
+    "footer": {
+      "blocks": {
+        "link_column": {
+          "name": "Link column"
+        }
+      }
+    }
+  }
+}

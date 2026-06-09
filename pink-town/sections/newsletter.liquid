@@ -1,0 +1,86 @@
+<section class="pt-news" id="news">
+  <div class="pt-news-card">
+    <div class="pt-news-glow"></div>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--pt-accent)" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+    <h2 class="pt-news-h">{{ section.settings.heading | escape }}</h2>
+    <p class="pt-news-sub">{{ section.settings.subheading | escape }}</p>
+    <p class="pt-news-thanks" style="display:none">{{ section.settings.success_message | escape }}</p>
+    {%- form 'customer', id: 'pt-newsletter-form', class: 'pt-news-form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter" />
+      <input type="email" name="contact[email]" class="pt-news-input"
+             placeholder="{{ 'newsletter.email_placeholder' | t }}"
+             aria-label="{{ 'newsletter.email_label' | t }}"
+             autocomplete="email"
+             required />
+      <button type="submit" class="pt-btn pt-btn--solid">{{ section.settings.button_text | escape }}</button>
+    {%- endform -%}
+    <span class="pt-news-fine">{{ section.settings.fine_print | escape }}</span>
+  </div>
+</section>
+
+{% stylesheet %}
+  .pt-news { padding: 40px 32px 96px; }
+  .pt-news-card {
+    position: relative; max-width: 820px; margin: 0 auto; text-align: center; overflow: hidden;
+    background: linear-gradient(160deg, #fff, var(--pt-accent-soft)); border: 1px solid var(--pt-line);
+    border-radius: 30px; padding: 64px 40px; box-shadow: var(--pt-shadow-md);
+    display: flex; flex-direction: column; align-items: center; font-family: var(--pt-font-body);
+  }
+  .pt-news-glow { position: absolute; width: 360px; height: 360px; border-radius: 50%; filter: blur(70px); background: radial-gradient(circle, var(--pt-accent-soft), transparent 70%); bottom: -160px; left: -80px; pointer-events: none; }
+  .pt-news-card > * { position: relative; z-index: 1; }
+  .pt-news-h { font-family: var(--pt-font-head); font-size: clamp(2rem, 4vw, 3rem); margin: 14px 0 0; }
+  .pt-news-sub { color: var(--pt-ink-soft); margin: 14px 0 28px; max-width: 44ch; }
+  .pt-news-form { display: flex; gap: 10px; width: 100%; max-width: 440px; }
+  .pt-news-input { flex: 1; min-width: 0; font-family: var(--pt-font-body); font-size: 14px; padding: 14px 18px; border: 1px solid var(--pt-line); border-radius: 999px; background: #fff; outline: none; transition: border-color .2s; }
+  .pt-news-input:focus { border-color: var(--pt-accent); }
+  .pt-news-thanks { font-size: 16px; color: var(--pt-accent-deep); font-weight: 600; margin: 6px 0 0; }
+  .pt-news-fine { font-size: 12px; color: var(--pt-ink-faint); margin-top: 16px; }
+  @media (max-width: 560px) {
+    .pt-news { padding: 20px 20px 60px; }
+    .pt-news-card { padding: 44px 24px; }
+    .pt-news-form { flex-direction: column; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.newsletter.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Get 15% off your first treat"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "t:labels.subheading",
+      "default": "Join the PinkTown list for early drops, secret sales & a little sparkle in your inbox."
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "t:labels.button_text",
+      "default": "Unlock 15% off"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "t:labels.success_message",
+      "default": "You're in! Check your inbox for the code HELLO15 ✨"
+    },
+    {
+      "type": "text",
+      "id": "fine_print",
+      "label": "t:labels.fine_print",
+      "default": "No spam, just sparkle. Unsubscribe anytime."
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.newsletter.name"
+    }
+  ]
+}
+{% endschema %}

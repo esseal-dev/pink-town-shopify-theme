@@ -1,0 +1,105 @@
+<section class="pt-featured-cols" id="collections">
+  <div class="pt-sec-head">
+    <span class="pt-eyebrow">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+      {{ section.settings.eyebrow | escape }}
+    </span>
+    <h2 class="pt-h2">{{ section.settings.heading | escape }}</h2>
+  </div>
+
+  <div class="pt-coll-grid">
+    {%- assign has_collections = false -%}
+    {%- for collection in section.settings.collections -%}
+      {%- assign has_collections = true -%}
+      <a href="{{ collection.url }}" class="pt-coll{% if forloop.first %} pt-coll--lg{% endif %}">
+        {%- if collection.image -%}
+          {{ collection.image | image_url: width: 1100 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: collection.image.alt | default: collection.title }}
+        {%- else -%}
+          <div style="position:absolute;inset:0;background:linear-gradient(135deg,#f7dbe6,#f3e2ea);"></div>
+        {%- endif -%}
+        <div class="pt-coll-scrim"></div>
+        <div class="pt-coll-body">
+          <span class="pt-coll-count">{{ collection.products_count }} {{ 'sections.featured_collections.pieces' | t }}</span>
+          <h3 class="pt-coll-name">{{ collection.title | escape }}</h3>
+          {%- if collection.description != blank -%}
+            <p class="pt-coll-blurb">{{ collection.description | strip_html | truncate: 80 }}</p>
+          {%- endif -%}
+          <span class="pt-coll-link">{{ 'sections.featured_collections.shop_now' | t }}
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+        </div>
+      </a>
+    {%- endfor -%}
+
+    {%- unless has_collections -%}
+      {%- for i in (1..3) -%}
+        <div class="pt-coll{% if forloop.first %} pt-coll--lg{% endif %}" style="background:linear-gradient(135deg,{% cycle '#f7dbe6,#f3e2ea', '#f3e2ea,#efdcec', '#efdcec,#f7dbe6' %});">
+          <div class="pt-coll-scrim"></div>
+          <div class="pt-coll-body">
+            <span class="pt-coll-count">{{ 'sections.featured_collections.example_count' | t }}</span>
+            <h3 class="pt-coll-name">{{ 'sections.featured_collections.example_name' | t }}</h3>
+            <p class="pt-coll-blurb">{{ 'sections.featured_collections.example_blurb' | t }}</p>
+            <span class="pt-coll-link">{{ 'sections.featured_collections.shop_now' | t }}
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </span>
+          </div>
+        </div>
+      {%- endfor -%}
+    {%- endunless -%}
+  </div>
+</section>
+
+{% stylesheet %}
+  .pt-featured-cols { width: 80%; margin: 0 auto; padding: 92px 0; }
+  .pt-coll-grid { display: grid; grid-template-columns: 1.12fr 1fr; gap: 18px; }
+  .pt-coll { position: relative; min-height: 268px; border-radius: var(--pt-radius); overflow: hidden; box-shadow: var(--pt-shadow-sm); transition: transform .35s cubic-bezier(.3,.7,.4,1), box-shadow .35s; display: block; }
+  .pt-coll--lg { grid-row: span 2; min-height: 554px; }
+  .pt-coll:hover { transform: translateY(-4px); box-shadow: var(--pt-shadow-md); }
+  .pt-coll:hover .pt-ph-img { transform: scale(1.05); }
+  .pt-ph-img { transition: transform .6s cubic-bezier(.3,.7,.4,1); }
+  .pt-coll-scrim { position: absolute; inset: 0; background: linear-gradient(to top, rgba(70,38,48,.62), rgba(70,38,48,.05) 52%); }
+  .pt-coll-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px; color: #fff; z-index: 2; }
+  .pt-coll-count { font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; opacity: .85; font-family: var(--pt-font-body); }
+  .pt-coll-name { font-family: var(--pt-font-head); font-size: 30px; margin: 6px 0 4px; }
+  .pt-coll--lg .pt-coll-name { font-size: 40px; }
+  .pt-coll-blurb { font-size: 13.5px; opacity: .88; margin: 0; font-family: var(--pt-font-body); }
+  .pt-coll-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 16px; font-size: 13px; font-weight: 700; letter-spacing: .02em; font-family: var(--pt-font-body); }
+  .pt-coll-link svg { transition: transform .25s; }
+  .pt-coll:hover .pt-coll-link svg { transform: translateX(4px); }
+  @media (max-width: 760px) {
+    .pt-featured-cols { width: 92%; padding: 60px 0; }
+    .pt-coll-grid { grid-template-columns: 1fr; }
+    .pt-coll--lg { grid-row: auto; min-height: 300px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.featured_collections.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow",
+      "default": "Shop by mood"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Collections to fall for"
+    },
+    {
+      "type": "collection_list",
+      "id": "collections",
+      "label": "t:labels.collections",
+      "limit": 3
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.featured_collections.name"
+    }
+  ]
+}
+{% endschema %}

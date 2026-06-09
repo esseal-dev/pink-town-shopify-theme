@@ -1,0 +1,224 @@
+<header class="pt-nav" data-scrolled="0">
+  <nav class="pt-nav-inner">
+    <ul class="pt-nav-links pt-nav-left" aria-label="{{ 'general.accessibility.nav_left' | t }}">
+      {%- assign left_count = 0 -%}
+      {%- for link in section.settings.menu.links -%}
+        {%- if left_count < 3 -%}
+          <li><a href="{{ link.url }}" class="pt-navlink">{{ link.title | escape }}</a></li>
+          {%- assign left_count = left_count | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+    </ul>
+
+    <a href="{{ routes.root_url }}" class="pt-logo" aria-label="{{ shop.name }}">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="var(--pt-accent)" style="margin-right:2px" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+      {{ shop.name }}
+    </a>
+
+    <ul class="pt-nav-links pt-nav-right" aria-label="{{ 'general.accessibility.nav_right' | t }}">
+      {%- assign right_start = 3 -%}
+      {%- assign right_shown = 0 -%}
+      {%- for link in section.settings.menu.links -%}
+        {%- if forloop.index0 >= right_start and right_shown < 2 -%}
+          <li><a href="{{ link.url }}" class="pt-navlink">{{ link.title | escape }}</a></li>
+          {%- assign right_shown = right_shown | plus: 1 -%}
+        {%- endif -%}
+      {%- endfor -%}
+
+      {% if shop.customer_accounts_enabled %}
+        <li>
+          <shopify-account menu="{{ section.settings.customer_account_menu }}">
+            <button class="pt-iconbtn" aria-label="{{ 'general.accessibility.account' | t }}">
+              {{ 'icon-account.svg' | inline_asset_content }}
+            </button>
+          </shopify-account>
+        </li>
+      {% endif %}
+
+      <li>
+        <button class="pt-iconbtn pt-nav-cart" aria-label="{{ 'cart.title' | t }}">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d="M6 8h12l-1 12H7L6 8z" stroke-linejoin="round"/>
+            <path d="M9 8a3 3 0 0 1 6 0"/>
+          </svg>
+          <span class="pt-badge pt-nav-cart-badge"{% unless cart.item_count > 0 %} style="display:none"{% endunless %} aria-label="{{ cart.item_count }} items">{{ cart.item_count }}</span>
+        </button>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<div class="pt-scrim" aria-hidden="true"></div>
+
+<aside class="pt-drawer" aria-hidden="true" aria-label="{{ 'cart.title' | t }}">
+  <div class="pt-drawer-head">
+    <h3>{{ 'cart.your_bag' | t }} <span class="pt-drawer-count">({{ cart.item_count }})</span></h3>
+    <button class="pt-drawer-x" aria-label="{{ 'general.accessibility.close' | t }}">✕</button>
+  </div>
+
+  <div class="pt-drawer-empty"{% if cart.item_count > 0 %} style="display:none"{% endif %}>
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="var(--pt-accent)" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+    <p>{{ 'cart.empty_message' | t }}</p>
+    <button class="pt-btn pt-btn--solid">{{ 'cart.start_shopping' | t }}</button>
+  </div>
+
+  <div class="pt-ship"{% unless cart.item_count > 0 %} style="display:none"{% endunless %}>
+    <p class="pt-ship-msg"></p>
+    <div class="pt-ship-bar"><i style="width:0%"></i></div>
+  </div>
+
+  <div class="pt-drawer-items"{% unless cart.item_count > 0 %} style="display:none"{% endunless %}>
+    {% for item in cart.items %}
+      <div class="pt-line" data-line="{{ forloop.index }}">
+        <div class="pt-ph" style="width:64px;flex:none;border-radius:12px;aspect-ratio:1/1;background:#f6dde4;overflow:hidden;">
+          {% if item.image %}
+            {{ item.image | image_url: width: 128 | image_tag: width: 64, height: 64, loading: 'lazy', style: 'width:100%;height:100%;object-fit:cover;' }}
+          {% endif %}
+        </div>
+        <div class="pt-line-mid">
+          {% unless item.variant.title == 'Default Title' %}
+            <span class="pt-line-cat">{{ item.variant.title | escape }}</span>
+          {% endunless %}
+          <b class="pt-line-name">{{ item.title | escape }}</b>
+          <div class="pt-qty">
+            <button type="button" onclick="ptChangeQty({{ forloop.index }},{{ item.quantity | minus: 1 }})" aria-label="{{ 'cart.decrease' | t }}">−</button>
+            <span>{{ item.quantity }}</span>
+            <button type="button" onclick="ptChangeQty({{ forloop.index }},{{ item.quantity | plus: 1 }})" aria-label="{{ 'cart.increase' | t }}">+</button>
+          </div>
+        </div>
+        <div class="pt-line-end">
+          <b>{{ item.final_line_price | money }}</b>
+          <button class="pt-line-rm" type="button" onclick="ptChangeQty({{ forloop.index }},0)">{{ 'cart.remove' | t }}</button>
+        </div>
+      </div>
+    {% endfor %}
+
+    <div class="pt-cart-extras">
+      <form id="pt-promo-form" class="pt-promo-wrap">
+        <div class="pt-promo-row">
+          <input class="pt-promo-input" type="text" placeholder="{{ 'cart.promo_placeholder' | t }}" aria-label="{{ 'cart.promo_code' | t }}" />
+          <button type="submit" class="pt-promo-btn">{{ 'cart.apply' | t }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="pt-drawer-foot"{% unless cart.item_count > 0 %} style="display:none"{% endunless %}>
+    <div class="pt-deliver">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7z" stroke-linejoin="round"/><circle cx="7" cy="17" r="1.6"/><circle cx="17" cy="17" r="1.6"/></svg>
+      {{ 'cart.delivery_estimate' | t }}
+    </div>
+    <div class="pt-drawer-sub">
+      <span>{{ 'cart.total' | t }}</span>
+      <b>{{ cart.total_price | money }}</b>
+    </div>
+    <a href="{{ routes.checkout_url }}" class="pt-btn pt-btn--solid pt-btn--full pt-checkout-btn">
+      {{ 'cart.checkout' | t }} &middot; {{ cart.total_price | money }}
+    </a>
+    <span class="pt-drawer-note">{{ 'cart.secure_note' | t }}</span>
+  </div>
+</aside>
+
+<div class="pt-toast" role="status" aria-live="polite">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="var(--pt-accent)" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+  <span class="pt-toast-msg"></span>
+  <button onclick="ptOpenCart();this.closest('.pt-toast').classList.remove('is-on')">{{ 'cart.view_bag' | t }}</button>
+</div>
+
+{% stylesheet %}
+  .pt-nav {
+    position: sticky; top: 0; z-index: 40;
+    transition: background .3s, box-shadow .3s, border-color .3s;
+    border-bottom: 1px solid transparent;
+    background: rgba(255,250,251,.7);
+    backdrop-filter: blur(14px) saturate(150%);
+    font-family: var(--pt-font-body);
+  }
+  .pt-nav[data-scrolled="1"] { background: rgba(255,250,251,.92); box-shadow: var(--pt-shadow-sm); border-color: var(--pt-line); }
+  .pt-nav-inner { max-width: var(--pt-wrap); margin: 0 auto; padding: 0 32px; height: 72px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
+  .pt-nav-links { display: flex; align-items: center; gap: 26px; }
+  .pt-nav-right { justify-content: flex-end; gap: 18px; }
+  .pt-navlink { font-size: 13.5px; font-weight: 600; color: var(--pt-ink); position: relative; padding: 4px 0; }
+  .pt-navlink::after { content: ''; position: absolute; left: 0; bottom: -2px; height: 1.5px; width: 0; background: var(--pt-accent); transition: width .28s ease; }
+  .pt-navlink:hover { color: var(--pt-accent-deep); }
+  .pt-navlink:hover::after { width: 100%; }
+  .pt-logo { font-family: var(--pt-font-head); font-size: 27px; font-weight: 600; letter-spacing: .01em; display: inline-flex; align-items: center; color: var(--pt-ink); }
+  .pt-iconbtn { position: relative; display: grid; place-items: center; width: 38px; height: 38px; border: none; background: transparent; color: var(--pt-ink); border-radius: 50%; cursor: pointer; transition: background .2s, color .2s; }
+  .pt-iconbtn:hover { background: var(--pt-accent-soft); color: var(--pt-accent-deep); }
+  .pt-badge { position: absolute; top: 2px; right: 0; min-width: 17px; height: 17px; padding: 0 4px; display: grid; place-items: center; font-size: 10px; font-weight: 800; color: #fff; background: var(--pt-accent); border-radius: 999px; border: 2px solid var(--pt-bg); }
+  /* Cart scrim */
+  .pt-scrim { position: fixed; inset: 0; z-index: 90; background: rgba(70,38,48,.34); opacity: 0; pointer-events: none; transition: opacity .35s; backdrop-filter: blur(2px); }
+  .pt-scrim.is-open { opacity: 1; pointer-events: auto; }
+  /* Cart drawer */
+  .pt-drawer { position: fixed; top: 0; right: 0; z-index: 100; width: min(420px, 92vw); height: 100%; background: var(--pt-bg); box-shadow: -20px 0 60px -30px rgba(70,38,48,.5); transform: translateX(100%); transition: transform .4s cubic-bezier(.3,.7,.4,1); display: flex; flex-direction: column; font-family: var(--pt-font-body); }
+  .pt-drawer.is-open { transform: translateX(0); }
+  .pt-drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 24px 26px; border-bottom: 1px solid var(--pt-line); }
+  .pt-drawer-head h3 { font-family: var(--pt-font-head); font-size: 24px; margin: 0; }
+  .pt-drawer-head span { color: var(--pt-ink-faint); font-size: 16px; }
+  .pt-drawer-x { border: none; background: transparent; font-size: 17px; color: var(--pt-ink-soft); cursor: pointer; width: 34px; height: 34px; border-radius: 50%; transition: background .2s; }
+  .pt-drawer-x:hover { background: var(--pt-accent-soft); }
+  .pt-drawer-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; color: var(--pt-ink-soft); padding: 40px; text-align: center; }
+  .pt-drawer-items { flex: 1; overflow-y: auto; padding: 8px 26px; }
+  .pt-line { display: flex; gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--pt-line); }
+  .pt-line-mid { flex: 1; min-width: 0; }
+  .pt-line-cat { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--pt-ink-faint); display: block; }
+  .pt-line-name { font-family: var(--pt-font-head); font-size: 18px; display: block; margin: 2px 0 10px; line-height: 1.15; }
+  .pt-qty { display: inline-flex; align-items: center; border: 1px solid var(--pt-line); border-radius: 999px; }
+  .pt-qty button { width: 28px; height: 28px; border: none; background: transparent; font-size: 16px; color: var(--pt-ink); cursor: pointer; border-radius: 50%; }
+  .pt-qty button:hover { color: var(--pt-accent-deep); }
+  .pt-qty span { min-width: 26px; text-align: center; font-size: 14px; font-weight: 700; }
+  .pt-line-end { text-align: right; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; }
+  .pt-line-end b { font-size: 15px; }
+  .pt-line-rm { border: none; background: transparent; color: var(--pt-ink-faint); font-size: 11.5px; cursor: pointer; font-family: var(--pt-font-body); padding: 0; transition: color .2s; }
+  .pt-line-rm:hover { color: var(--pt-accent-deep); text-decoration: underline; }
+  /* Free shipping bar */
+  .pt-ship { padding: 14px 26px 16px; border-bottom: 1px solid var(--pt-line); }
+  .pt-ship-msg { margin: 0 0 9px; font-size: 13px; color: var(--pt-ink-soft); }
+  .pt-ship-msg b { color: var(--pt-accent-deep); font-weight: 800; }
+  .pt-ship-bar { height: 7px; border-radius: 999px; background: var(--pt-accent-soft); overflow: hidden; }
+  .pt-ship-bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--pt-accent), var(--pt-accent-deep)); transition: width .4s cubic-bezier(.3,.7,.4,1); }
+  /* Cart extras */
+  .pt-cart-extras { padding: 16px 0 4px; }
+  .pt-promo-wrap { margin-top: 12px; }
+  .pt-promo-row { display: flex; gap: 8px; }
+  .pt-promo-input { flex: 1; min-width: 0; font-family: var(--pt-font-body); font-size: 13px; padding: 10px 14px; border: 1px solid var(--pt-line); border-radius: 999px; background: #fff; outline: none; transition: border-color .2s; }
+  .pt-promo-input:focus { border-color: var(--pt-accent); }
+  .pt-promo-btn { flex: none; border: 1px solid var(--pt-accent); background: #fff; color: var(--pt-accent-deep); font-family: var(--pt-font-body); font-size: 13px; font-weight: 700; padding: 10px 18px; border-radius: 999px; cursor: pointer; transition: all .2s; }
+  .pt-promo-btn:hover { background: var(--pt-accent-soft); }
+  /* Drawer footer */
+  .pt-drawer-foot { padding: 22px 26px calc(22px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--pt-line); }
+  .pt-deliver { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--pt-ink-soft); margin-bottom: 14px; }
+  .pt-drawer-sub { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 16px; }
+  .pt-drawer-sub span { color: var(--pt-ink-soft); font-size: 14px; }
+  .pt-drawer-sub b { font-family: var(--pt-font-head); font-size: 26px; }
+  .pt-drawer-note { display: block; text-align: center; font-size: 12px; color: var(--pt-ink-faint); margin-top: 14px; }
+  /* Toast */
+  .pt-toast { position: fixed; left: 50%; bottom: 28px; z-index: 120; transform: translate(-50%, 140%); display: flex; align-items: center; gap: 10px; background: #fff; color: var(--pt-ink); font-size: 14px; font-weight: 600; padding: 13px 16px 13px 18px; border-radius: 999px; border: 1px solid var(--pt-line); box-shadow: var(--pt-shadow-md); transition: transform .4s cubic-bezier(.3,.7,.4,1); font-family: var(--pt-font-body); white-space: nowrap; }
+  .pt-toast.is-on { transform: translate(-50%, 0); }
+  .pt-toast button { border: none; background: var(--pt-accent-soft); color: var(--pt-accent-deep); font-weight: 700; font-size: 12.5px; font-family: var(--pt-font-body); padding: 7px 13px; border-radius: 999px; cursor: pointer; margin-left: 4px; }
+  .pt-toast button:hover { background: var(--pt-accent); color: #fff; }
+  @media (max-width: 760px) {
+    .pt-nav-left { display: none; }
+    .pt-nav-inner { grid-template-columns: auto 1fr; padding: 0 20px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "t:labels.menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "link_list",
+      "id": "customer_account_menu",
+      "label": "t:labels.customer_account_menu",
+      "default": "customer-account-main-menu"
+    }
+  ]
+}
+{% endschema %}
