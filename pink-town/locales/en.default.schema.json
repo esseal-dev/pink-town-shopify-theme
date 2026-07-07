@@ -128,7 +128,12 @@
     "paragraph_1": "Paragraph 1",
     "paragraph_2": "Paragraph 2",
     "icon": "Icon",
-    "title": "Title"
+    "title": "Title",
+    "quick_links": "Quick links",
+    "faq_group": "Group",
+    "faq_group_info": "Questions with the same group name are shown together under one heading. Keep same-group questions next to each other in this list.",
+    "faq_question": "Question",
+    "faq_answer": "Answer"
   },
   "options": {
     "alignment": {
@@ -223,6 +228,19 @@
           "name": "Value"
         }
       }
+    },
+    "faq": {
+      "hero_name": "FAQ hero",
+      "accordion_name": "FAQ accordion",
+      "cta_name": "FAQ contact CTA",
+      "blocks": {
+        "question": {
+          "name": "Question"
+        }
+      }
+    },
+    "policy": {
+      "name": "Policy"
     },
     "store_locations": {
       "name": "Store locations",

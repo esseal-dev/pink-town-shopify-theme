@@ -1,9 +1,4 @@
 {
-  "404": {
-    "title": "404",
-    "not_found": "Page not found.",
-    "back_to_shopping": "Back to shopping"
-  },
   "blog": {
     "article_comments": "Comments",
     "article_metadata_html": "{{ date }} by {{ author }}",
@@ -206,6 +201,22 @@
     "about": {
       "breadcrumb": "About",
       "story_image_placeholder": "Studio shot"
+    },
+    "404": {
+      "back_home": "Back to home",
+      "shop_collection": "Shop the collection"
+    },
+    "faq": {
+      "breadcrumb": "FAQ",
+      "search_placeholder": "Search questions…",
+      "search_label": "Search FAQ",
+      "no_match_html": "No questions match {query}. Try a different search, or",
+      "contact_link_text": "contact us"
+    },
+    "policy": {
+      "toc_label": "On this page",
+      "empty_state": "This policy hasn't been set up yet. Add it in Settings → Policies in the Shopify admin.",
+      "fallback_title": "Policy"
     }
   }
 }

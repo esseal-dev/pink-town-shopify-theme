@@ -22,7 +22,18 @@
   <body>
     {% sections 'header-group' %}
 
-    {{ content_for_layout }}
+    {%- comment -%}
+      Shopify always renders its own built-in markup for shop policy pages
+      (Privacy Policy, Terms of Service, Refund Policy, Shipping Policy) and
+      ignores any templates/policy.liquid or .json file entirely. The only
+      documented way to apply theme styling to them is to intercept here in
+      the layout and render our own section instead of the default output.
+    {%- endcomment -%}
+    {%- if request.path contains '/policies/' -%}
+      {% section 'main-policy' %}
+    {%- else -%}
+      {{ content_for_layout }}
+    {%- endif -%}
 
     {% sections 'footer-group' %}
 

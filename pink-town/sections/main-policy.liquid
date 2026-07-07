@@ -1,0 +1,131 @@
+{% comment %}
+  This section renders a shop policy page (Privacy Policy, Terms of Service,
+  Refund Policy, Shipping Policy, Subscription Policy). It's included
+  directly from layout/theme.liquid (see the comment there) rather than via
+  a templates/policy.* file, because Shopify always renders its own built-in
+  markup for policy URLs and ignores that template entirely.
+
+  Shopify also does NOT populate page_title/page_content in this bypass
+  context (they're only set when Shopify renders its own default policy
+  markup), so the policy text is read from the always-available shop.*
+  policy objects instead and matched to the current URL. The actual policy
+  text itself is still managed by the merchant in Settings > Policies, not
+  hardcoded in the theme, since legal content needs to be editable without a
+  code change.
+{% endcomment %}
+
+{%- liquid
+  assign policy = null
+  if request.path contains 'privacy-policy'
+    assign policy = shop.privacy_policy
+  elsif request.path contains 'terms-of-service'
+    assign policy = shop.terms_of_service
+  elsif request.path contains 'refund-policy'
+    assign policy = shop.refund_policy
+  elsif request.path contains 'shipping-policy'
+    assign policy = shop.shipping_policy
+  elsif request.path contains 'subscription-policy'
+    assign policy = shop.subscription_policy
+  endif
+
+  if policy.title != blank
+    assign policy_title = policy.title
+  else
+    assign policy_title = 'sections.policy.fallback_title' | t
+  endif
+-%}
+
+<header class="pt-ch">
+  <nav class="pt-crumb" aria-label="{{ 'general.accessibility.nav_left' | t }}">
+    <a href="{{ routes.root_url }}">{{ 'sections.collection.breadcrumb_home' | t }}</a>
+    <span>/</span>
+    <b>{{ policy_title }}</b>
+  </nav>
+  <span class="pt-eyebrow">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+    {{ section.settings.eyebrow | escape }}
+  </span>
+  <h1 class="pt-ch-h">{{ policy_title }}</h1>
+</header>
+
+<section class="pt-section pt-policy-sec">
+  <div class="pt-legal-wrap">
+    <nav class="pt-legal-toc" data-policy-toc hidden aria-label="{{ 'sections.policy.toc_label' | t }}">
+      <span class="pt-legal-toc-label">{{ 'sections.policy.toc_label' | t }}</span>
+    </nav>
+    <article class="pt-legal-article" data-policy-body>
+      {%- if policy.body != blank -%}
+        {{ policy.body }}
+      {%- else -%}
+        <p class="pt-policy-empty">{{ 'sections.policy.empty_state' | t }}</p>
+      {%- endif -%}
+    </article>
+  </div>
+</section>
+
+{% stylesheet %}
+  .pt-policy-sec { padding-top: 12px; }
+  .pt-legal-wrap { display: grid; grid-template-columns: 220px 1fr; gap: 56px; align-items: start; width: 100%; font-family: var(--pt-font-body); }
+  .pt-legal-toc { position: sticky; top: 92px; display: flex; flex-direction: column; gap: 10px; border-left: 2px solid var(--pt-line); padding-left: 18px; }
+  .pt-legal-toc-label { font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--pt-ink-faint); margin-bottom: 4px; }
+  .pt-legal-toc a { font-size: 13px; color: var(--pt-ink-soft); transition: color .2s; }
+  .pt-legal-toc a:hover { color: var(--pt-accent-deep); }
+  .pt-legal-toc a[data-active="1"] { color: var(--pt-accent-deep); font-weight: 700; }
+  .pt-legal-article { max-width: 68ch; font-size: 15px; line-height: 1.75; color: var(--pt-ink-soft); }
+  .pt-legal-article h2 { font-family: var(--pt-font-head); font-size: 24px; color: var(--pt-ink); margin: 40px 0 14px; scroll-margin-top: 100px; }
+  .pt-legal-article h2:first-child { margin-top: 0; }
+  .pt-legal-article h3 { font-family: var(--pt-font-head); font-size: 19px; color: var(--pt-ink); margin: 28px 0 10px; scroll-margin-top: 100px; }
+  .pt-legal-article p { margin: 0 0 16px; }
+  .pt-legal-article ul, .pt-legal-article ol { margin: 0 0 16px; padding-left: 22px; }
+  .pt-legal-article li { margin-bottom: 8px; }
+  .pt-legal-article a { color: var(--pt-accent-deep); font-weight: 600; }
+  .pt-legal-article a:hover { text-decoration: underline; }
+  .pt-policy-empty { color: var(--pt-ink-faint); font-style: italic; }
+  @media (max-width: 860px) {
+    .pt-legal-wrap { grid-template-columns: 1fr; gap: 28px; }
+    .pt-legal-toc { position: static; border-left: none; border-top: 1px solid var(--pt-line); padding-left: 0; padding-top: 18px; flex-direction: row; flex-wrap: wrap; gap: 14px; }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    document.querySelectorAll('[data-policy-body]').forEach(function (article) {
+      var toc = article.closest('.pt-legal-wrap').querySelector('[data-policy-toc]');
+      var headings = article.querySelectorAll('h2, h3');
+      if (!toc || headings.length < 2) return; // not worth a TOC for a couple sections
+
+      var links = [];
+      headings.forEach(function (h, i) {
+        if (!h.id) h.id = 'policy-section-' + i;
+        var a = document.createElement('a');
+        a.href = '#' + h.id;
+        a.textContent = h.textContent;
+        toc.appendChild(a);
+        links.push({ heading: h, link: a });
+      });
+      toc.hidden = false;
+
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          var match = links.find(function (l) { return l.heading === entry.target; });
+          if (match) match.link.dataset.active = entry.isIntersecting ? '1' : '0';
+        });
+      }, { rootMargin: '-100px 0px -70% 0px' });
+      headings.forEach(function (h) { observer.observe(h); });
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.policy.name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow",
+      "default": "The fine print"
+    }
+  ]
+}
+{% endschema %}
