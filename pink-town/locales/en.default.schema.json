@@ -124,7 +124,11 @@
     "location_code_info": "Short label shown on the pin, e.g. \"NY\".",
     "location_address": "Address",
     "pin_x": "Map pin — horizontal position",
-    "pin_y": "Map pin — vertical position"
+    "pin_y": "Map pin — vertical position",
+    "paragraph_1": "Paragraph 1",
+    "paragraph_2": "Paragraph 2",
+    "icon": "Icon",
+    "title": "Title"
   },
   "options": {
     "alignment": {
@@ -158,6 +162,12 @@
     "grid_columns": {
       "three": "3 across",
       "four": "4 across"
+    },
+    "icon": {
+      "heart": "Heart",
+      "check": "Checkmark",
+      "sparkle": "Sparkle",
+      "gift": "Gift"
     }
   },
   "sections": {
@@ -203,6 +213,16 @@
     "contact": {
       "hero_name": "Contact hero",
       "form_name": "Contact form"
+    },
+    "about": {
+      "hero_name": "About hero",
+      "story_name": "About story",
+      "values_name": "About values",
+      "blocks": {
+        "value": {
+          "name": "Value"
+        }
+      }
     },
     "store_locations": {
       "name": "Store locations",

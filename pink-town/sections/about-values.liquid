@@ -1,0 +1,128 @@
+<section class="pt-section pt-section--tint">
+  <div class="pt-sec-head pt-sec-head--center">
+    <span class="pt-eyebrow">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+      {{ section.settings.eyebrow | escape }}
+    </span>
+    <h2 class="pt-h2">{{ section.settings.heading | escape }}</h2>
+  </div>
+
+  {%- if section.blocks.size > 0 -%}
+    <div class="pt-values-grid">
+      {%- for block in section.blocks -%}
+        <div class="pt-value" {{ block.shopify_attributes }}>
+          <div class="pt-value-ic">
+            {%- render 'value-icon', icon: block.settings.icon -%}
+          </div>
+          <h3>{{ block.settings.title | escape }}</h3>
+          <p>{{ block.settings.text | escape }}</p>
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</section>
+
+{% stylesheet %}
+  .pt-values-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+  .pt-value { text-align: center; }
+  .pt-value-ic { width: 52px; height: 52px; margin: 0 auto 18px; border-radius: 50%; background: var(--pt-accent-soft); color: var(--pt-accent-deep); display: grid; place-items: center; }
+  .pt-value h3 { font-family: var(--pt-font-head); font-size: 20px; margin-bottom: 8px; }
+  .pt-value p { font-size: 13.5px; line-height: 1.6; color: var(--pt-ink-soft); font-family: var(--pt-font-body); }
+  @media (max-width: 900px) {
+    .pt-values-grid { grid-template-columns: 1fr 1fr; gap: 36px 24px; }
+  }
+  @media (max-width: 560px) {
+    .pt-values-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.about.values_name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow",
+      "default": "What we stand for"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "The PinkTown promise"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "value",
+      "name": "t:sections.about.blocks.value.name",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "t:labels.icon",
+          "options": [
+            { "value": "heart", "label": "t:options.icon.heart" },
+            { "value": "check", "label": "t:options.icon.check" },
+            { "value": "sparkle", "label": "t:options.icon.sparkle" },
+            { "value": "gift", "label": "t:options.icon.gift" }
+          ],
+          "default": "heart"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:labels.title",
+          "default": "Made to last"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "t:labels.text",
+          "default": "Tarnish-free, waterproof, hypoallergenic finishes — wear every piece every day, no babying required."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.about.values_name",
+      "blocks": [
+        {
+          "type": "value",
+          "settings": {
+            "icon": "heart",
+            "title": "Made to last",
+            "text": "Tarnish-free, waterproof, hypoallergenic finishes — wear every piece every day, no babying required."
+          }
+        },
+        {
+          "type": "value",
+          "settings": {
+            "icon": "check",
+            "title": "Priced honestly",
+            "text": "No mined stones, no markup games — just the look you want at roughly 70% off the real thing."
+          }
+        },
+        {
+          "type": "value",
+          "settings": {
+            "icon": "sparkle",
+            "title": "Designed in-house",
+            "text": "Every collection is sketched, sampled and finished by our own small design team, drop by drop."
+          }
+        },
+        {
+          "type": "value",
+          "settings": {
+            "icon": "gift",
+            "title": "Gift-ready always",
+            "text": "Every order ships in a ribboned pouch — free gift wrap and a handwritten note whenever you want one."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,90 @@
+{
+  "sections": {
+    "hero": {
+      "type": "about-hero",
+      "settings": {}
+    },
+    "story": {
+      "type": "about-story",
+      "settings": {}
+    },
+    "values": {
+      "type": "about-values",
+      "blocks": {
+        "val-1": {
+          "type": "value",
+          "settings": {
+            "icon": "heart",
+            "title": "Made to last",
+            "text": "Tarnish-free, waterproof, hypoallergenic finishes — wear every piece every day, no babying required."
+          }
+        },
+        "val-2": {
+          "type": "value",
+          "settings": {
+            "icon": "check",
+            "title": "Priced honestly",
+            "text": "No mined stones, no markup games — just the look you want at roughly 70% off the real thing."
+          }
+        },
+        "val-3": {
+          "type": "value",
+          "settings": {
+            "icon": "sparkle",
+            "title": "Designed in-house",
+            "text": "Every collection is sketched, sampled and finished by our own small design team, drop by drop."
+          }
+        },
+        "val-4": {
+          "type": "value",
+          "settings": {
+            "icon": "gift",
+            "title": "Gift-ready always",
+            "text": "Every order ships in a ribboned pouch — free gift wrap and a handwritten note whenever you want one."
+          }
+        }
+      },
+      "block_order": ["val-1", "val-2", "val-3", "val-4"],
+      "settings": {}
+    },
+    "reviews": {
+      "type": "reviews",
+      "blocks": {
+        "rev-1": {
+          "type": "review",
+          "settings": {
+            "name": "Mia R.",
+            "handle": "@miawears",
+            "stars": 5,
+            "text": "Genuinely cannot believe these are under $30. The pearl drops look like the designer pair I saved for and never bought."
+          }
+        },
+        "rev-2": {
+          "type": "review",
+          "settings": {
+            "name": "Sofía L.",
+            "handle": "@sof.jpg",
+            "stars": 5,
+            "text": "Wore the charm bracelet every single day for two months — showered, swam, the whole thing. Still sparkling. Obsessed."
+          }
+        },
+        "rev-3": {
+          "type": "review",
+          "settings": {
+            "name": "Hana K.",
+            "handle": "@hanakoto",
+            "stars": 5,
+            "text": "Bought a stack for my little sister's birthday and now we're both hooked. Packaging is so cute it's gift-ready."
+          }
+        }
+      },
+      "block_order": ["rev-1", "rev-2", "rev-3"],
+      "settings": {}
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {}
+    }
+  },
+  "order": ["hero", "story", "values", "reviews", "newsletter"]
+}

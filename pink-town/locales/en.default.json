@@ -202,6 +202,10 @@
     },
     "store_locations": {
       "map_label": "Store map"
+    },
+    "about": {
+      "breadcrumb": "About",
+      "story_image_placeholder": "Studio shot"
     }
   }
 }

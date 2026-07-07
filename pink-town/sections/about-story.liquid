@@ -1,0 +1,78 @@
+<section class="pt-section">
+  <div class="pt-about-story">
+    <div class="pt-about-story-copy">
+      <span class="pt-eyebrow">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+        {{ section.settings.eyebrow | escape }}
+      </span>
+      <h2 class="pt-h2">{{ section.settings.heading | escape }}</h2>
+      {%- if section.settings.paragraph_1 != blank -%}
+        <p>{{ section.settings.paragraph_1 | escape }}</p>
+      {%- endif -%}
+      {%- if section.settings.paragraph_2 != blank -%}
+        <p>{{ section.settings.paragraph_2 | escape }}</p>
+      {%- endif -%}
+    </div>
+    <div class="pt-about-story-art">
+      <div class="pt-ph" style="aspect-ratio:4/5;border-radius:var(--pt-radius);background:var(--pt-accent-soft);">
+        {%- if section.settings.image -%}
+          {{ section.settings.image | image_url: width: 900 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: section.settings.image.alt }}
+        {%- else -%}
+          <span class="pt-ph-lbl">{{ 'sections.about.story_image_placeholder' | t }}</span>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .pt-about-story { display: grid; grid-template-columns: 1.05fr .95fr; gap: 64px; align-items: center; }
+  .pt-about-story-copy p { font-size: 15.5px; line-height: 1.7; color: var(--pt-ink-soft); margin-top: 18px; font-family: var(--pt-font-body); }
+  .pt-about-story-copy .pt-h2 { margin-bottom: 4px; }
+  @media (max-width: 900px) {
+    .pt-about-story { grid-template-columns: 1fr; gap: 32px; }
+    .pt-about-story-art { order: -1; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.about.story_name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow",
+      "default": "Why we started"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Beautiful jewelry shouldn't come with a catch."
+    },
+    {
+      "type": "textarea",
+      "id": "paragraph_1",
+      "label": "t:labels.paragraph_1",
+      "default": "We were tired of choosing between jewelry that tarnished within a week and fine pieces that cost a paycheck. So we set out to make the in-between: designs with real presence, made from finishes that actually hold up to daily life."
+    },
+    {
+      "type": "textarea",
+      "id": "paragraph_2",
+      "label": "t:labels.paragraph_2",
+      "default": "Every drop starts as a sketch of a mood — storybook, celestial, sun-soaked — then gets built in tarnish-free, nickel-free finishes so it can be worn in the shower, at the gym, or on a plane without a second thought."
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:labels.image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.about.story_name"
+    }
+  ]
+}
+{% endschema %}
