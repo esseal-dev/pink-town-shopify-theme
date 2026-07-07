@@ -44,8 +44,6 @@
     "alignment": "Alignment",
     "background": "Background",
     "foreground": "Foreground",
-    "grid_gap": "Grid spacing",
-    "grid_item_width": "Grid item width",
     "input_corner_radius": "Input corner radius",
     "layout_direction": "Layout direction",
     "menu": "Menu",
@@ -105,6 +103,7 @@
     "enable_price_filter": "Enable price filter",
     "grid_columns": "Grid columns",
     "products_per_page": "Products per page",
+    "collections_per_page": "Collections per page",
     "show_promo": "Show promo banner",
     "promo_position": "Promo banner position",
     "promo_eyebrow": "Promo eyebrow",
@@ -125,10 +124,6 @@
     "page_width": {
       "narrow": "Narrow",
       "wide": "Wide"
-    },
-    "size": {
-      "large": "Large",
-      "small": "Small"
     },
     "text_style": {
       "title": "Title",

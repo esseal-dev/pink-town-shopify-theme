@@ -179,6 +179,11 @@
       "empty_heading": "Nothing saved yet",
       "empty_text": "Tap the heart on any piece to keep it here for later.",
       "start_browsing": "Start browsing"
+    },
+    "collections_index": {
+      "breadcrumb": "Collections",
+      "empty_heading": "No collections yet",
+      "empty_text": "Check back soon — collections are on the way."
     }
   }
 }
