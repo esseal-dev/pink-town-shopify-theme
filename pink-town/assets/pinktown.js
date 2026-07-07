@@ -213,33 +213,48 @@ function initAddToCart() {
 }
 
 // ── Wishlist (localStorage) ───────────────────────────────────────────────────
-function initWishlist() {
-  var key = 'pt_wishlist';
-  function load() { try { return JSON.parse(localStorage.getItem(key)) || []; } catch (e) { return []; } }
-  function save(list) { try { localStorage.setItem(key, JSON.stringify(list)); } catch (e) {} }
+var PT_WISHLIST_KEY = 'pt_wishlist';
 
-  var list = load();
+function ptLoadWishlist() {
+  try { return JSON.parse(localStorage.getItem(PT_WISHLIST_KEY)) || []; } catch (e) { return []; }
+}
+function ptSaveWishlist(list) {
+  try { localStorage.setItem(PT_WISHLIST_KEY, JSON.stringify(list)); } catch (e) {}
+  window.dispatchEvent(new CustomEvent('pt:wishlist-change', { detail: list }));
+}
+
+function ptSyncWishlistBadge() {
+  var badge = document.querySelector('.pt-nav-wish-badge');
+  if (!badge) return;
+  var count = ptLoadWishlist().length;
+  badge.textContent = count;
+  badge.style.display = count > 0 ? '' : 'none';
+}
+
+function initWishlist() {
+  var list = ptLoadWishlist();
 
   function syncButtons() {
     document.querySelectorAll('.pt-wish-btn').forEach(function (btn) {
-      var id = btn.dataset.productId;
-      btn.dataset.on = list.includes(id) ? '1' : '0';
+      var handle = btn.dataset.productHandle;
+      btn.dataset.on = list.includes(handle) ? '1' : '0';
       var svg = btn.querySelector('svg');
-      if (svg) svg.setAttribute('fill', list.includes(id) ? 'currentColor' : 'none');
+      if (svg) svg.setAttribute('fill', list.includes(handle) ? 'currentColor' : 'none');
     });
+    ptSyncWishlistBadge();
   }
 
   document.addEventListener('click', function (e) {
     var btn = e.target.closest('.pt-wish-btn');
     if (!btn) return;
-    var id = btn.dataset.productId;
-    if (!id) return;
-    if (list.includes(id)) {
-      list = list.filter(function (x) { return x !== id; });
+    var handle = btn.dataset.productHandle;
+    if (!handle) return;
+    if (list.includes(handle)) {
+      list = list.filter(function (x) { return x !== handle; });
     } else {
-      list = list.concat([id]);
+      list = list.concat([handle]);
     }
-    save(list);
+    ptSaveWishlist(list);
     syncButtons();
   });
 

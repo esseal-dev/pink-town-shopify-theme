@@ -187,6 +187,9 @@
     "newsletter": {
       "name": "Newsletter"
     },
+    "wishlist": {
+      "name": "Wishlist"
+    },
     "footer": {
       "blocks": {
         "link_column": {

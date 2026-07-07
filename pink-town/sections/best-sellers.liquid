@@ -59,7 +59,7 @@
             {%- elsif product.tags contains 'new' or product.tags contains 'New' -%}
               <span class="pt-card-tag">{{ 'products.tag_new' | t }}</span>
             {%- endif -%}
-            <button class="pt-wish pt-wish-btn" data-product-id="{{ product.id }}" data-on="0" aria-label="{{ 'products.save_to_wishlist' | t }}">
+            <button class="pt-wish pt-wish-btn" data-product-handle="{{ product.handle }}" data-on="0" aria-label="{{ 'products.save_to_wishlist' | t }}">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
                 <path d="M12 20s-7-4.6-9.2-9C1.3 7.7 3 4.8 6 4.8c2 0 3.2 1.2 4 2.4.8-1.2 2-2.4 4-2.4 3 0 4.7 2.9 3.2 6.2C19 15.4 12 20 12 20z" stroke-linejoin="round"/>
               </svg>

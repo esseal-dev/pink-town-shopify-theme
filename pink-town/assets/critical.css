@@ -6,6 +6,14 @@
   margin: 0;
 }
 
+/* The `hidden` attribute has the same specificity as a class selector, so any
+   class that sets its own `display` (flex/grid/etc.) silently defeats
+   `el.hidden = true` since author CSS loads after the UA stylesheet. Force it
+   to always win regardless of what else targets the element. */
+[hidden] {
+  display: none !important;
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -131,9 +139,33 @@ h1, h2, h3, h4 { margin: 0; font-weight: 500; }
 }
 .pt-sec-foot { display: flex; justify-content: center; margin-top: 48px; }
 
+/** Breadcrumb, centered page header, and empty-state — shared across the
+ * collection, wishlist, and other standalone pages. */
+.pt-crumb { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--pt-ink-faint); margin-bottom: 18px; font-family: var(--pt-font-body); }
+.pt-crumb a:hover { color: var(--pt-accent-deep); }
+.pt-crumb b { color: var(--pt-ink); font-weight: 600; white-space: nowrap; }
+.pt-crumb span { opacity: .6; }
+
+.pt-ch { max-width: var(--pt-wrap); margin: 0 auto; padding: 40px 32px 36px; font-family: var(--pt-font-body); }
+.pt-ch-h { font-family: var(--pt-font-head); font-size: clamp(2.8rem, 5.2vw, 4.4rem); line-height: 1; letter-spacing: -.015em; margin: 14px 0 0; }
+.pt-ch-blurb { color: var(--pt-ink-soft); font-size: 16.5px; line-height: 1.6; max-width: 46ch; margin: 18px 0 0; text-wrap: pretty; }
+.pt-ch-meta { display: flex; align-items: center; gap: 12px; margin-top: 22px; font-size: 13.5px; color: var(--pt-ink-soft); flex-wrap: wrap; }
+.pt-ch-meta > span { white-space: nowrap; }
+.pt-ch-meta b { color: var(--pt-ink); }
+.pt-ch-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--pt-ink-faint); }
+.pt-ch-rate { display: inline-flex; color: var(--pt-accent); }
+.pt-ch--center { text-align: center; display: flex; flex-direction: column; align-items: center; padding-top: 30px; }
+.pt-ch--center .pt-crumb { justify-content: center; }
+.pt-ch--center .pt-ch-blurb { max-width: 56ch; }
+.pt-ch--center .pt-ch-meta { justify-content: center; }
+
+.pt-empty { text-align: center; padding: 80px 20px; color: var(--pt-ink-soft); display: flex; flex-direction: column; align-items: center; gap: 8px; font-family: var(--pt-font-body); }
+.pt-empty h3 { font-family: var(--pt-font-head); font-size: 26px; color: var(--pt-ink); margin-top: 8px; }
+
 @media (max-width: 760px) {
   .pt-section { padding: 60px 20px; }
   .pt-sec-head--row { align-items: flex-start; }
+  .pt-ch { padding: 28px 20px; }
 }
 
 /** Section layout utilities */

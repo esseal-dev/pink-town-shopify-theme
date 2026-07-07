@@ -1,0 +1,175 @@
+{% comment %}
+  Client-side wishlist page. The wishlist itself lives in localStorage (see
+  ptLoadWishlist/ptSaveWishlist in assets/pinktown.js) as a list of product
+  handles, so this section renders an empty shell server-side and fills it
+  in with real product data fetched from /products/{handle}.js once the
+  page loads.
+{% endcomment %}
+
+<div class="pt-wishlist-page"
+     data-i-eyebrow="{{ 'sections.wishlist.eyebrow' | t | escape }}"
+     data-i-heading="{{ 'sections.wishlist.heading' | t | escape }}"
+     data-i-blurb-empty="{{ 'sections.wishlist.blurb_empty' | t | escape }}"
+     data-i-blurb-suffix="{{ 'sections.wishlist.blurb_suffix' | t | escape }}"
+     data-i-piece="{{ 'sections.collection.piece' | t | escape }}"
+     data-i-pieces="{{ 'sections.collection.pieces' | t | escape }}"
+     data-i-add-to-cart="{{ 'products.add_to_cart' | t | escape }}"
+     data-i-sold-out="{{ 'products.sold_out' | t | escape }}"
+     data-i-remove="{{ 'products.remove_from_wishlist' | t | escape }}">
+
+  <header class="pt-ch pt-ch--center">
+    <nav class="pt-crumb" aria-label="{{ 'general.accessibility.nav_left' | t }}">
+      <a href="{{ routes.root_url }}">{{ 'sections.collection.breadcrumb_home' | t }}</a>
+      <span>/</span>
+      <b>{{ 'sections.wishlist.heading' | t }}</b>
+    </nav>
+    <span class="pt-eyebrow">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+      {{ 'sections.wishlist.eyebrow' | t }}
+    </span>
+    <h1 class="pt-ch-h">{{ 'sections.wishlist.heading' | t }}</h1>
+    <p class="pt-ch-blurb" data-wish-blurb>{{ 'sections.wishlist.blurb_empty' | t }}</p>
+  </header>
+
+  <section class="pt-section pt-wish-section">
+    <div class="pt-prod-grid" data-wish-grid hidden></div>
+
+    <div class="pt-empty" data-wish-empty hidden>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--pt-accent)" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+      <h3>{{ 'sections.wishlist.empty_heading' | t }}</h3>
+      <p>{{ 'sections.wishlist.empty_text' | t }}</p>
+      <a href="{{ routes.all_products_collection_url }}" class="pt-btn pt-btn--solid" style="margin-top:18px">{{ 'sections.wishlist.start_browsing' | t }}</a>
+    </div>
+  </section>
+</div>
+
+{% stylesheet %}
+  .pt-wish-section { padding-top: 12px; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    var page = document.querySelector('.pt-wishlist-page');
+    if (!page) return;
+
+    function money(cents) {
+      return '$' + (cents / 100).toFixed(2).replace(/\.00$/, '');
+    }
+    function esc(str) {
+      return String(str == null ? '' : str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    var i18n = {
+      blurbEmpty: page.dataset.iBlurbEmpty,
+      blurbSuffix: page.dataset.iBlurbSuffix,
+      piece: page.dataset.iPiece,
+      pieces: page.dataset.iPieces,
+      addToCart: page.dataset.iAddToCart,
+      soldOut: page.dataset.iSoldOut,
+      remove: page.dataset.iRemove
+    };
+
+    var grid = page.querySelector('[data-wish-grid]');
+    var emptyEl = page.querySelector('[data-wish-empty]');
+    var blurbEl = page.querySelector('[data-wish-blurb]');
+
+    function updateBlurb(count) {
+      if (!blurbEl) return;
+      blurbEl.textContent = count === 0
+        ? i18n.blurbEmpty
+        : count + ' ' + (count === 1 ? i18n.piece : i18n.pieces) + ' ' + i18n.blurbSuffix;
+    }
+
+    function cardHtml(product) {
+      var variants = product.variants || [];
+      var variant = variants.filter(function (v) { return v.available; })[0] || variants[0] || {};
+      var onSale = variant.compare_at_price > variant.price;
+      var img = product.featured_image ? product.featured_image.replace(/(\.\w+)(\?|$)/, '_600x600$1$2') : '';
+      return '<div class="pt-card">'
+        + '<div class="pt-card-media">'
+        + (img
+            ? '<img class="pt-ph-img" src="' + esc(img) + '" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">'
+            : '<span class="pt-ph-lbl">' + esc(product.title) + '</span>')
+        + '<button type="button" class="pt-wish pt-wish-btn" data-product-handle="' + esc(product.handle) + '" data-on="1" aria-label="' + esc(i18n.remove) + '">'
+        + '<svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.7"><path d="M12 20s-7-4.6-9.2-9C1.3 7.7 3 4.8 6 4.8c2 0 3.2 1.2 4 2.4.8-1.2 2-2.4 4-2.4 3 0 4.7 2.9 3.2 6.2C19 15.4 12 20 12 20z" stroke-linejoin="round"/></svg>'
+        + '</button>'
+        + (variant.available
+            ? '<button type="button" class="pt-add" data-wish-add data-variant-id="' + variant.id + '">' + esc(i18n.addToCart) + '</button>'
+            : '<span class="pt-add pt-add--soldout">' + esc(i18n.soldOut) + '</span>')
+        + '</div>'
+        + '<div class="pt-card-info">'
+        + '<span class="pt-card-cat">' + esc(product.type) + '</span>'
+        + '<h3 class="pt-card-name"><a href="/products/' + esc(product.handle) + '">' + esc(product.title) + '</a></h3>'
+        + '<div class="pt-card-price">'
+        + '<span class="pt-price-now">' + money(variant.price || 0) + '</span>'
+        + (onSale ? '<span class="pt-price-was">' + money(variant.compare_at_price) + '</span>' : '')
+        + '</div></div></div>';
+    }
+
+    function render() {
+      var handles = (window.ptLoadWishlist ? window.ptLoadWishlist() : []).slice();
+      updateBlurb(handles.length);
+
+      if (handles.length === 0) {
+        grid.hidden = true;
+        grid.innerHTML = '';
+        emptyEl.hidden = false;
+        return;
+      }
+
+      Promise.all(handles.map(function (handle) {
+        return fetch('/products/' + handle + '.js')
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .catch(function () { return null; });
+      })).then(function (results) {
+        var valid = [];
+        var products = [];
+        results.forEach(function (product, i) {
+          if (product) { valid.push(handles[i]); products.push(product); }
+        });
+        // Prune handles for products that no longer exist (deleted/unpublished).
+        if (valid.length !== handles.length && window.ptSaveWishlist) {
+          window.ptSaveWishlist(valid);
+        }
+        if (products.length === 0) {
+          grid.hidden = true;
+          emptyEl.hidden = false;
+          updateBlurb(0);
+          return;
+        }
+        grid.innerHTML = products.map(cardHtml).join('');
+        grid.hidden = false;
+        emptyEl.hidden = true;
+      });
+    }
+
+    grid.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-wish-add]');
+      if (!btn) return;
+      var variantId = btn.dataset.variantId;
+      if (!variantId) return;
+      btn.disabled = true;
+      var original = btn.textContent;
+      btn.textContent = '…';
+      fetch('/cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: variantId, quantity: 1 })
+      }).then(function () {
+        if (window.ptOpenCart) window.ptOpenCart();
+      }).finally(function () {
+        btn.disabled = false;
+        btn.textContent = original;
+      });
+    });
+
+    window.addEventListener('pt:wishlist-change', render);
+    render();
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.wishlist.name"
+}
+{% endschema %}

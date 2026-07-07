@@ -54,6 +54,7 @@
       "skip_to_content": "Skip to content",
       "close": "Close",
       "account": "Account",
+      "wishlist": "Wishlist",
       "nav_left": "Main navigation",
       "nav_right": "Secondary navigation",
       "prev": "Previous",
@@ -76,6 +77,7 @@
     "tag_bestseller": "Bestseller",
     "tag_new": "New",
     "save_to_wishlist": "Save to wishlist",
+    "remove_from_wishlist": "Remove from wishlist",
     "quick_view": "Quick view",
     "quantity": "Quantity",
     "please_select": "please select",
@@ -168,6 +170,15 @@
       "empty_heading": "This collection is empty",
       "empty_text": "Check back soon — new pieces are on the way.",
       "toggle_filters": "Toggle filters"
+    },
+    "wishlist": {
+      "eyebrow": "Saved for later",
+      "heading": "Your Wishlist",
+      "blurb_empty": "Everything you save shows up here.",
+      "blurb_suffix": "you’re dreaming about.",
+      "empty_heading": "Nothing saved yet",
+      "empty_text": "Tap the heart on any piece to keep it here for later.",
+      "start_browsing": "Start browsing"
     }
   }
 }
