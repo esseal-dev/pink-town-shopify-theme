@@ -96,7 +96,22 @@
     "copyright_text": "Copyright text",
     "instagram_url": "Instagram URL",
     "tiktok_url": "TikTok URL",
-    "pinterest_url": "Pinterest URL"
+    "pinterest_url": "Pinterest URL",
+    "header_layout": "Header layout",
+    "badge_text": "Image badge text",
+    "show_rating": "Show rating",
+    "enable_finish_filter": "Enable finish filter",
+    "finish_options": "Finish options (comma-separated)",
+    "finish_options_info": "Tag products with these exact names (e.g. \"Rose Gold\") to enable finish filtering and color dots.",
+    "enable_price_filter": "Enable price filter",
+    "grid_columns": "Grid columns",
+    "products_per_page": "Products per page",
+    "show_promo": "Show promo banner",
+    "promo_position": "Promo banner position",
+    "promo_eyebrow": "Promo eyebrow",
+    "promo_heading": "Promo heading",
+    "promo_text": "Promo text",
+    "promo_badge": "Promo badge text"
   },
   "options": {
     "alignment": {
@@ -125,6 +140,15 @@
       "split": "Split",
       "centered": "Centered",
       "editorial": "Editorial"
+    },
+    "collection_layout": {
+      "split": "Split",
+      "centered": "Centered",
+      "fullbleed": "Full bleed"
+    },
+    "grid_columns": {
+      "three": "3 across",
+      "four": "4 across"
     }
   },
   "sections": {

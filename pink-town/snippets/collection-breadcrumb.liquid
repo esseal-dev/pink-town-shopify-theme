@@ -1,0 +1,14 @@
+{% doc %}
+  Renders the Home / Shop / <collection> breadcrumb trail on the collection page.
+
+  @example
+  {% render 'collection-breadcrumb' %}
+{% enddoc %}
+
+<nav class="pt-crumb" aria-label="{{ 'general.accessibility.nav_left' | t }}">
+  <a href="{{ routes.root_url }}">{{ 'sections.collection.breadcrumb_home' | t }}</a>
+  <span>/</span>
+  <a href="{{ routes.all_products_collection_url }}">{{ 'sections.collection.breadcrumb_shop' | t }}</a>
+  <span>/</span>
+  <b>{{ collection.title }}</b>
+</nav>

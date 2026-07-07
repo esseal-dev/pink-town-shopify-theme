@@ -1,0 +1,25 @@
+{% doc %}
+  Renders the "N pieces · ★★★★★ 4.9 · everyday-wear approved" meta line
+  under a collection header.
+
+  @param {number} count - Number of products in the collection
+  @param {boolean} show_rating - Whether to show the rating line
+  @param {string} [rating] - Rating value to display (e.g. "4.9")
+  @param {string} [review_count] - Review count to display (e.g. "218")
+
+  @example
+  {% render 'collection-meta', count: collection.products.size, show_rating: section.settings.show_rating, rating: section.settings.rating, review_count: section.settings.review_count %}
+{% enddoc %}
+
+<div class="pt-ch-meta">
+  <span><b>{{ count }}</b> {% if count == 1 %}{{ 'sections.collection.piece' | t }}{% else %}{{ 'sections.collection.pieces' | t }}{% endif %}</span>
+  {%- if show_rating -%}
+    <span class="pt-ch-dot"></span>
+    <span class="pt-ch-rate">
+      <span class="pt-stars" aria-hidden="true">
+        {%- for i in (1..5) -%}<svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.4"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8L3.5 9.7l5.9-.9L12 3.5z" stroke-linejoin="round"/></svg>{%- endfor -%}
+      </span>
+    </span>
+    <span><b>{{ rating }}</b> {{ 'products.reviews_count' | t: count: review_count }} &middot; {{ 'sections.collection.meta_suffix' | t }}</span>
+  {%- endif -%}
+</div>

@@ -75,7 +75,20 @@
     "save_pct": "Save {{ pct }}%",
     "tag_bestseller": "Bestseller",
     "tag_new": "New",
-    "save_to_wishlist": "Save to wishlist"
+    "save_to_wishlist": "Save to wishlist",
+    "quick_view": "Quick view",
+    "quantity": "Quantity",
+    "please_select": "please select",
+    "size": "Size",
+    "length": "Length",
+    "finish_html": "Finish — <b>{{ value }}</b>",
+    "size_selected_html": "{{ label }} — <b>{{ value }}</b>",
+    "size_unselected_html": "{{ label }} <i>· please select</i>",
+    "view_full_details": "View full details",
+    "perk_tarnish_free": "Tarnish-free & nickel-free",
+    "perk_free_shipping": "Free shipping over $35",
+    "perk_returns": "30-day happy returns",
+    "reviews_count": "({{ count }})"
   },
   "search": {
     "title": "Search",
@@ -131,6 +144,31 @@
       "from_count": "from {{ count }} reviews",
       "stars_label": "out of 5 stars",
       "verified": "Verified"
+    },
+    "collection": {
+      "breadcrumb_home": "Home",
+      "breadcrumb_shop": "Shop",
+      "piece": "piece",
+      "pieces": "pieces",
+      "meta_suffix": "everyday-wear approved",
+      "filters": "Filters",
+      "clear_all": "Clear all",
+      "close_filters": "Close filters",
+      "show_results": "Show results",
+      "category": "Category",
+      "finish": "Finish",
+      "price": "Price",
+      "sort_label": "Sort",
+      "sort_featured": "Featured",
+      "sort_price_low": "Price: low to high",
+      "sort_price_high": "Price: high to low",
+      "sort_newest": "Newest",
+      "sort_saving": "Biggest saving",
+      "no_results_heading": "No pieces match those filters",
+      "no_results_text": "Try loosening a filter or two — there's magic in here somewhere.",
+      "empty_heading": "This collection is empty",
+      "empty_text": "Check back soon — new pieces are on the way.",
+      "toggle_filters": "Toggle filters"
     }
   }
 }

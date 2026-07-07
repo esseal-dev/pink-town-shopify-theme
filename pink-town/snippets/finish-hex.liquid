@@ -1,0 +1,23 @@
+{% doc %}
+  Returns a hex color for a jewelry finish/color name, with a neutral fallback
+  for custom names that aren't in the curated list.
+
+  @param {string} name - The finish name (e.g. "Rose Gold")
+
+  @example
+  {% render 'finish-hex', name: 'Rose Gold' %}
+{% enddoc %}
+
+{%- case name -%}
+  {%- when 'Rose Gold' -%}#d9a299
+  {%- when 'Silver' -%}#c8ced3
+  {%- when 'Gold' -%}#e3c378
+  {%- when 'Pink' -%}#f2a7bd
+  {%- when 'Pearl' -%}#efe4df
+  {%- when 'Crystal' -%}#d4e1ea
+  {%- when 'Two-Tone' -%}#cbb08a
+  {%- when 'Gunmetal' -%}#5c5c66
+  {%- when 'White Gold' -%}#e7e6df
+  {%- when 'Black' -%}#3a3a3f
+  {%- else -%}#cbb9bd
+{%- endcase -%}
