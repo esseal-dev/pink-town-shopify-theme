@@ -108,16 +108,12 @@ function renderCartItems(cart) {
         + '</div></div>';
     }).join('');
 
+    itemsEl.querySelectorAll('.pt-line').forEach(function (el) { el.remove(); });
     var extrasEl = itemsEl.querySelector('.pt-cart-extras');
     if (extrasEl) {
       extrasEl.insertAdjacentHTML('beforebegin', html);
-      itemsEl.querySelectorAll('.pt-line').forEach(function (el) {
-        if (el.compareDocumentPosition(extrasEl) & Node.DOCUMENT_POSITION_FOLLOWING) {
-          el.remove();
-        }
-      });
     } else {
-      itemsEl.innerHTML = html;
+      itemsEl.insertAdjacentHTML('afterbegin', html);
     }
   }
 

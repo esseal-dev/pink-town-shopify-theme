@@ -10,10 +10,27 @@
   assign grid_cols = section.settings.grid_columns | default: '3'
   assign per_page = section.settings.products_per_page | default: 24
   assign enable_price_filter = section.settings.enable_price_filter
-  assign enable_finish_filter = section.settings.enable_finish_filter
+  assign enable_variant_filters = section.settings.enable_variant_filters
 
   assign categories = collection.products | map: 'type' | uniq | sort
-  assign finish_names = section.settings.finish_options | default: 'Rose Gold, Silver, Gold, Pink, Pearl, Crystal' | split: ','
+
+  comment
+    Discover every variant option (Color, Size, Material, …) actually used by
+    products in this collection, so the filter sidebar stays in sync with
+    whatever options merchants set up — no manual configuration needed.
+    Built with plain loops (not `map`/`flatten`) since Shopify Liquid doesn't
+    support flattening nested arrays.
+  endcomment
+  assign option_names_str = '|'
+  for product in collection.products
+    for opt in product.options_with_values
+      assign name_needle = '|' | append: opt.name | append: '|'
+      unless option_names_str contains name_needle
+        assign option_names_str = option_names_str | append: opt.name | append: '|'
+      endunless
+    endfor
+  endfor
+  assign option_name_list = option_names_str | split: '|'
 
   assign prices = collection.products | map: 'price' | sort
   assign price_min = prices | first | default: 0
@@ -138,32 +155,78 @@
           </div>
         {%- endif -%}
 
-        {%- if enable_finish_filter -%}
-          <div class="pt-fg" data-open="1">
-            <button type="button" class="pt-fg-h" data-fg-toggle>
-              {{ 'sections.collection.finish' | t }}
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="pt-fg-body">
-              <div class="pt-swatches">
-                {%- for raw_finish in finish_names -%}
-                  {%- assign finish = raw_finish | strip -%}
-                  {%- assign finish_count = 0 -%}
-                  {%- for product in collection.products -%}
-                    {%- if product.tags contains finish -%}
-                      {%- assign finish_count = finish_count | plus: 1 -%}
-                    {%- endif -%}
-                  {%- endfor -%}
-                  {%- if finish_count > 0 -%}
-                    <button type="button" class="pt-sw" data-filter-finish data-on="0" data-value="{{ finish | escape }}" title="{{ finish | escape }}">
-                      <span style="background:{% render 'finish-hex', name: finish %}"></span>
-                      {{ finish }}
-                    </button>
+        {%- if enable_variant_filters -%}
+          {%- for opt_name in option_name_list -%}
+            {%- unless opt_name == blank or opt_name == 'Title' -%}
+              {%- assign opt_name_down = opt_name | downcase -%}
+              {%- assign is_swatch = false -%}
+              {%- if opt_name_down contains 'color' or opt_name_down contains 'finish' -%}
+                {%- assign is_swatch = true -%}
+              {%- endif -%}
+
+              {%- comment -%} Distinct values for this option name, pipe-delimited to avoid substring collisions. {%- endcomment -%}
+              {%- assign opt_values_str = '|' -%}
+              {%- for product in collection.products -%}
+                {%- for opt in product.options_with_values -%}
+                  {%- if opt.name == opt_name -%}
+                    {%- for val in opt.values -%}
+                      {%- assign val_needle = '|' | append: val | append: '|' -%}
+                      {%- unless opt_values_str contains val_needle -%}
+                        {%- assign opt_values_str = opt_values_str | append: val | append: '|' -%}
+                      {%- endunless -%}
+                    {%- endfor -%}
                   {%- endif -%}
                 {%- endfor -%}
-              </div>
-            </div>
-          </div>
+              {%- endfor -%}
+              {%- assign opt_values = opt_values_str | split: '|' -%}
+
+              {%- comment -%}
+                Skip options with only one possible value — nothing for a
+                shopper to actually filter by.
+              {%- endcomment -%}
+              {%- if opt_values.size > 1 -%}
+                <div class="pt-fg" data-open="1">
+                  <button type="button" class="pt-fg-h" data-fg-toggle>
+                    {{ opt_name }}
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <div class="pt-fg-body">
+                    {%- if is_swatch -%}
+                      <div class="pt-swatches">
+                        {%- for val in opt_values -%}
+                          {%- unless val == blank -%}
+                            <button type="button" class="pt-sw" data-filter-option data-on="0" data-opt-name="{{ opt_name | escape }}" data-opt-value="{{ val | escape }}" title="{{ val | escape }}">
+                              <span style="background:{% render 'finish-hex', name: val %}"></span>
+                              {{ val }}
+                            </button>
+                          {%- endunless -%}
+                        {%- endfor -%}
+                      </div>
+                    {%- else -%}
+                      {%- for val in opt_values -%}
+                        {%- unless val == blank -%}
+                          {%- assign val_count = 0 -%}
+                          {%- for product in collection.products -%}
+                            {%- for opt in product.options_with_values -%}
+                              {%- if opt.name == opt_name and opt.values contains val -%}
+                                {%- assign val_count = val_count | plus: 1 -%}
+                              {%- endif -%}
+                            {%- endfor -%}
+                          {%- endfor -%}
+                          <label class="pt-check">
+                            <input type="checkbox" data-filter-option data-opt-name="{{ opt_name | escape }}" value="{{ val | escape }}">
+                            <span class="pt-check-box"></span>
+                            <span class="pt-check-lbl">{{ val }}</span>
+                            <span class="pt-check-ct">{{ val_count }}</span>
+                          </label>
+                        {%- endunless -%}
+                      {%- endfor -%}
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- endif -%}
+            {%- endunless -%}
+          {%- endfor -%}
         {%- endif -%}
 
         {%- if enable_price_filter and price_max > price_min -%}
@@ -228,19 +291,13 @@
                 assign is_new = true
               endif
             -%}
-            {%- capture prod_finishes -%}
-              {%- for raw_finish in finish_names -%}
-                {%- assign finish = raw_finish | strip -%}
-                {%- if product.tags contains finish -%}{{ finish }}|{%- endif -%}
-              {%- endfor -%}
-            {%- endcapture -%}
             <div class="pt-card pt-card--coll"
                  data-coll-card
                  data-cat="{{ product.type | escape }}"
                  data-price="{{ product.price }}"
                  data-new="{% if is_new %}1{% else %}0{% endif %}"
                  data-saving="{{ savings_pct }}"
-                 data-finishes="{{ prod_finishes | strip | escape }}">
+                 data-options="{{ product.options_with_values | json | escape }}">
               <button type="button" class="pt-card-media" data-quick-view data-handle="{{ product.handle }}" aria-label="{{ 'products.quick_view' | t }} — {{ product.title | escape }}">
                 {%- if product.featured_image -%}
                   {{ product.featured_image | image_url: width: 600 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: product.featured_image.alt | default: product.title, style: 'position:absolute;inset:0;height:100%;border-radius:inherit;' }}
@@ -266,10 +323,12 @@
                   <span class="pt-price-now">{{ product.price | money }}</span>
                   {%- if on_sale -%}<span class="pt-price-was">{{ product.compare_at_price | money }}</span>{%- endif -%}
                   <span class="pt-card-dots">
-                    {%- for raw_finish in finish_names -%}
-                      {%- assign finish = raw_finish | strip -%}
-                      {%- if product.tags contains finish -%}
-                        <i style="background:{% render 'finish-hex', name: finish %}" title="{{ finish | escape }}"></i>
+                    {%- for opt in product.options_with_values -%}
+                      {%- assign opt_name_down = opt.name | downcase -%}
+                      {%- if opt_name_down contains 'color' or opt_name_down contains 'finish' -%}
+                        {%- for val in opt.values -%}
+                          <i style="background:{% render 'finish-hex', name: val %}" title="{{ val | escape }}"></i>
+                        {%- endfor -%}
                       {%- endif -%}
                     {%- endfor -%}
                   </span>
@@ -434,7 +493,7 @@
 
   .pt-promo { grid-column: 1 / -1; position: relative; overflow: hidden; border-radius: var(--pt-radius); padding: 38px 40px; background: linear-gradient(120deg, var(--pt-accent-deep), var(--pt-accent)); color: #fff; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: var(--pt-shadow-md); margin: 4px 0; font-family: var(--pt-font-body); }
   .pt-promo-glow { position: absolute; width: 320px; height: 320px; border-radius: 50%; background: rgba(255,255,255,.16); filter: blur(50px); top: -140px; right: -60px; }
-  .pt-promo > * { position: relative; z-index: 1; }
+  .pt-promo > *:not(.pt-promo-glow) { position: relative; z-index: 1; }
   .pt-promo-h { font-family: var(--pt-font-head); font-size: clamp(2rem, 3.4vw, 2.8rem); margin: 8px 0 0; }
   .pt-promo-sub { font-size: 15px; opacity: .92; margin: 10px 0 0; max-width: 44ch; }
   .pt-promo-code { margin-top: 16px; font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; background: rgba(255,255,255,.18); padding: 7px 14px; border-radius: 999px; }
@@ -540,24 +599,43 @@
     var priceMin = priceFilter ? parseInt(priceFilter.dataset.min, 10) : 0;
     var priceMax = priceFilter ? parseInt(priceFilter.dataset.max, 10) : 0;
 
-    var state = { cats: [], finishes: [], lo: priceMin, hi: priceMax };
+    var cardOptions = new Map();
+    cards.forEach(function (card) {
+      var parsed = [];
+      try { parsed = JSON.parse(card.dataset.options || '[]'); } catch (e) { parsed = []; }
+      cardOptions.set(card, parsed);
+    });
+    function cardHasValue(card, name, value) {
+      var opts = cardOptions.get(card) || [];
+      var opt = opts.filter(function (o) { return o.name === name; })[0];
+      return !!(opt && opt.values.indexOf(value) !== -1);
+    }
+
+    var state = { cats: [], options: {}, lo: priceMin, hi: priceMax };
 
     function toggleIn(list, val) {
       var i = list.indexOf(val);
       if (i === -1) list.push(val); else list.splice(i, 1);
       return list;
     }
+    function toggleOption(name, value) {
+      if (!state.options[name]) state.options[name] = [];
+      toggleIn(state.options[name], value);
+    }
 
     function apply() {
       var visible = 0;
       cards.forEach(function (card) {
         var cat = card.dataset.cat || '';
-        var finishes = (card.dataset.finishes || '').split('|').filter(Boolean);
         var price = parseInt(card.dataset.price, 10) || 0;
         var okCat = state.cats.length === 0 || state.cats.indexOf(cat) !== -1;
-        var okFinish = state.finishes.length === 0 || state.finishes.some(function (f) { return finishes.indexOf(f) !== -1; });
+        var okOptions = Object.keys(state.options).every(function (name) {
+          var values = state.options[name];
+          if (!values.length) return true;
+          return values.some(function (v) { return cardHasValue(card, name, v); });
+        });
         var okPrice = price >= state.lo && price <= state.hi;
-        var show = okCat && okFinish && okPrice;
+        var show = okCat && okOptions && okPrice;
         card.hidden = !show;
         if (show) visible += 1;
       });
@@ -574,7 +652,9 @@
       if (!activeTagsEl) return;
       var chips = [];
       state.cats.forEach(function (c) { chips.push({ group: 'cats', value: c, label: c }); });
-      state.finishes.forEach(function (c) { chips.push({ group: 'finishes', value: c, label: c }); });
+      Object.keys(state.options).forEach(function (name) {
+        state.options[name].forEach(function (v) { chips.push({ group: 'option', name: name, value: v, label: v }); });
+      });
       if (state.lo > priceMin || state.hi < priceMax) {
         chips.push({ group: 'price', label: money(state.lo) + '–' + money(state.hi) });
       }
@@ -602,13 +682,13 @@
     function removeFilter(chip) {
       if (chip.group === 'price') { state.lo = priceMin; state.hi = priceMax; syncPriceUI(); }
       else if (chip.group === 'cats') { toggleIn(state.cats, chip.value); syncCatUI(); }
-      else if (chip.group === 'finishes') { toggleIn(state.finishes, chip.value); syncFinishUI(); }
+      else if (chip.group === 'option') { toggleOption(chip.name, chip.value); syncOptionUI(); }
       apply();
     }
 
     function clearAll() {
-      state.cats = []; state.finishes = []; state.lo = priceMin; state.hi = priceMax;
-      syncCatUI(); syncFinishUI(); syncPriceUI();
+      state.cats = []; state.options = {}; state.lo = priceMin; state.hi = priceMax;
+      syncCatUI(); syncOptionUI(); syncPriceUI();
       apply();
     }
 
@@ -617,9 +697,14 @@
         input.checked = state.cats.indexOf(input.value) !== -1;
       });
     }
-    function syncFinishUI() {
-      page.querySelectorAll('[data-filter-finish]').forEach(function (btn) {
-        btn.dataset.on = state.finishes.indexOf(btn.dataset.value) !== -1 ? '1' : '0';
+    function syncOptionUI() {
+      page.querySelectorAll('input[data-filter-option]').forEach(function (input) {
+        var vals = state.options[input.dataset.optName] || [];
+        input.checked = vals.indexOf(input.value) !== -1;
+      });
+      page.querySelectorAll('button[data-filter-option]').forEach(function (btn) {
+        var vals = state.options[btn.dataset.optName] || [];
+        btn.dataset.on = vals.indexOf(btn.dataset.optValue) !== -1 ? '1' : '0';
       });
     }
     function syncPriceUI() {
@@ -644,8 +729,11 @@
     page.querySelectorAll('[data-filter-cat]').forEach(function (input) {
       input.addEventListener('change', function () { toggleIn(state.cats, input.value); apply(); });
     });
-    page.querySelectorAll('[data-filter-finish]').forEach(function (btn) {
-      btn.addEventListener('click', function () { toggleIn(state.finishes, btn.dataset.value); syncFinishUI(); apply(); });
+    page.querySelectorAll('input[data-filter-option]').forEach(function (input) {
+      input.addEventListener('change', function () { toggleOption(input.dataset.optName, input.value); apply(); });
+    });
+    page.querySelectorAll('button[data-filter-option]').forEach(function (btn) {
+      btn.addEventListener('click', function () { toggleOption(btn.dataset.optName, btn.dataset.optValue); syncOptionUI(); apply(); });
     });
     if (priceFilter) {
       var loInput = priceFilter.querySelector('[data-range-lo]');
@@ -718,12 +806,14 @@
 
     var qvProduct = null, qvSelected = [], qvVariant = null, qvQtyVal = 1;
 
-    var FINISH_HEX = {};
-    page.querySelectorAll('[data-filter-finish]').forEach(function (btn) {
-      var span = btn.querySelector('span');
-      if (span) FINISH_HEX[btn.dataset.value] = span.style.background;
-    });
-    function hexFor(name) { return FINISH_HEX[name] || '#cbb9bd'; }
+    // Mirrors snippets/finish-hex.liquid so quick-view swatches match the
+    // sidebar even when a value wasn't rendered server-side (e.g. filters off).
+    var KNOWN_HEX = {
+      'Rose Gold': '#d9a299', 'Silver': '#c8ced3', 'Gold': '#e3c378', 'Pink': '#f2a7bd',
+      'Pearl': '#efe4df', 'Crystal': '#d4e1ea', 'Two-Tone': '#cbb08a', 'Gunmetal': '#5c5c66',
+      'White Gold': '#e7e6df', 'Black': '#3a3a3f'
+    };
+    function hexFor(name) { return KNOWN_HEX[name] || '#cbb9bd'; }
     function isSwatchOption(name) { return /color|finish/i.test(name); }
 
     function openQuickView(handle) {
@@ -741,7 +831,11 @@
         .then(function (r) { return r.json(); })
         .then(function (product) {
           qvProduct = product;
-          qvSelected = (product.options || []).map(function (opt, i) {
+          qvSelected = (product.options || []).map(function (opt) {
+            // Single-value options (e.g. Shopify's auto "Title"/"Default Title"
+            // placeholder for products with no real variants) aren't a real
+            // choice — pre-select them and hide them from the UI.
+            if (opt.values.length === 1) return opt.values[0];
             return isSwatchOption(opt.name) ? opt.values[0] : null;
           });
           qvLink.setAttribute('href', '/products/' + product.handle);
@@ -787,8 +881,10 @@
     function renderOptions(product) {
       qvOptions.innerHTML = '';
       (product.options || []).forEach(function (opt, i) {
+        if (opt.values.length <= 1) return;
         var field = document.createElement('div');
         field.className = 'pt-qv-field';
+        field.dataset.optIndex = i;
         var label = document.createElement('span');
         label.className = 'pt-qv-flabel';
         field.appendChild(label);
@@ -827,9 +923,11 @@
     }
 
     function syncVariant() {
-      var fields = qvOptions.querySelectorAll('.pt-qv-flabel');
-      (qvProduct.options || []).forEach(function (opt, i) {
-        if (fields[i]) updateFieldLabel(fields[i], opt.name, qvSelected[i]);
+      qvOptions.querySelectorAll('.pt-qv-field').forEach(function (field) {
+        var i = parseInt(field.dataset.optIndex, 10);
+        var opt = (qvProduct.options || [])[i];
+        var label = field.querySelector('.pt-qv-flabel');
+        if (opt && label) updateFieldLabel(label, opt.name, qvSelected[i]);
       });
 
       var complete = qvSelected.every(function (v) { return v !== null && v !== undefined; });
@@ -872,7 +970,8 @@
 
     if (qvAdd) qvAdd.addEventListener('click', function () {
       if (!qvVariant) {
-        qvOptions.querySelectorAll('.pt-qv-field').forEach(function (f, i) {
+        qvOptions.querySelectorAll('.pt-qv-field').forEach(function (f) {
+          var i = parseInt(f.dataset.optIndex, 10);
           if (qvSelected[i] === null || qvSelected[i] === undefined) {
             f.classList.add('pt-shake');
             setTimeout(function () { f.classList.remove('pt-shake'); }, 500);
@@ -964,16 +1063,10 @@
     },
     {
       "type": "checkbox",
-      "id": "enable_finish_filter",
-      "label": "t:labels.enable_finish_filter",
+      "id": "enable_variant_filters",
+      "label": "t:labels.enable_variant_filters",
+      "info": "t:labels.enable_variant_filters_info",
       "default": true
-    },
-    {
-      "type": "text",
-      "id": "finish_options",
-      "label": "t:labels.finish_options",
-      "default": "Rose Gold, Silver, Gold, Pink, Pearl, Crystal",
-      "info": "t:labels.finish_options_info"
     },
     {
       "type": "checkbox",

@@ -27,7 +27,7 @@
     display: flex; flex-direction: column; align-items: center; font-family: var(--pt-font-body);
   }
   .pt-news-glow { position: absolute; width: 360px; height: 360px; border-radius: 50%; filter: blur(70px); background: radial-gradient(circle, var(--pt-accent-soft), transparent 70%); bottom: -160px; left: -80px; pointer-events: none; }
-  .pt-news-card > * { position: relative; z-index: 1; }
+  .pt-news-card > *:not(.pt-news-glow) { position: relative; z-index: 1; }
   .pt-news-h { font-family: var(--pt-font-head); font-size: clamp(2rem, 4vw, 3rem); margin: 14px 0 0; }
   .pt-news-sub { color: var(--pt-ink-soft); margin: 14px 0 28px; max-width: 44ch; }
   .pt-news-form { display: flex; gap: 10px; width: 100%; max-width: 440px; }
