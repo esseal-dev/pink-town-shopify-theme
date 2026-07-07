@@ -1,0 +1,64 @@
+{
+  "sections": {
+    "hero": {
+      "type": "contact-hero",
+      "settings": {}
+    },
+    "form": {
+      "type": "contact-form",
+      "settings": {}
+    },
+    "locations": {
+      "type": "store-locations",
+      "blocks": {
+        "loc-1": {
+          "type": "location",
+          "settings": {
+            "name": "PinkTown SoHo",
+            "code": "NY",
+            "address": "148 Spring Street, New York, NY 10012",
+            "hours": "Mon\u2013Sat 11\u20137, Sun 12\u20136",
+            "phone": "(212) 555-0148",
+            "pin_x": 78,
+            "pin_y": 30
+          }
+        },
+        "loc-2": {
+          "type": "location",
+          "settings": {
+            "name": "PinkTown Melrose",
+            "code": "LA",
+            "address": "7421 Melrose Avenue, Los Angeles, CA 90046",
+            "hours": "Mon\u2013Sat 10\u20137, Sun 11\u20136",
+            "phone": "(323) 555-0172",
+            "pin_x": 12,
+            "pin_y": 42
+          }
+        },
+        "loc-3": {
+          "type": "location",
+          "settings": {
+            "name": "PinkTown South Congress",
+            "code": "AU",
+            "address": "1600 South Congress Ave, Austin, TX 78704",
+            "hours": "Mon\u2013Sat 11\u20137, Sun 12\u20135",
+            "phone": "(512) 555-0193",
+            "pin_x": 46,
+            "pin_y": 62
+          }
+        }
+      },
+      "block_order": [
+        "loc-1",
+        "loc-2",
+        "loc-3"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "hero",
+    "form",
+    "locations"
+  ]
+}

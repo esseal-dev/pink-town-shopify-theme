@@ -184,6 +184,24 @@
       "breadcrumb": "Collections",
       "empty_heading": "No collections yet",
       "empty_text": "Check back soon — collections are on the way."
+    },
+    "contact": {
+      "breadcrumb": "Contact",
+      "field_name": "Name",
+      "field_email": "Email",
+      "field_subject": "Subject",
+      "field_message": "Message",
+      "name_placeholder": "Your name",
+      "email_placeholder": "you@email.com",
+      "message_placeholder": "How can we help?",
+      "info_email_label": "Email",
+      "info_phone_label": "Phone",
+      "info_hours_label": "Support hours",
+      "info_social_label": "Follow along",
+      "info_social_on": "on"
+    },
+    "store_locations": {
+      "map_label": "Store map"
     }
   }
 }

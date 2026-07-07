@@ -1,0 +1,194 @@
+{%- comment -%} Contact form: native Shopify contact form + info cards {%- endcomment -%}
+{%- liquid
+  assign subject_options = section.settings.subject_options | split: ','
+-%}
+
+<section class="pt-section pt-contact-sec">
+  <div class="pt-contact-wrap">
+    {%- form 'contact', id: 'ContactForm', class: 'pt-contact-form' -%}
+      {%- if form.posted_successfully? -%}
+        {%- assign first_name = form.name | split: ' ' | first -%}
+        <div class="pt-contact-thanks">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--pt-accent)" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+          <h2>{{ section.settings.thanks_heading | escape }}</h2>
+          <p>{{ section.settings.thanks_text | replace: '[name]', first_name | replace: '[email]', form.email | escape }}</p>
+        </div>
+      {%- else -%}
+        {%- if form.errors -%}
+          <div class="pt-contact-error">{{ form.errors | default_errors }}</div>
+        {%- endif -%}
+        <h2>{{ section.settings.form_heading | escape }}</h2>
+        <div class="pt-contact-fields">
+          <label class="pt-fld pt-fld--full">
+            <span class="pt-fld-lbl">{{ 'sections.contact.field_name' | t }}</span>
+            <input class="pt-input" type="text" name="contact[name]" value="{{ form.name }}" placeholder="{{ 'sections.contact.name_placeholder' | t }}" autocomplete="name">
+          </label>
+          <label class="pt-fld pt-fld--full">
+            <span class="pt-fld-lbl">{{ 'sections.contact.field_email' | t }}</span>
+            <input class="pt-input" type="email" name="contact[email]" value="{{ form.email }}" placeholder="{{ 'sections.contact.email_placeholder' | t }}" autocomplete="email" required>
+          </label>
+          {%- if subject_options.size > 0 -%}
+            <label class="pt-fld pt-fld--full">
+              <span class="pt-fld-lbl">{{ 'sections.contact.field_subject' | t }}</span>
+              <select class="pt-input" name="contact[subject]">
+                {%- for raw_option in subject_options -%}
+                  {%- assign option = raw_option | strip -%}
+                  <option value="{{ option | escape }}">{{ option }}</option>
+                {%- endfor -%}
+              </select>
+            </label>
+          {%- endif -%}
+          <label class="pt-fld pt-fld--full">
+            <span class="pt-fld-lbl">{{ 'sections.contact.field_message' | t }}</span>
+            <textarea class="pt-input" name="contact[body]" rows="5" placeholder="{{ 'sections.contact.message_placeholder' | t }}" required>{{ form.body }}</textarea>
+          </label>
+        </div>
+        <button type="submit" class="pt-btn pt-btn--solid pt-btn--full">{{ section.settings.submit_text | escape }}</button>
+      {%- endif -%}
+    {%- endform -%}
+
+    <div class="pt-contact-info">
+      <div class="pt-info-card">
+        <div class="pt-info-ic">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6h18v12H3z" stroke-linejoin="round"/><path d="M3 7l9 6 9-6" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <h4>{{ 'sections.contact.info_email_label' | t }}</h4>
+          <p><a href="mailto:{{ section.settings.email }}">{{ section.settings.email }}</a></p>
+        </div>
+      </div>
+      <div class="pt-info-card">
+        <div class="pt-info-ic">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1.1-.3 1.2.4 2.5.6 3.8.6.6 0 1 .4 1 1v3.7c0 .6-.4 1-1 1C10.6 21.2 2.8 13.4 2.8 4.6c0-.6.4-1 1-1H7.5c.6 0 1 .4 1 1 0 1.3.2 2.6.6 3.8.1.4 0 .8-.3 1.1L6.6 10.8z" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <h4>{{ 'sections.contact.info_phone_label' | t }}</h4>
+          <p><a href="tel:{{ section.settings.phone | remove: ' ' | remove: '(' | remove: ')' | remove: '-' }}">{{ section.settings.phone }}</a></p>
+        </div>
+      </div>
+      <div class="pt-info-card">
+        <div class="pt-info-ic">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2" stroke-linecap="round"/></svg>
+        </div>
+        <div>
+          <h4>{{ 'sections.contact.info_hours_label' | t }}</h4>
+          <p>{{ section.settings.hours | escape }}</p>
+        </div>
+      </div>
+      {%- if section.settings.social_handle != blank -%}
+        <div class="pt-info-card">
+          <div class="pt-info-ic">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+          </div>
+          <div>
+            <h4>{{ 'sections.contact.info_social_label' | t }}</h4>
+            <p>{{ section.settings.social_handle | escape }} {{ 'sections.contact.info_social_on' | t }} {{ section.settings.social_platforms | escape }}</p>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% stylesheet %}
+  .pt-contact-wrap { display: grid; grid-template-columns: 1.3fr .8fr; gap: 48px; align-items: start; width: 100%; font-family: var(--pt-font-body); }
+  .pt-contact-form { background: var(--pt-card); border: 1px solid var(--pt-line); border-radius: var(--pt-radius); padding: 36px; box-shadow: var(--pt-shadow-sm); }
+  .pt-contact-form h2 { font-family: var(--pt-font-head); font-size: 26px; margin-bottom: 22px; }
+  .pt-contact-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 24px; }
+  .pt-fld { display: flex; flex-direction: column; gap: 8px; }
+  .pt-fld--full { grid-column: 1 / -1; }
+  .pt-fld-lbl { font-size: 12.5px; font-weight: 700; color: var(--pt-ink); }
+  .pt-input { font-family: var(--pt-font-body); font-size: 14px; padding: 12px 14px; border: 1px solid var(--pt-line); border-radius: 12px; background: #fff; outline: none; transition: border-color .2s; color: var(--pt-ink); width: 100%; }
+  .pt-input:focus { border-color: var(--pt-accent); }
+  textarea.pt-input { resize: vertical; }
+  .pt-contact-error { background: #fdecef; border: 1px solid #f3c8ce; color: #a23f4a; border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; font-size: 13.5px; }
+  .pt-contact-thanks { text-align: center; padding: 60px 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .pt-contact-thanks h2 { font-family: var(--pt-font-head); font-size: 26px; margin: 0; }
+  .pt-contact-thanks p { color: var(--pt-ink-soft); margin: 0; max-width: 40ch; }
+  .pt-contact-info { display: flex; flex-direction: column; gap: 22px; padding-top: 6px; }
+  .pt-info-card { display: flex; gap: 14px; align-items: flex-start; }
+  .pt-info-ic { flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--pt-accent-soft); color: var(--pt-accent-deep); display: grid; place-items: center; }
+  .pt-info-card h4 { font-size: 12.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--pt-ink); margin-bottom: 4px; }
+  .pt-info-card p { font-size: 14px; color: var(--pt-ink-soft); margin: 0; }
+  .pt-info-card a { color: var(--pt-accent-deep); font-weight: 600; }
+  .pt-info-card a:hover { text-decoration: underline; }
+  @media (max-width: 760px) {
+    .pt-contact-wrap { grid-template-columns: 1fr; gap: 32px; }
+    .pt-contact-fields { grid-template-columns: 1fr; }
+    .pt-contact-form { padding: 26px 22px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:sections.contact.form_name",
+  "settings": [
+    {
+      "type": "text",
+      "id": "form_heading",
+      "label": "t:labels.heading",
+      "default": "Send us a message"
+    },
+    {
+      "type": "text",
+      "id": "subject_options",
+      "label": "t:labels.subject_options",
+      "default": "Order question, Returns & exchanges, Product question, Wholesale & press, Something else"
+    },
+    {
+      "type": "text",
+      "id": "submit_text",
+      "label": "t:labels.button_text",
+      "default": "Send message"
+    },
+    {
+      "type": "text",
+      "id": "thanks_heading",
+      "label": "t:labels.thanks_heading",
+      "default": "Message sent"
+    },
+    {
+      "type": "textarea",
+      "id": "thanks_text",
+      "label": "t:labels.thanks_text",
+      "info": "t:labels.thanks_text_info",
+      "default": "Thanks, [name]! We'll get back to you at [email] shortly."
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "t:labels.email",
+      "default": "hello@pinktown.example"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "t:labels.phone",
+      "default": "(888) 555-0148"
+    },
+    {
+      "type": "text",
+      "id": "hours",
+      "label": "t:labels.hours",
+      "default": "Mon–Fri 9am–6pm ET · Sat 10am–4pm ET"
+    },
+    {
+      "type": "text",
+      "id": "social_handle",
+      "label": "t:labels.social_handle",
+      "default": "@pinktown.jewels"
+    },
+    {
+      "type": "text",
+      "id": "social_platforms",
+      "label": "t:labels.social_platforms",
+      "default": "Instagram & TikTok"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.contact.form_name"
+    }
+  ]
+}
+{% endschema %}

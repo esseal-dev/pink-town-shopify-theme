@@ -109,7 +109,22 @@
     "promo_eyebrow": "Promo eyebrow",
     "promo_heading": "Promo heading",
     "promo_text": "Promo text",
-    "promo_badge": "Promo badge text"
+    "promo_badge": "Promo badge text",
+    "subject_options": "Subject options (comma-separated)",
+    "thanks_heading": "Thank-you heading",
+    "thanks_text": "Thank-you message",
+    "thanks_text_info": "Use [name] and [email] as placeholders — they'll be replaced with the submitted values.",
+    "email": "Email address",
+    "phone": "Phone number",
+    "hours": "Support hours",
+    "social_handle": "Social handle",
+    "social_platforms": "Social platforms",
+    "location_name": "Location name",
+    "location_code": "Location code",
+    "location_code_info": "Short label shown on the pin, e.g. \"NY\".",
+    "location_address": "Address",
+    "pin_x": "Map pin — horizontal position",
+    "pin_y": "Map pin — vertical position"
   },
   "options": {
     "alignment": {
@@ -184,6 +199,18 @@
     },
     "wishlist": {
       "name": "Wishlist"
+    },
+    "contact": {
+      "hero_name": "Contact hero",
+      "form_name": "Contact form"
+    },
+    "store_locations": {
+      "name": "Store locations",
+      "blocks": {
+        "location": {
+          "name": "Location"
+        }
+      }
     },
     "footer": {
       "blocks": {
