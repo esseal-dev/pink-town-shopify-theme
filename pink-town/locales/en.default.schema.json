@@ -133,7 +133,32 @@
     "faq_group": "Group",
     "faq_group_info": "Questions with the same group name are shown together under one heading. Keep same-group questions next to each other in this list.",
     "faq_question": "Question",
-    "faq_answer": "Answer"
+    "faq_answer": "Answer",
+    "media_position": "Image position",
+    "show_vendor": "Show vendor",
+    "show_related": "Show related products",
+    "related_heading": "Related products heading",
+    "addons_heading": "Add-ons heading",
+    "addon_product": "Product",
+    "addon_product_info": "Shown as an optional add-on the shopper can check to add alongside this product (e.g. a gift box).",
+    "show_dynamic_checkout": "Show additional checkout buttons",
+    "show_dynamic_checkout_info": "Displays Shop Pay, PayPal, Apple Pay, or other express payment buttons below \"Buy it now\", based on what's enabled in Settings > Payments.",
+    "show_stock_countdown": "Show low-stock countdown",
+    "stock_threshold": "Low-stock threshold",
+    "show_share": "Show share buttons",
+    "details_heading": "Details section heading",
+    "highlights": "Highlights",
+    "highlights_info": "One per line.",
+    "recommend_pct": "Recommend percentage",
+    "initial_visible_count": "Reviews shown before \"Show all\"",
+    "reviewer_name": "Name",
+    "verified": "Verified buyer",
+    "review_date": "Date",
+    "review_title": "Review title",
+    "photo_1": "Photo 1",
+    "photo_2": "Photo 2",
+    "photo_3": "Photo 3",
+    "helpful_count": "Helpful votes (starting count)"
   },
   "options": {
     "alignment": {
@@ -173,6 +198,10 @@
       "check": "Checkmark",
       "sparkle": "Sparkle",
       "gift": "Gift"
+    },
+    "media_position": {
+      "left": "Left",
+      "right": "Right"
     }
   },
   "sections": {
@@ -241,6 +270,24 @@
     },
     "policy": {
       "name": "Policy"
+    },
+    "product": {
+      "blocks": {
+        "accordion_item": {
+          "name": "Accordion item"
+        },
+        "addon": {
+          "name": "Add-on product"
+        }
+      }
+    },
+    "product_reviews": {
+      "name": "Loved by customers",
+      "blocks": {
+        "review": {
+          "name": "Review"
+        }
+      }
     },
     "store_locations": {
       "name": "Store locations",

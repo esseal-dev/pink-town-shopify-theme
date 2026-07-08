@@ -24,7 +24,17 @@
     "total": "Total",
     "decrease": "Decrease quantity",
     "increase": "Increase quantity",
-    "view_bag": "View bag"
+    "view_bag": "View bag",
+    "order_summary": "Order summary",
+    "subtotal": "Subtotal",
+    "you_save": "You're saving",
+    "discount_label": "Discount",
+    "promo_applied": "applied",
+    "remove_discount_note": "To remove or change a code, do so at checkout.",
+    "count_singular": "item",
+    "count_plural": "items",
+    "ready_suffix": "ready for checkout.",
+    "empty_blurb": "Nothing here yet — let's fix that."
   },
   "customers": {
     "login": {
@@ -67,6 +77,7 @@
   },
   "products": {
     "add_to_cart": "Add to bag",
+    "buy_it_now": "Buy it now",
     "sold_out": "Sold out",
     "save_pct": "Save {{ pct }}%",
     "tag_bestseller": "Bestseller",
@@ -85,7 +96,29 @@
     "perk_tarnish_free": "Tarnish-free & nickel-free",
     "perk_free_shipping": "Free shipping over $35",
     "perk_returns": "30-day happy returns",
-    "reviews_count": "({{ count }})"
+    "perk_gift_wrapped": "Comes gift-wrapped",
+    "reviews_count": "({{ count }})",
+    "stock_low_html": "Only <b>{{ count }}</b> left — selling fast",
+    "share_label": "Share",
+    "share_copy_link": "Copy link",
+    "share_copied": "Link copied",
+    "share_pinterest": "Share on Pinterest",
+    "share_facebook": "Share on Facebook",
+    "share_email": "Share via email",
+    "savings_caption_html": "You're saving <b>{{ amount }}</b> compared to the original price.",
+    "loved_by_customers_html": "Loved by {{ count }} customers",
+    "based_on_reviews_html": "Based on {{ count }} reviews",
+    "would_recommend_html": "{{ pct }} would recommend",
+    "write_a_review": "Write a review",
+    "with_photos": "With photos",
+    "sort_label": "Sort",
+    "sort_recent": "Most recent",
+    "sort_helpful": "Most helpful",
+    "sort_high": "Highest rated",
+    "sort_low": "Lowest rated",
+    "verified_buyer": "Verified buyer",
+    "helpful_label": "Helpful",
+    "show_all_reviews_html": "Show all {{ count }} reviews"
   },
   "search": {
     "title": "Search",

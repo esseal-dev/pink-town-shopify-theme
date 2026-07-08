@@ -1,37 +1,343 @@
 {% comment %}
-  This section is used in the cart template to render /cart page with an
-  overview of the items in customer's cart.
+  This section is used in the cart template to render the full /cart page:
+  line-item list + order summary. The header's cart drawer (sections/header.liquid)
+  covers the in-session quick view; this page is the fallback destination for
+  direct /cart visits, discount-redirect links, and no-JS shoppers.
 
   https://shopify.dev/docs/storefronts/themes/architecture/templates/cart
 {% endcomment %}
 
-<h1>{{ 'cart.title' | t }}</h1>
+{%- liquid
+  assign markdown_savings = 0
+  for item in cart.items
+    if item.variant.compare_at_price > item.variant.price
+      assign line_savings = item.variant.compare_at_price | minus: item.variant.price | times: item.quantity
+      assign markdown_savings = markdown_savings | plus: line_savings
+    endif
+  endfor
 
-<form action="{{ routes.cart_url }}" method="post">
-  <table>
-    {% for item in cart.items %}
-      <tr>
-        <td>
-          {% render 'image', image: item.image, url: item.url %}
-        </td>
-        <td>
-          <p>{{ item.product.title }}</p>
-          {{ 'cart.remove' | t | link_to: item.url_to_remove }}
-        </td>
-        <td>
-          <input type="text" name="updates[]" value="{{ item.quantity }}">
-          <input type="submit" value="{{ 'cart.update' | t }}">
-        </td>
-      </tr>
-    {% endfor %}
-  </table>
+  assign discount_savings = cart.original_total_price | minus: cart.total_price
+  assign free_ship_threshold = 3500
+  assign ship_remaining = free_ship_threshold | minus: cart.total_price
+  if ship_remaining < 0
+    assign ship_remaining = 0
+  endif
+  assign ship_pct = 100
+  if free_ship_threshold > 0
+    assign ship_pct = cart.total_price | times: 100 | divided_by: free_ship_threshold
+    if ship_pct > 100
+      assign ship_pct = 100
+    endif
+  endif
+-%}
 
-  <input type="submit" name="checkout" value="{{ 'cart.checkout' | t }}">
-</form>
+<div class="pt-cart-page" id="pt-cart-{{ section.id }}" data-cart-page
+     data-root-url="{{ routes.root_url }}"
+     data-cart-url="{{ routes.cart_url }}"
+     data-free-ship-cents="{{ free_ship_threshold }}"
+     data-i-item="{{ 'cart.count_singular' | t }}"
+     data-i-items="{{ 'cart.count_plural' | t }}"
+     data-i-ready="{{ 'cart.ready_suffix' | t }}"
+     data-i-empty="{{ 'cart.empty_blurb' | t }}">
+
+  <header class="pt-ch pt-ch--center">
+    <nav class="pt-crumb" aria-label="{{ 'general.accessibility.nav_left' | t }}">
+      <a href="{{ routes.root_url }}">{{ 'sections.collection.breadcrumb_home' | t }}</a>
+      <span>/</span>
+      <b>{{ 'cart.your_bag' | t }}</b>
+    </nav>
+    <span class="pt-eyebrow">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+      {{ section.settings.eyebrow | escape }}
+    </span>
+    <h1 class="pt-ch-h">{{ section.settings.heading | escape }}</h1>
+    <p class="pt-ch-blurb" data-cart-count-text>
+      {%- if cart.item_count > 0 -%}
+        {{ cart.item_count }} {% if cart.item_count == 1 %}{{ 'cart.count_singular' | t }}{% else %}{{ 'cart.count_plural' | t }}{% endif %} {{ 'cart.ready_suffix' | t }}
+      {%- else -%}
+        {{ 'cart.empty_blurb' | t }}
+      {%- endif -%}
+    </p>
+  </header>
+
+  <div class="pt-cart-empty-wrap" data-cart-empty {% if cart.item_count > 0 %}hidden{% endif %}>
+    <div class="pt-empty">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--pt-accent)" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+      <h3>{{ 'cart.empty_message' | t }}</h3>
+      <a href="{{ routes.all_products_collection_url }}" class="pt-btn pt-btn--solid" style="margin-top:18px">{{ 'cart.start_shopping' | t }}</a>
+    </div>
+  </div>
+
+  <div class="pt-cart-layout" data-cart-layout {% if cart.item_count == 0 %}hidden{% endif %}>
+    <div class="pt-cart-list" data-cart-list>
+      {%- for item in cart.items -%}
+        <div class="pt-line" data-cart-line data-line="{{ forloop.index }}">
+          <div class="pt-ph" style="width:92px;flex:none;border-radius:12px;aspect-ratio:1/1;background:var(--pt-accent-soft);overflow:hidden;">
+            {%- if item.image -%}
+              {%- assign item_alt = item.title | escape -%}
+              {{ item.image | image_url: width: 200 | image_tag: loading: 'lazy', alt: item_alt, style: 'width:100%;height:100%;object-fit:cover;' }}
+            {%- else -%}
+              <span class="pt-ph-lbl">{{ item.title | truncate: 20 }}</span>
+            {%- endif -%}
+          </div>
+          <div class="pt-line-mid">
+            {%- unless item.variant.title == 'Default Title' -%}
+              <span class="pt-line-cat">{{ item.variant.title | escape }}</span>
+            {%- endunless -%}
+            <b class="pt-line-name"><a href="{{ item.url }}">{{ item.title | escape }}</a></b>
+            <div class="pt-qty">
+              <button type="button" data-cart-qty-dec aria-label="{{ 'cart.decrease' | t }}">&minus;</button>
+              <span data-cart-qty-val>{{ item.quantity }}</span>
+              <button type="button" data-cart-qty-inc aria-label="{{ 'cart.increase' | t }}">+</button>
+            </div>
+          </div>
+          <div class="pt-line-end">
+            <b data-cart-line-price>{{ item.final_line_price | money }}</b>
+            <button class="pt-line-rm" type="button" data-cart-remove>{{ 'cart.remove' | t }}</button>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <aside class="pt-cart-summary" data-cart-summary>
+      <h2>{{ 'cart.order_summary' | t }}</h2>
+
+      <div class="pt-ship pt-cart-ship" data-cart-ship>
+        <p class="pt-ship-msg" data-cart-ship-msg>
+          {%- if ship_remaining > 0 -%}
+            You&rsquo;re <b>{{ ship_remaining | money }}</b> away from <b>free shipping</b>
+          {%- else -%}
+            <span class="pt-ship-win">✨ You&rsquo;ve unlocked free shipping</span>
+          {%- endif -%}
+        </p>
+        <div class="pt-ship-bar"><i style="width:{{ ship_pct }}%" data-cart-ship-bar></i></div>
+      </div>
+
+      <form class="pt-promo-wrap" data-cart-promo-form>
+        <div class="pt-promo-row">
+          <input class="pt-promo-input" type="text" name="discount" placeholder="{{ 'cart.promo_placeholder' | t }}" aria-label="{{ 'cart.promo_code' | t }}" />
+          <button type="submit" class="pt-promo-btn">{{ 'cart.apply' | t }}</button>
+        </div>
+      </form>
+      {%- if cart.cart_level_discount_applications.size > 0 -%}
+        <div class="pt-promo-applied">
+          {%- for discount in cart.cart_level_discount_applications -%}
+            <span><b>{{ discount.title }}</b> {{ 'cart.promo_applied' | t }}</span>
+          {%- endfor -%}
+        </div>
+        <span class="pt-promo-note">{{ 'cart.remove_discount_note' | t }}</span>
+      {%- endif -%}
+
+      <div class="pt-sum-lines">
+        <div class="pt-deliver">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 7h11v8H3zM14 10h4l3 3v2h-7z" stroke-linejoin="round"/><circle cx="7" cy="17" r="1.6"/><circle cx="17" cy="17" r="1.6"/></svg>
+          {{ 'cart.delivery_estimate' | t }}
+        </div>
+        <div class="pt-sum-row"><span>{{ 'cart.subtotal' | t }}</span><span>{{ cart.original_total_price | money }}</span></div>
+        {%- if discount_savings > 0 -%}
+          <div class="pt-sum-row pt-sum-disc"><span>{{ 'cart.discount_label' | t }}</span><span>&minus;{{ discount_savings | money }}</span></div>
+        {%- endif -%}
+        {%- if markdown_savings > 0 -%}
+          <div class="pt-sum-row pt-sum-save"><span>{{ 'cart.you_save' | t }}</span><span>{{ markdown_savings | money }}</span></div>
+        {%- endif -%}
+      </div>
+
+      <div class="pt-drawer-sub">
+        <span>{{ 'cart.total' | t }}</span>
+        <b data-cart-total>{{ cart.total_price | money }}</b>
+      </div>
+      <a href="{{ routes.cart_url }}/checkout" class="pt-btn pt-btn--solid pt-btn--full pt-checkout-btn" data-cart-checkout>
+        {{ 'cart.checkout' | t }} &middot; <span data-cart-checkout-total>{{ cart.total_price | money }}</span>
+      </a>
+      <span class="pt-drawer-note">{{ 'cart.secure_note' | t }}</span>
+    </aside>
+  </div>
+</div>
+
+{% stylesheet %}
+  .pt-cart-page { max-width: var(--pt-wrap); margin: 0 auto; padding: 0 32px 100px; }
+  .pt-cart-empty-wrap { padding: 20px 0 60px; }
+  .pt-cart-layout { display: grid; grid-template-columns: 1fr 380px; gap: 48px; align-items: flex-start; }
+  .pt-cart-list { display: flex; flex-direction: column; }
+  .pt-cart-list .pt-line:first-child { padding-top: 0; }
+  .pt-cart-list .pt-line-name a { color: inherit; }
+  .pt-cart-list .pt-line-name a:hover { color: var(--pt-accent-deep); }
+
+  .pt-cart-summary { position: sticky; top: 92px; background: var(--pt-card); border: 1px solid var(--pt-line); border-radius: var(--pt-radius); padding: 28px; font-family: var(--pt-font-body); }
+  .pt-cart-summary h2 { font-family: var(--pt-font-head); font-size: 22px; margin-bottom: 18px; }
+  .pt-cart-ship { padding: 0 0 18px; border-bottom: 1px solid var(--pt-line); margin-bottom: 18px; }
+  .pt-ship-win { display: inline-flex; align-items: center; gap: 6px; color: var(--pt-accent-deep); font-weight: 700; }
+  .pt-promo-applied { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--pt-ink-soft); margin-top: 10px; }
+  .pt-promo-applied b { color: var(--pt-accent-deep); }
+  .pt-promo-note { display: block; font-size: 11.5px; color: var(--pt-ink-faint); margin-top: 4px; }
+  .pt-sum-lines { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--pt-line); display: flex; flex-direction: column; gap: 10px; }
+  .pt-deliver { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--pt-ink-soft); margin-bottom: 4px; }
+  .pt-deliver b { color: var(--pt-ink); }
+  .pt-sum-row { display: flex; justify-content: space-between; font-size: 14px; color: var(--pt-ink-soft); }
+  .pt-sum-disc span:last-child { color: var(--pt-accent-deep); font-weight: 700; }
+  .pt-sum-save span:last-child { color: var(--pt-accent-deep); font-weight: 700; }
+  .pt-cart-summary .pt-drawer-sub { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--pt-line); }
+  .pt-cart-summary .pt-drawer-note { margin-top: 14px; }
+
+  @media (max-width: 900px) {
+    .pt-cart-page { padding: 0 20px 70px; }
+    .pt-cart-layout { grid-template-columns: 1fr; gap: 32px; }
+    .pt-cart-summary { position: static; }
+  }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    var page = document.querySelector('[data-cart-page]');
+    if (!page) return;
+
+    function money(cents) {
+      return '$' + (cents / 100).toFixed(2).replace(/\.00$/, '');
+    }
+
+    var freeShip = parseInt(page.dataset.freeShipCents, 10) || 0;
+    var list = page.querySelector('[data-cart-list]');
+    var emptyWrap = page.querySelector('[data-cart-empty]');
+    var layout = page.querySelector('[data-cart-layout]');
+    var countText = page.querySelector('[data-cart-count-text]');
+    var shipMsg = page.querySelector('[data-cart-ship-msg]');
+    var shipBar = page.querySelector('[data-cart-ship-bar]');
+    var totalEl = page.querySelector('[data-cart-total]');
+    var checkoutTotalEl = page.querySelector('[data-cart-checkout-total]');
+
+    var i18n = {
+      item: page.dataset.iItem,
+      items: page.dataset.iItems,
+      ready: page.dataset.iReady,
+      empty: page.dataset.iEmpty
+    };
+
+    function fetchCart() {
+      return fetch('/cart.js').then(function (r) { return r.json(); });
+    }
+
+    function render(cart) {
+      var badge = document.querySelector('.pt-nav-cart-badge');
+      if (badge) {
+        badge.textContent = cart.item_count;
+        badge.style.display = cart.item_count > 0 ? '' : 'none';
+      }
+
+      if (countText) {
+        countText.textContent = cart.item_count > 0
+          ? cart.item_count + ' ' + (cart.item_count === 1 ? i18n.item : i18n.items) + ' ' + i18n.ready
+          : i18n.empty;
+      }
+
+      if (cart.item_count === 0) {
+        if (emptyWrap) emptyWrap.hidden = false;
+        if (layout) layout.hidden = true;
+        return;
+      }
+      if (emptyWrap) emptyWrap.hidden = true;
+      if (layout) layout.hidden = false;
+
+      if (list) {
+        list.querySelectorAll('[data-cart-line]').forEach(function (el) { el.remove(); });
+        cart.items.forEach(function (item, i) {
+          var img = item.image ? item.image.replace(/(\.\w+)(\?|$)/, '_200x200$1$2') : '';
+          var variant = (item.variant_title && item.variant_title !== 'Default Title') ? item.variant_title : '';
+          var line = document.createElement('div');
+          line.className = 'pt-line';
+          line.dataset.cartLine = '';
+          line.dataset.line = i + 1;
+          line.innerHTML =
+            '<div class="pt-ph" style="width:92px;flex:none;border-radius:12px;aspect-ratio:1/1;background:var(--pt-accent-soft);overflow:hidden;">' +
+              (img ? '<img src="' + img + '" alt="" style="width:100%;height:100%;object-fit:cover;">' : '') +
+            '</div>' +
+            '<div class="pt-line-mid">' +
+              (variant ? '<span class="pt-line-cat">' + variant + '</span>' : '') +
+              '<b class="pt-line-name"><a href="' + item.url + '">' + item.title + '</a></b>' +
+              '<div class="pt-qty">' +
+                '<button type="button" data-cart-qty-dec aria-label="Decrease">−</button>' +
+                '<span data-cart-qty-val>' + item.quantity + '</span>' +
+                '<button type="button" data-cart-qty-inc aria-label="Increase">+</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="pt-line-end">' +
+              '<b data-cart-line-price>' + money(item.final_line_price) + '</b>' +
+              '<button class="pt-line-rm" type="button" data-cart-remove>Remove</button>' +
+            '</div>';
+          list.appendChild(line);
+        });
+      }
+
+      if (shipMsg) {
+        var remaining = Math.max(0, freeShip - cart.total_price);
+        shipMsg.innerHTML = remaining > 0
+          ? "You're <b>" + money(remaining) + '</b> away from <b>free shipping</b>'
+          : '<span class="pt-ship-win">✨ You’ve unlocked free shipping</span>';
+      }
+      if (shipBar && freeShip > 0) {
+        shipBar.style.width = Math.min(100, (cart.total_price / freeShip) * 100) + '%';
+      }
+      if (totalEl) totalEl.textContent = money(cart.total_price);
+      if (checkoutTotalEl) checkoutTotalEl.textContent = money(cart.total_price);
+    }
+
+    function changeLine(line, quantity) {
+      fetch('/cart/change.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ line: line, quantity: quantity })
+      }).then(fetchCart).then(render);
+    }
+
+    if (list) {
+      list.addEventListener('click', function (e) {
+        var lineEl = e.target.closest('[data-cart-line]');
+        if (!lineEl) return;
+        var line = parseInt(lineEl.dataset.line, 10);
+        if (e.target.closest('[data-cart-qty-dec]')) {
+          var current = parseInt(lineEl.querySelector('[data-cart-qty-val]').textContent, 10);
+          changeLine(line, Math.max(0, current - 1));
+        } else if (e.target.closest('[data-cart-qty-inc]')) {
+          var current2 = parseInt(lineEl.querySelector('[data-cart-qty-val]').textContent, 10);
+          changeLine(line, current2 + 1);
+        } else if (e.target.closest('[data-cart-remove]')) {
+          changeLine(line, 0);
+        }
+      });
+    }
+
+    var promoForm = page.querySelector('[data-cart-promo-form]');
+    if (promoForm) {
+      promoForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        var code = (promoForm.querySelector('input[name="discount"]').value || '').trim();
+        if (!code) return;
+        var root = page.dataset.rootUrl.replace(/\/$/, '');
+        var redirect = encodeURIComponent(page.dataset.cartUrl);
+        window.location.href = root + '/discount/' + encodeURIComponent(code) + '?redirect=' + redirect;
+      });
+    }
+  })();
+{% endjavascript %}
 
 {% schema %}
 {
   "name": "t:general.cart",
-  "settings": []
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow",
+      "default": "Your bag"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "Your Bag"
+    }
+  ],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
 }
 {% endschema %}

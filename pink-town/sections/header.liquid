@@ -121,7 +121,7 @@
       <span>{{ 'cart.total' | t }}</span>
       <b>{{ cart.total_price | money }}</b>
     </div>
-    <a href="{{ routes.checkout_url }}" class="pt-btn pt-btn--solid pt-btn--full pt-checkout-btn">
+    <a href="{{ routes.cart_url }}/checkout" class="pt-btn pt-btn--solid pt-btn--full pt-checkout-btn">
       {{ 'cart.checkout' | t }} &middot; {{ cart.total_price | money }}
     </a>
     <span class="pt-drawer-note">{{ 'cart.secure_note' | t }}</span>
