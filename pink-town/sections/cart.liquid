@@ -31,7 +31,7 @@
   endif
 -%}
 
-<div class="pt-cart-page" id="pt-cart-{{ section.id }}" data-cart-page
+<div class="pt-cart-page full-width" id="pt-cart-{{ section.id }}" data-cart-page
      data-root-url="{{ routes.root_url }}"
      data-cart-url="{{ routes.cart_url }}"
      data-free-ship-cents="{{ free_ship_threshold }}"
@@ -155,7 +155,7 @@
 </div>
 
 {% stylesheet %}
-  .pt-cart-page { max-width: var(--pt-wrap); margin: 0 auto; padding: 0 32px 100px; }
+  .pt-cart-page { width: 100%; max-width: var(--pt-wrap); margin: 0 auto; padding: 0 32px 100px; }
   .pt-cart-empty-wrap { padding: 20px 0 60px; }
   .pt-cart-layout { display: grid; grid-template-columns: 1fr 380px; gap: 48px; align-items: flex-start; }
   .pt-cart-list { display: flex; flex-direction: column; }

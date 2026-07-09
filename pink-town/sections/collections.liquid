@@ -9,7 +9,7 @@
   assign per_page = section.settings.collections_per_page | default: 24
 -%}
 
-<header class="pt-ch pt-ch--center">
+<header class="pt-ch pt-ch--center full-width">
   <nav class="pt-crumb" aria-label="{{ 'general.accessibility.nav_left' | t }}">
     <a href="{{ routes.root_url }}">{{ 'sections.collection.breadcrumb_home' | t }}</a>
     <span>/</span>
@@ -27,7 +27,7 @@
 
 {%- if collections.size == 0 -%}
 
-  <div class="pt-empty pt-section">
+  <div class="pt-empty pt-section full-width">
     <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--pt-accent)" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
     <h3>{{ 'sections.collections_index.empty_heading' | t }}</h3>
     <p>{{ 'sections.collections_index.empty_text' | t }}</p>
@@ -35,7 +35,7 @@
 
 {%- else -%}
 
-  <section class="pt-section pt-coll-index">
+  <section class="pt-section pt-coll-index full-width">
     {%- paginate collections by per_page -%}
       <div class="pt-coll-grid">
         {%- for collection in collections -%}
@@ -60,9 +60,7 @@
         {%- endfor -%}
       </div>
 
-      {%- if paginate.pages > 1 -%}
-        <div class="pt-sec-foot">{{ paginate | default_pagination }}</div>
-      {%- endif -%}
+      <div class="pt-sec-foot">{% render 'pagination', paginate: paginate %}</div>
     {%- endpaginate -%}
   </section>
 

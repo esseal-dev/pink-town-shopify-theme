@@ -1,5 +1,9 @@
-<header class="pt-nav" data-scrolled="0">
+<header class="pt-nav full-width" data-scrolled="0">
   <nav class="pt-nav-inner">
+    <button type="button" class="pt-nav-hamburger" data-nav-open aria-label="{{ 'general.accessibility.open_menu' | t }}" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+    </button>
+
     <ul class="pt-nav-links pt-nav-left" aria-label="{{ 'general.accessibility.nav_left' | t }}">
       {%- assign left_count = 0 -%}
       {%- for link in section.settings.menu.links -%}
@@ -38,7 +42,7 @@
       <li>
         <a href="{{ pages.wishlist.url | default: '/pages/wishlist' }}" class="pt-iconbtn pt-nav-wish" aria-label="{{ 'general.accessibility.wishlist' | t }}">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-            <path d="M12 20s-7-4.6-9.2-9C1.3 7.7 3 4.8 6 4.8c2 0 3.2 1.2 4 2.4.8-1.2 2-2.4 4-2.4 3 0 4.7 2.9 3.2 6.2C19 15.4 12 20 12 20z" stroke-linejoin="round"/>
+            <path d="M12 21C12 21 4 14.5 4 9.5C4 6.8 6.2 4.5 9 4.5C10.5 4.5 11.6 5.2 12 6.3C12.4 5.2 13.5 4.5 15 4.5C17.8 4.5 20 6.8 20 9.5C20 14.5 12 21 12 21Z" stroke-linejoin="round"/>
           </svg>
           <span class="pt-badge pt-nav-wish-badge" style="display:none" aria-label="0 items">0</span>
         </a>
@@ -56,6 +60,23 @@
     </ul>
   </nav>
 </header>
+
+<div class="pt-nav-scrim" data-nav-scrim aria-hidden="true"></div>
+
+<aside class="pt-nav-drawer" data-nav-drawer aria-hidden="true" aria-label="{{ 'general.accessibility.menu' | t }}">
+  <div class="pt-nav-drawer-head">
+    <a href="{{ routes.root_url }}" class="pt-logo">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="var(--pt-accent)" style="margin-right:2px" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+      {{ shop.name }}
+    </a>
+    <button type="button" class="pt-drawer-x" data-nav-close aria-label="{{ 'general.accessibility.close' | t }}">✕</button>
+  </div>
+  <nav class="pt-nav-drawer-links" aria-label="{{ 'general.accessibility.nav_left' | t }}">
+    {%- for link in section.settings.menu.links -%}
+      <a href="{{ link.url }}" class="pt-nav-drawer-link">{{ link.title | escape }}</a>
+    {%- endfor -%}
+  </nav>
+</aside>
 
 <div class="pt-scrim" aria-hidden="true"></div>
 
@@ -155,6 +176,18 @@
   .pt-iconbtn { position: relative; display: grid; place-items: center; width: 38px; height: 38px; border: none; background: transparent; color: var(--pt-ink); border-radius: 50%; cursor: pointer; transition: background .2s, color .2s; }
   .pt-iconbtn:hover { background: var(--pt-accent-soft); color: var(--pt-accent-deep); }
   .pt-badge { position: absolute; top: 2px; right: 0; min-width: 17px; height: 17px; padding: 0 4px; display: grid; place-items: center; font-size: 10px; font-weight: 800; color: #fff; background: var(--pt-accent); border-radius: 999px; border: 2px solid var(--pt-bg); }
+  /* Mobile nav hamburger + drawer */
+  .pt-nav-hamburger { display: none; width: 100%; height: 38px; border: none; background: transparent; color: var(--pt-ink); cursor: pointer; align-items: center; justify-content: flex-start; transition: background .2s; }
+  .pt-nav-hamburger svg { flex: none; width: 38px; height: 38px; padding: 9px; box-sizing: border-box; border-radius: 50%; transition: background .2s; }
+  .pt-nav-hamburger:hover svg { background: var(--pt-accent-soft); }
+  .pt-nav-scrim { position: fixed; inset: 0; z-index: 95; background: rgba(70,38,48,.34); opacity: 0; pointer-events: none; transition: opacity .35s; backdrop-filter: blur(2px); }
+  .pt-nav-scrim.is-open { opacity: 1; pointer-events: auto; }
+  .pt-nav-drawer { position: fixed; top: 0; left: 0; z-index: 101; width: min(320px, 84vw); height: 100%; background: var(--pt-bg); box-shadow: 20px 0 60px -30px rgba(70,38,48,.5); transform: translateX(-100%); transition: transform .4s cubic-bezier(.3,.7,.4,1); display: flex; flex-direction: column; font-family: var(--pt-font-body); }
+  .pt-nav-drawer.is-open { transform: translateX(0); }
+  .pt-nav-drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px; border-bottom: 1px solid var(--pt-line); }
+  .pt-nav-drawer-links { display: flex; flex-direction: column; padding: 10px 10px; overflow-y: auto; }
+  .pt-nav-drawer-link { padding: 15px 14px; font-size: 15.5px; font-weight: 600; color: var(--pt-ink); border-radius: 12px; transition: background .2s, color .2s; }
+  .pt-nav-drawer-link:hover, .pt-nav-drawer-link:active { background: var(--pt-accent-soft); color: var(--pt-accent-deep); }
   /* Cart scrim */
   .pt-scrim { position: fixed; inset: 0; z-index: 90; background: rgba(70,38,48,.34); opacity: 0; pointer-events: none; transition: opacity .35s; backdrop-filter: blur(2px); }
   .pt-scrim.is-open { opacity: 1; pointer-events: auto; }
@@ -202,13 +235,16 @@
   .pt-drawer-sub b { font-family: var(--pt-font-head); font-size: 26px; }
   .pt-drawer-note { display: block; text-align: center; font-size: 12px; color: var(--pt-ink-faint); margin-top: 14px; }
   /* Toast */
-  .pt-toast { position: fixed; left: 50%; bottom: 28px; z-index: 120; transform: translate(-50%, 140%); display: flex; align-items: center; gap: 10px; background: #fff; color: var(--pt-ink); font-size: 14px; font-weight: 600; padding: 13px 16px 13px 18px; border-radius: 999px; border: 1px solid var(--pt-line); box-shadow: var(--pt-shadow-md); transition: transform .4s cubic-bezier(.3,.7,.4,1); font-family: var(--pt-font-body); white-space: nowrap; }
+  .pt-toast { position: fixed; left: 50%; bottom: 28px; z-index: 120; transform: translate(-50%, calc(100% + 40px)); display: flex; align-items: center; gap: 10px; background: #fff; color: var(--pt-ink); font-size: 14px; font-weight: 600; padding: 13px 16px 13px 18px; border-radius: 999px; border: 1px solid var(--pt-line); box-shadow: var(--pt-shadow-md); transition: transform .4s cubic-bezier(.3,.7,.4,1); font-family: var(--pt-font-body); white-space: nowrap; }
   .pt-toast.is-on { transform: translate(-50%, 0); }
   .pt-toast button { border: none; background: var(--pt-accent-soft); color: var(--pt-accent-deep); font-weight: 700; font-size: 12.5px; font-family: var(--pt-font-body); padding: 7px 13px; border-radius: 999px; cursor: pointer; margin-left: 4px; }
   .pt-toast button:hover { background: var(--pt-accent); color: #fff; }
   @media (max-width: 760px) {
     .pt-nav-left { display: none; }
-    .pt-nav-inner { grid-template-columns: auto 1fr; padding: 0 20px; }
+    .pt-nav-hamburger { display: inline-flex; grid-column: 1; }
+    .pt-nav-right { grid-column: 3; }
+    .pt-nav-inner { padding: 0 16px; position: relative; }
+    .pt-nav-inner > .pt-logo { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
   }
 {% endstylesheet %}
 

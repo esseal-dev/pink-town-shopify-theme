@@ -1,4 +1,4 @@
-<section class="pt-featured-cols" id="collections">
+<section class="pt-featured-cols full-width" id="collections">
   <div class="pt-sec-head">
     <span class="pt-eyebrow">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
@@ -50,7 +50,7 @@
 </section>
 
 {% stylesheet %}
-  .pt-featured-cols { width: 80%; margin: 0 auto; padding: 92px 0; }
+  .pt-featured-cols { width: 100%; max-width: var(--pt-wrap); margin: 0 auto; padding: 92px 32px; }
   .pt-coll-grid { display: grid; grid-template-columns: 1.12fr 1fr; gap: 18px; }
   .pt-coll { position: relative; min-height: 268px; border-radius: var(--pt-radius); overflow: hidden; box-shadow: var(--pt-shadow-sm); transition: transform .35s cubic-bezier(.3,.7,.4,1), box-shadow .35s; display: block; }
   .pt-coll--lg { grid-row: span 2; min-height: 554px; }
@@ -67,7 +67,7 @@
   .pt-coll-link svg { transition: transform .25s; }
   .pt-coll:hover .pt-coll-link svg { transform: translateX(4px); }
   @media (max-width: 760px) {
-    .pt-featured-cols { width: 92%; padding: 60px 0; }
+    .pt-featured-cols { padding: 60px 20px; }
     .pt-coll-grid { grid-template-columns: 1fr; }
     .pt-coll--lg { grid-row: auto; min-height: 300px; }
   }

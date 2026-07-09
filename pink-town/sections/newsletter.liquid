@@ -1,18 +1,24 @@
-<section class="pt-news" id="news">
+<section class="pt-news full-width" id="news">
   <div class="pt-news-card">
     <div class="pt-news-glow"></div>
     <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--pt-accent)" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
     <h2 class="pt-news-h">{{ section.settings.heading | escape }}</h2>
     <p class="pt-news-sub">{{ section.settings.subheading | escape }}</p>
-    <p class="pt-news-thanks" style="display:none">{{ section.settings.success_message | escape }}</p>
     {%- form 'customer', id: 'pt-newsletter-form', class: 'pt-news-form' -%}
-      <input type="hidden" name="contact[tags]" value="newsletter" />
-      <input type="email" name="contact[email]" class="pt-news-input"
-             placeholder="{{ 'newsletter.email_placeholder' | t }}"
-             aria-label="{{ 'newsletter.email_label' | t }}"
-             autocomplete="email"
-             required />
-      <button type="submit" class="pt-btn pt-btn--solid">{{ section.settings.button_text | escape }}</button>
+      {%- if form.posted_successfully? -%}
+        <p class="pt-news-thanks">{{ section.settings.success_message | escape }}</p>
+      {%- else -%}
+        {%- if form.errors -%}
+          <div class="pt-contact-error">{{ form.errors | default_errors }}</div>
+        {%- endif -%}
+        <input type="hidden" name="contact[tags]" value="newsletter" />
+        <input type="email" name="contact[email]" class="pt-news-input"
+               placeholder="{{ 'newsletter.email_placeholder' | t }}"
+               aria-label="{{ 'newsletter.email_label' | t }}"
+               autocomplete="email"
+               required />
+        <button type="submit" class="pt-btn pt-btn--solid">{{ section.settings.button_text | escape }}</button>
+      {%- endif -%}
     {%- endform -%}
     <span class="pt-news-fine">{{ section.settings.fine_print | escape }}</span>
   </div>
@@ -33,7 +39,8 @@
   .pt-news-form { display: flex; gap: 10px; width: 100%; max-width: 440px; }
   .pt-news-input { flex: 1; min-width: 0; font-family: var(--pt-font-body); font-size: 14px; padding: 14px 18px; border: 1px solid var(--pt-line); border-radius: 999px; background: #fff; outline: none; transition: border-color .2s; }
   .pt-news-input:focus { border-color: var(--pt-accent); }
-  .pt-news-thanks { font-size: 16px; color: var(--pt-accent-deep); font-weight: 600; margin: 6px 0 0; }
+  .pt-news-thanks { width: 100%; text-align: center; font-size: 16px; color: var(--pt-accent-deep); font-weight: 600; margin: 6px 0 0; }
+  .pt-news-form .pt-contact-error { width: 100%; background: #fdecef; border: 1px solid #f3c8ce; color: #a23f4a; border-radius: 12px; padding: 12px 16px; margin-bottom: 4px; font-size: 13px; text-align: left; }
   .pt-news-fine { font-size: 12px; color: var(--pt-ink-faint); margin-top: 16px; }
   @media (max-width: 560px) {
     .pt-news { padding: 20px 20px 60px; }

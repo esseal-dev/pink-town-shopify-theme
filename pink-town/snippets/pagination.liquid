@@ -1,0 +1,55 @@
+{% doc %}
+  Renders theme-styled pagination controls for a Shopify `paginate` block.
+  Replaces the unstyled `default_pagination` filter with markup matching
+  the site's pill-button design system.
+
+  @param paginate {paginate} - the current paginate object from {% paginate %}
+
+  @example
+  {% paginate collection.products by 24 %}
+    ...
+    {% render 'pagination', paginate: paginate %}
+  {% endpaginate %}
+{% enddoc %}
+
+{%- if paginate.pages > 1 -%}
+  <nav class="pt-pagination" role="navigation" aria-label="{{ 'general.pagination.label' | t }}">
+    {%- if paginate.previous -%}
+      <a href="{{ paginate.previous.url }}" class="pt-page-link pt-page-link--prev">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        {{ 'general.pagination.previous' | t }}
+      </a>
+    {%- else -%}
+      <span class="pt-page-link pt-page-link--prev is-disabled" aria-disabled="true">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        {{ 'general.pagination.previous' | t }}
+      </span>
+    {%- endif -%}
+
+    <ul class="pt-page-nums">
+      {%- for part in paginate.parts -%}
+        <li>
+          {%- if part.is_link -%}
+            <a href="{{ part.url }}" class="pt-page-num" aria-label="{{ 'general.pagination.page' | t: page: part.title }}">{{ part.title }}</a>
+          {%- elsif part.title == paginate.current_page -%}
+            <span class="pt-page-num is-current" aria-current="page" aria-label="{{ 'general.pagination.current_page' | t: page: part.title }}">{{ part.title }}</span>
+          {%- else -%}
+            <span class="pt-page-num pt-page-ellipsis" aria-hidden="true">{{ part.title }}</span>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+
+    {%- if paginate.next -%}
+      <a href="{{ paginate.next.url }}" class="pt-page-link pt-page-link--next">
+        {{ 'general.pagination.next' | t }}
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    {%- else -%}
+      <span class="pt-page-link pt-page-link--next is-disabled" aria-disabled="true">
+        {{ 'general.pagination.next' | t }}
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+    {%- endif -%}
+  </nav>
+{%- endif -%}

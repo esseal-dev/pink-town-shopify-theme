@@ -1,4 +1,4 @@
-<footer class="pt-footer">
+<footer class="pt-footer full-width">
   <div class="pt-footer-top">
     <div class="pt-footer-brand">
       <a href="{{ routes.root_url }}" class="pt-logo pt-logo--foot">
@@ -35,6 +35,13 @@
 
   <div class="pt-footer-bottom">
     <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright_text | escape }}</span>
+    {%- if shop.policies.size > 0 -%}
+      <nav class="pt-footer-legal" aria-label="{{ 'general.accessibility.legal' | t }}">
+        {%- for policy in shop.policies -%}
+          <a href="{{ policy.url }}">{{ policy.title }}</a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
     {% if section.settings.show_payment_icons %}
       <div class="pt-pays">
         {% for type in shop.enabled_payment_types %}
@@ -58,7 +65,9 @@
   .pt-footer-col li { margin-bottom: 9px; }
   .pt-footer-col a { font-size: 14px; color: var(--pt-ink-soft); transition: color .2s; }
   .pt-footer-col a:hover { color: var(--pt-accent-deep); }
-  .pt-footer-bottom { max-width: var(--pt-wrap); margin: 44px auto 0; padding-top: 24px; border-top: 1px solid var(--pt-line); display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; font-size: 12.5px; color: var(--pt-ink-faint); }
+  .pt-footer-bottom { max-width: var(--pt-wrap); margin: 44px auto 0; padding-top: 24px; border-top: 1px solid var(--pt-line); display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; row-gap: 10px; font-size: 12.5px; color: var(--pt-ink-faint); }
+  .pt-footer-legal { display: flex; gap: 18px; }
+  .pt-footer-legal a:hover { color: var(--pt-accent-deep); }
   .pt-pays { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
   .pt-pay-icon { height: 24px; width: auto; }
   @media (max-width: 980px) { .pt-footer-top { grid-template-columns: 1fr; gap: 36px; } }

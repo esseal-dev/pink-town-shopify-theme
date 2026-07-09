@@ -3,7 +3,7 @@
   assign subject_options = section.settings.subject_options | split: ','
 -%}
 
-<section class="pt-section pt-contact-sec">
+<section class="pt-section pt-contact-sec full-width">
   <div class="pt-contact-wrap">
     {%- form 'contact', id: 'ContactForm', class: 'pt-contact-form' -%}
       {%- if form.posted_successfully? -%}

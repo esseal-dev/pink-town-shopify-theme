@@ -50,8 +50,6 @@
             <div class="pt-ph">
               {%- if product.featured_image -%}
                 {{ product.featured_image | image_url: width: 600 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: product.featured_image.alt | default: product.title }}
-              {%- else -%}
-                <span class="pt-ph-lbl">{{ product.title | truncate: 24 }}</span>
               {%- endif -%}
             </div>
             {%- if product.tags contains 'bestseller' or product.tags contains 'Bestseller' -%}
@@ -61,7 +59,7 @@
             {%- endif -%}
             <button class="pt-wish pt-wish-btn" data-product-handle="{{ product.handle }}" data-on="0" aria-label="{{ 'products.save_to_wishlist' | t }}">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                <path d="M12 20s-7-4.6-9.2-9C1.3 7.7 3 4.8 6 4.8c2 0 3.2 1.2 4 2.4.8-1.2 2-2.4 4-2.4 3 0 4.7 2.9 3.2 6.2C19 15.4 12 20 12 20z" stroke-linejoin="round"/>
+                <path d="M12 21C12 21 4 14.5 4 9.5C4 6.8 6.2 4.5 9 4.5C10.5 4.5 11.6 5.2 12 6.3C12.4 5.2 13.5 4.5 15 4.5C17.8 4.5 20 6.8 20 9.5C20 14.5 12 21 12 21Z" stroke-linejoin="round"/>
               </svg>
             </button>
             {%- if variant.available -%}
@@ -115,9 +113,7 @@
         -%}
         <div class="pt-card" data-cat="">
           <div class="pt-card-media">
-            <div class="pt-ph" style="--ph-tint: {% cycle '#f6dde4', '#f8e0ea', '#e9e1f2', '#f7e1d9' %};">
-              <span class="pt-ph-lbl">{{ demo_name_key | t }}</span>
-            </div>
+            <div class="pt-ph" style="--ph-tint: {% cycle '#f6dde4', '#f8e0ea', '#e9e1f2', '#f7e1d9' %};"></div>
             {%- if demo_idx == 1 or demo_idx == 6 -%}
               <span class="pt-card-tag">{{ 'products.tag_bestseller' | t }}</span>
             {%- elsif demo_idx == 2 or demo_idx == 7 -%}
@@ -125,7 +121,7 @@
             {%- endif -%}
             <button class="pt-wish pt-wish-btn" data-on="0" aria-label="{{ 'products.save_to_wishlist' | t }}">
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                <path d="M12 20s-7-4.6-9.2-9C1.3 7.7 3 4.8 6 4.8c2 0 3.2 1.2 4 2.4.8-1.2 2-2.4 4-2.4 3 0 4.7 2.9 3.2 6.2C19 15.4 12 20 12 20z" stroke-linejoin="round"/>
+                <path d="M12 21C12 21 4 14.5 4 9.5C4 6.8 6.2 4.5 9 4.5C10.5 4.5 11.6 5.2 12 6.3C12.4 5.2 13.5 4.5 15 4.5C17.8 4.5 20 6.8 20 9.5C20 14.5 12 21 12 21Z" stroke-linejoin="round"/>
               </svg>
             </button>
           </div>

@@ -62,8 +62,18 @@
       "wishlist": "Wishlist",
       "nav_left": "Main navigation",
       "nav_right": "Secondary navigation",
+      "legal": "Legal",
+      "menu": "Menu",
+      "open_menu": "Open menu",
       "prev": "Previous",
       "next": "Next"
+    },
+    "pagination": {
+      "label": "Pagination",
+      "previous": "Previous",
+      "next": "Next",
+      "page": "Page {{ page }}",
+      "current_page": "Page {{ page }}, current page"
     }
   },
   "newsletter": {

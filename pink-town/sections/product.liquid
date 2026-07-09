@@ -28,8 +28,9 @@
   endif
 -%}
 
-<div class="pt-pdp" id="pt-pdp-{{ section.id }}" data-pdp
+<div class="pt-pdp full-width" id="pt-pdp-{{ section.id }}" data-pdp
      data-checkout-url="{{ routes.cart_url }}/checkout"
+     data-product-title="{{ product.title | escape }}"
      data-stock-threshold="{{ section.settings.stock_threshold }}"
      data-show-stock="{{ section.settings.show_stock_countdown }}"
      data-i-add-to-cart="{{ 'products.add_to_cart' | t }}"
@@ -188,7 +189,7 @@
             </button>
             <button type="button" class="pt-wish-btn pt-pdp-wish" data-product-handle="{{ product.handle }}" data-on="0" aria-label="{{ 'products.save_to_wishlist' | t }}">
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                <path d="M12 20s-7-4.6-9.2-9C1.3 7.7 3 4.8 6 4.8c2 0 3.2 1.2 4 2.4.8-1.2 2-2.4 4-2.4 3 0 4.7 2.9 3.2 6.2C19 15.4 12 20 12 20z" stroke-linejoin="round"/>
+                <path d="M12 21C12 21 4 14.5 4 9.5C4 6.8 6.2 4.5 9 4.5C10.5 4.5 11.6 5.2 12 6.3C12.4 5.2 13.5 4.5 15 4.5C17.8 4.5 20 6.8 20 9.5C20 14.5 12 21 12 21Z" stroke-linejoin="round"/>
               </svg>
             </button>
           </div>
@@ -359,8 +360,6 @@
               <div class="pt-ph">
                 {%- if related.featured_image -%}
                   {{ related.featured_image | image_url: width: 600 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: related.featured_image.alt | default: related.title }}
-                {%- else -%}
-                  <span class="pt-ph-lbl">{{ related.title | truncate: 24 }}</span>
                 {%- endif -%}
               </div>
               {%- if related.tags contains 'bestseller' or related.tags contains 'Bestseller' -%}
@@ -370,7 +369,7 @@
               {%- endif -%}
               <button class="pt-wish pt-wish-btn" data-product-handle="{{ related.handle }}" data-on="0" aria-label="{{ 'products.save_to_wishlist' | t }}">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                  <path d="M12 20s-7-4.6-9.2-9C1.3 7.7 3 4.8 6 4.8c2 0 3.2 1.2 4 2.4.8-1.2 2-2.4 4-2.4 3 0 4.7 2.9 3.2 6.2C19 15.4 12 20 12 20z" stroke-linejoin="round"/>
+                  <path d="M12 21C12 21 4 14.5 4 9.5C4 6.8 6.2 4.5 9 4.5C10.5 4.5 11.6 5.2 12 6.3C12.4 5.2 13.5 4.5 15 4.5C17.8 4.5 20 6.8 20 9.5C20 14.5 12 21 12 21Z" stroke-linejoin="round"/>
                 </svg>
               </button>
               {%- if related_variant.available -%}
@@ -427,13 +426,14 @@
 {% stylesheet %}
   .pt-visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
+  .pt-pdp { width: 100%; }
   .pt-pdp-top { max-width: var(--pt-wrap); margin: 0 auto; padding: 26px 32px 16px; }
   .pt-pdp-wrap { display: grid; grid-template-columns: 1.08fr .92fr; gap: 56px; align-items: flex-start; margin-top: 8px; }
   .pt-pdp--right .pt-pdp-media { order: 2; }
   .pt-pdp--right .pt-pdp-info { order: 1; }
 
   .pt-pdp-info { position: sticky; top: 88px; align-self: start; font-family: var(--pt-font-body); }
-  .pt-pdp-main { position: relative; aspect-ratio: 1/1; border-radius: var(--pt-radius); overflow: hidden; background: var(--pt-accent-soft); box-shadow: var(--pt-shadow-sm); }
+  .pt-pdp-main { position: relative; aspect-ratio: 1/1; border-radius: var(--pt-radius); overflow: hidden; background: var(--pt-accent-soft); box-shadow: var(--pt-shadow-sm); display: flex; align-items: center; justify-content: center; }
   .pt-pdp-main .pt-ph-img { transition: transform .5s ease; }
   .pt-pdp-main:hover .pt-ph-img { transform: scale(1.05); }
   .pt-pdp-main .pt-ph-lbl { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); }
@@ -529,8 +529,8 @@
   .pt-pdp-acc-a { font-size: 14px; line-height: 1.65; color: var(--pt-ink-soft); margin: 0 0 20px; max-width: 60ch; }
 
   .pt-pdp-sec { max-width: var(--pt-wrap); margin: 0 auto; padding: 70px 32px; font-family: var(--pt-font-body); }
-  .pt-pdp-sec--tint { max-width: none; margin: 0; background: radial-gradient(120% 80% at 50% 0%, var(--pt-accent-soft) 0%, transparent 55%), var(--pt-bg-tint); }
-  .pt-pdp-sec--tint > * { max-width: var(--pt-wrap); margin-left: auto; margin-right: auto; }
+  .pt-pdp-sec--tint { width: 100%; max-width: none; margin: 0; background: radial-gradient(120% 80% at 50% 0%, var(--pt-accent-soft) 0%, transparent 55%), var(--pt-bg-tint); }
+  .pt-pdp-sec--tint > * { width: 100%; max-width: var(--pt-wrap); margin-left: auto; margin-right: auto; }
   .pt-pdp-h { font-family: var(--pt-font-head); font-size: clamp(2rem, 3.4vw, 2.8rem); line-height: 1.05; letter-spacing: -.01em; }
   .pt-pdp-h--center { text-align: center; }
   .pt-pdp-desc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
@@ -799,6 +799,7 @@
             window.location.href = pdp.dataset.checkoutUrl;
             return;
           }
+          if (window.ptShowToast) window.ptShowToast(pdp.dataset.productTitle + ' added to bag');
           if (window.ptOpenCart) window.ptOpenCart();
           updateAddButtons(variant);
         }).catch(function () {

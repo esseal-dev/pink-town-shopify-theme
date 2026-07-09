@@ -37,7 +37,7 @@
   assign price_max = prices | last | default: 0
 -%}
 
-<div class="pt-coll-page" id="pt-coll-{{ section.id }}"
+<div class="pt-coll-page full-width" id="pt-coll-{{ section.id }}"
      data-i-piece="{{ 'sections.collection.piece' | t | escape }}"
      data-i-pieces="{{ 'sections.collection.pieces' | t | escape }}"
      data-i-clear-all="{{ 'sections.collection.clear_all' | t | escape }}"
@@ -301,8 +301,6 @@
               <button type="button" class="pt-card-media" data-quick-view data-handle="{{ product.handle }}" aria-label="{{ 'products.quick_view' | t }} — {{ product.title | escape }}">
                 {%- if product.featured_image -%}
                   {{ product.featured_image | image_url: width: 600 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: product.featured_image.alt | default: product.title, style: 'position:absolute;inset:0;height:100%;border-radius:inherit;' }}
-                {%- else -%}
-                  <span class="pt-ph-lbl">{{ product.title | truncate: 24 }}</span>
                 {%- endif -%}
                 {%- if product.tags contains 'bestseller' or product.tags contains 'Bestseller' -%}
                   <span class="pt-card-tag">{{ 'products.tag_bestseller' | t }}</span>
@@ -313,7 +311,7 @@
               </button>
               <button class="pt-wish pt-wish-btn" data-product-handle="{{ product.handle }}" data-on="0" aria-label="{{ 'products.save_to_wishlist' | t }}">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                  <path d="M12 20s-7-4.6-9.2-9C1.3 7.7 3 4.8 6 4.8c2 0 3.2 1.2 4 2.4.8-1.2 2-2.4 4-2.4 3 0 4.7 2.9 3.2 6.2C19 15.4 12 20 12 20z" stroke-linejoin="round"/>
+                  <path d="M12 21C12 21 4 14.5 4 9.5C4 6.8 6.2 4.5 9 4.5C10.5 4.5 11.6 5.2 12 6.3C12.4 5.2 13.5 4.5 15 4.5C17.8 4.5 20 6.8 20 9.5C20 14.5 12 21 12 21Z" stroke-linejoin="round"/>
                 </svg>
               </button>
               <div class="pt-card-info">
@@ -356,9 +354,7 @@
           <p>{{ 'sections.collection.no_results_text' | t }}</p>
         </div>
 
-        {%- if paginate.pages > 1 -%}
-          <div class="pt-sec-foot">{{ paginate | default_pagination }}</div>
-        {%- endif -%}
+        <div class="pt-sec-foot">{% render 'pagination', paginate: paginate %}</div>
         {%- endpaginate -%}
       </div>
     </div>
@@ -414,6 +410,7 @@
   .pt-ch--full .pt-ch-meta { color: rgba(255,255,255,.85); }
   .pt-ch--full .pt-ch-meta b { color: #fff; }
 
+  .pt-coll-page { width: 100%; }
   .pt-coll-layout { max-width: var(--pt-wrap); margin: 0 auto; padding: 12px 32px 90px; display: grid; grid-template-columns: 244px 1fr; gap: 40px; align-items: start; }
   .pt-coll-main { min-width: 0; }
 
@@ -470,7 +467,7 @@
   .pt-tag-clear:hover { color: var(--pt-accent-deep); text-decoration: underline; }
 
   .pt-prod-grid--coll { grid-template-columns: repeat(var(--cols, 3), 1fr); gap: 30px 24px; }
-  .pt-card--coll .pt-card-media { cursor: pointer; width: 100%; border: none; padding: 0; text-align: left; display: block; }
+  .pt-card--coll .pt-card-media { cursor: pointer; width: 100%; border: none; padding: 0; display: flex; align-items: center; justify-content: center; }
   .pt-card-dots { display: inline-flex; gap: 4px; margin-left: auto; }
   .pt-card-dots i { width: 11px; height: 11px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.1); }
 
@@ -834,7 +831,7 @@
     function renderThumbs(product) {
       var imgs = (product.images || []).slice(0, 4);
       if (imgs.length === 0) {
-        qvMain.innerHTML = '<span class="pt-ph-lbl">' + product.title + '</span>';
+        qvMain.innerHTML = '';
         return;
       }
       setMainImage(imgs[0]);

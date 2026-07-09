@@ -5,7 +5,7 @@
   by keeping same-group questions next to each other in the block list.
 {%- endcomment -%}
 
-<div class="pt-faq-wrap" data-faq-wrap
+<div class="pt-faq-wrap full-width" data-faq-wrap
      data-i-no-match="{{ 'sections.faq.no_match_html' | t | escape }}"
      data-i-contact-text="{{ 'sections.faq.contact_link_text' | t | escape }}"
      data-i-contact-url="{{ routes.root_url | append: 'pages/contact' | escape }}">
@@ -38,7 +38,7 @@
 </div>
 
 {% stylesheet %}
-  .pt-faq-wrap { max-width: 820px; margin: 0 auto; padding: 12px 32px 100px; font-family: var(--pt-font-body); }
+  .pt-faq-wrap { width: 100%; max-width: 820px; margin: 0 auto; padding: 12px 32px 100px; font-family: var(--pt-font-body); }
   .pt-faq-group { margin-bottom: 40px; }
   .pt-faq-group-title { font-family: var(--pt-font-head); font-size: 22px; margin-bottom: 16px; }
   .pt-faq-item { border-bottom: 1px solid var(--pt-line); }

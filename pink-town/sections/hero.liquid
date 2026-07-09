@@ -2,7 +2,7 @@
 
 {% if layout == 'centered' %}
 
-<section class="pt-hero pt-hero--centered" id="top">
+<section class="pt-hero pt-hero--centered full-width" id="top">
   <div class="pt-hero-glow"></div>
   <div class="pt-hero-center">
     <span class="pt-eyebrow">
@@ -39,7 +39,7 @@
 
 {% elsif layout == 'editorial' %}
 
-<section class="pt-hero pt-hero--editorial" id="top">
+<section class="pt-hero pt-hero--editorial full-width" id="top">
   <div class="pt-ph" style="position:absolute;inset:0;height:100%;border-radius:0;background:#f3dbe4;">
     {% if section.settings.image %}
       {{ section.settings.image | image_url: width: 1600 | image_tag: class: 'pt-ph-img', loading: 'eager', alt: section.settings.image.alt }}
@@ -65,7 +65,7 @@
 
 {% else %}
 
-<section class="pt-hero pt-hero--split" id="top">
+<section class="pt-hero pt-hero--split full-width" id="top">
   <div class="pt-hero-copy">
     <span class="pt-eyebrow">
       <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
@@ -120,7 +120,7 @@
   .pt-stat strong { font-family: var(--pt-font-head); font-size: 30px; font-weight: 600; color: var(--pt-accent-deep); line-height: 1; }
   .pt-stat span { font-size: 12.5px; color: var(--pt-ink-soft); max-width: 14ch; }
   .pt-hero-glow { position: absolute; border-radius: 50%; filter: blur(60px); background: radial-gradient(circle, var(--pt-accent-soft), transparent 70%); }
-  .pt-hero--split { max-width: var(--pt-wrap); margin: 0 auto; padding: 70px 32px 96px; display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; }
+  .pt-hero--split { width: 100%; max-width: var(--pt-wrap); margin: 0 auto; padding: 70px 32px 96px; display: grid; grid-template-columns: 1.05fr .95fr; gap: 56px; align-items: center; overflow: hidden; }
   .pt-hero-art { position: relative; }
   .pt-hero--split .pt-hero-glow { inset: -12% -8% -12% -12%; }
   .pt-hero-chip { position: absolute; z-index: 2; display: inline-flex; align-items: center; gap: 7px; background: rgba(255,255,255,.92); backdrop-filter: blur(6px); border: 1px solid var(--pt-line); border-radius: 999px; padding: 9px 15px; font-size: 12.5px; font-weight: 600; box-shadow: var(--pt-shadow-sm); font-family: var(--pt-font-body); }
