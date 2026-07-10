@@ -5,31 +5,97 @@
   https://shopify.dev/docs/storefronts/themes/architecture/templates/blog
 {% endcomment %}
 
-<h1>{{ blog.title }}</h1>
-
-{% paginate blog.articles by 5 %}
-  {% for article in blog.articles %}
-    <div>
-      {% if article.image %}
-        {{ article.image | image_url: width: 1000 | image_tag }}
-      {% endif %}
-      <h2>
-        {{ article.title | link_to: article.url }}
-      </h2>
-      {% assign date = article.published_at | time_tag: format: 'date' %}
-      <p>{{ 'blog.article_metadata_html' | t: date: date, author: article.author }}</p>
-      <p>{{ article.excerpt }}</p>
-    </div>
-  {% endfor %}
-
-  {%- if paginate.pages > 1 -%}
-    {{- paginate | default_pagination -}}
+<header class="pt-ch pt-ch--center full-width">
+  <nav class="pt-crumb" aria-label="{{ 'general.accessibility.nav_left' | t }}">
+    <a href="{{ routes.root_url }}">{{ 'sections.collection.breadcrumb_home' | t }}</a>
+    <span>/</span>
+    <b>{{ blog.title }}</b>
+  </nav>
+  <span class="pt-eyebrow">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+    {{ section.settings.eyebrow | escape }}
+  </span>
+  <h1 class="pt-ch-h">{{ blog.title }}</h1>
+  {%- if section.settings.subheading != blank -%}
+    <p class="pt-ch-blurb">{{ section.settings.subheading | escape }}</p>
   {%- endif -%}
-{% endpaginate %}
+</header>
+
+{%- if blog.articles.size == 0 -%}
+
+  <div class="pt-empty pt-section full-width">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--pt-accent)" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+    <h3>{{ 'sections.blog.empty_heading' | t }}</h3>
+    <p>{{ 'sections.blog.empty_text' | t }}</p>
+  </div>
+
+{%- else -%}
+
+  <section class="pt-section pt-blog-index full-width">
+    {%- paginate blog.articles by 9 -%}
+      <div class="pt-blog-grid">
+        {%- for article in blog.articles -%}
+          <a href="{{ article.url }}" class="pt-blog-card">
+            <div class="pt-blog-card-media">
+              {%- if article.image -%}
+                {{ article.image | image_url: width: 700 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: article.image.alt | default: article.title, style: 'position:absolute;inset:0;height:100%;border-radius:inherit;' }}
+              {%- else -%}
+                <div class="pt-ph" style="position:absolute;inset:0;height:100%;"></div>
+              {%- endif -%}
+            </div>
+            <div class="pt-blog-card-body">
+              <span class="pt-blog-card-date">{{ article.published_at | time_tag: format: 'date' }}</span>
+              <h3 class="pt-blog-card-name">{{ article.title | escape }}</h3>
+              {%- if article.excerpt != blank -%}
+                <p class="pt-blog-card-excerpt">{{ article.excerpt | strip_html | truncate: 120 }}</p>
+              {%- else -%}
+                <p class="pt-blog-card-excerpt">{{ article.content | strip_html | truncate: 120 }}</p>
+              {%- endif -%}
+              <span class="pt-coll-link">{{ 'sections.blog.read_more' | t }}
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </a>
+        {%- endfor -%}
+      </div>
+
+      <div class="pt-sec-foot">{% render 'pagination', paginate: paginate %}</div>
+    {%- endpaginate -%}
+  </section>
+
+{%- endif -%}
+
+{% stylesheet %}
+  .pt-blog-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px 24px; }
+  .pt-blog-card { display: block; }
+  .pt-blog-card-media { position: relative; aspect-ratio: 4 / 3; border-radius: var(--pt-radius); overflow: hidden; box-shadow: var(--pt-shadow-sm); }
+  .pt-blog-card:hover .pt-ph-img { transform: scale(1.05); }
+  .pt-blog-card .pt-ph-img { transition: transform .6s cubic-bezier(.3,.7,.4,1); }
+  .pt-blog-card-body { padding: 18px 2px 0; }
+  .pt-blog-card-date { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--pt-ink-faint); font-family: var(--pt-font-body); }
+  .pt-blog-card-name { font-family: var(--pt-font-head); font-size: 22px; margin: 6px 0 8px; line-height: 1.15; color: var(--pt-ink); }
+  .pt-blog-card:hover .pt-blog-card-name { color: var(--pt-accent-deep); }
+  .pt-blog-card-excerpt { font-size: 14px; color: var(--pt-ink-soft); line-height: 1.6; margin: 0 0 14px; }
+  @media (max-width: 980px) { .pt-blog-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .pt-blog-grid { grid-template-columns: 1fr; } }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.blog",
-  "settings": []
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow",
+      "default": "From the journal"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "t:labels.subheading",
+      "default": "Sparkle tips, styling notes, and a little bit of PinkTown magic."
+    }
+  ]
 }
 {% endschema %}

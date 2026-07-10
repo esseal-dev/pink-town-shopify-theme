@@ -1,64 +1,173 @@
 {% comment %}
   This section is used in the article template to render the article page, which
   displays the full content of the blog post and can optionally include a
-  comments section for customers (not shown in this example).
+  comments section for customers.
 
   https://shopify.dev/docs/storefronts/themes/architecture/templates/article
 {% endcomment %}
 
-{% if article.image %}
-  {{ article.image | image_url: width: 1000 | image_tag }}
-{% endif %}
+<header class="pt-ch pt-ch--center full-width">
+  <nav class="pt-crumb" aria-label="{{ 'general.accessibility.nav_left' | t }}">
+    <a href="{{ routes.root_url }}">{{ 'sections.collection.breadcrumb_home' | t }}</a>
+    <span>/</span>
+    <a href="{{ blog.url }}">{{ blog.title }}</a>
+    <span>/</span>
+    <b>{{ article.title }}</b>
+  </nav>
+  <span class="pt-eyebrow">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+    {%- if article.tags.size > 0 -%}{{ article.tags.first }}{%- else -%}{{ blog.title }}{%- endif -%}
+  </span>
+  <h1 class="pt-ch-h">{{ article.title }}</h1>
+  <div class="pt-ch-meta">
+    <span>{{ article.published_at | time_tag: format: 'date' }}</span>
+    <span class="pt-ch-dot"></span>
+    <span>{{ 'sections.article.by_author' | t: author: article.author }}</span>
+  </div>
+</header>
 
-<h1>{{ article.title }}</h1>
+{%- if article.image -%}
+  <div class="pt-article-hero full-width">
+    <div class="pt-ph" style="aspect-ratio:16/8;border-radius:0;">
+      {{ article.image | image_url: width: 1600 | image_tag: class: 'pt-ph-img', loading: 'eager', alt: article.image.alt | default: article.title }}
+    </div>
+  </div>
+{%- endif -%}
 
-{% assign date = article.published_at | time_tag: format: 'date' %}
-<p>{{ 'blog.article_metadata_html' | t: date: date, author: article.author }}</p>
-
-{{ article.content }}
-
-{% if blog.comments_enabled? %}
-  <h2>{{ 'blog.article_comments' | t }}</h2>
-
-  <div id="comments">
-    {% paginate article.comments by 10 %}
-      {% for comment in article.comments %}
-        <div>
-          <p>{{ comment.author }}</p>
-          <p>
-            {{- comment.created_at | time_tag: format: 'date' -}}
-          </p>
-          <p>{{ comment.content }}</p>
-        </div>
-      {% endfor %}
-
-      {{ paginate | default_pagination: anchor: 'comments' }}
-    {% endpaginate %}
+<article class="pt-section pt-article-wrap full-width">
+  <div class="pt-article-content">
+    {{ article.content }}
   </div>
 
-  {% form 'new_comment', article %}
-    <h2>{{ 'blog.comment_form_title' | t }}</h2>
+  <div class="pt-pdp-share pt-article-share">
+    <span class="pt-pdp-share-lbl">{{ 'products.share_label' | t }}</span>
+    <button type="button" class="pt-pdp-share-btn" data-article-copy-link aria-label="{{ 'products.share_copy_link' | t }}">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 15l6-6M11 6l1-1a4 4 0 0 1 6 6l-1 1M13 18l-1 1a4 4 0 0 1-6-6l1-1" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <a class="pt-pdp-share-btn" href="https://pinterest.com/pin/create/button/?url={{ canonical_url | url_encode }}&media={{ article.image | image_url: width: 1200 | prepend: 'https:' | url_encode }}&description={{ article.title | url_encode }}" target="_blank" rel="noopener" aria-label="{{ 'products.share_pinterest' | t }}"><b>P</b></a>
+    <a class="pt-pdp-share-btn" href="https://www.facebook.com/sharer.php?u={{ canonical_url | url_encode }}" target="_blank" rel="noopener" aria-label="{{ 'products.share_facebook' | t }}"><b>f</b></a>
+    <a class="pt-pdp-share-btn" href="mailto:?subject={{ article.title | url_encode }}&body={{ canonical_url | url_encode }}" aria-label="{{ 'products.share_email' | t }}">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg>
+    </a>
+    <span class="pt-pdp-share-copied" data-article-copied hidden>{{ 'products.share_copied' | t }}</span>
+  </div>
 
-    {{ form.errors | default_errors }}
+  <a href="{{ blog.url }}" class="pt-article-back">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    {{ 'sections.article.back_to_blog' | t: blog: blog.title }}
+  </a>
 
-    <div>
-      <label for="author">{{ 'blog.comment_form_name' | t }}</label>
-      <input type="text" name="comment[author]" id="author" value="{{ form.author }}" required>
+  {%- if blog.comments_enabled? -%}
+    <div class="pt-article-comments" id="comments">
+      <h2 class="pt-h2">{{ 'sections.article.comments_heading' | t }} {%- if article.comments_count > 0 -%}<span class="pt-comments-count">({{ article.comments_count }})</span>{%- endif -%}</h2>
+
+      {%- if article.comments_count > 0 -%}
+        {%- paginate article.comments by 10 -%}
+          <div class="pt-comment-list">
+            {%- for comment in article.comments -%}
+              <div class="pt-comment">
+                <span class="pt-avatar">{{ comment.author | slice: 0 }}</span>
+                <div class="pt-comment-body">
+                  <div class="pt-comment-head">
+                    <b>{{ comment.author }}</b>
+                    <span>{{ comment.created_at | time_tag: format: 'date' }}</span>
+                  </div>
+                  <p>{{ comment.content }}</p>
+                </div>
+              </div>
+            {%- endfor -%}
+          </div>
+          <div class="pt-sec-foot">{% render 'pagination', paginate: paginate %}</div>
+        {%- endpaginate -%}
+      {%- else -%}
+        <p class="pt-comments-empty">{{ 'sections.article.comments_empty' | t }}</p>
+      {%- endif -%}
+
+      {%- form 'new_comment', article, id: 'ArticleCommentForm', class: 'pt-comment-form' -%}
+        {%- if form.posted_successfully? -%}
+          <div class="pt-comment-thanks">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--pt-accent)" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+            <p>{%- if blog.moderated? -%}{{ 'sections.article.comment_pending' | t }}{%- else -%}{{ 'sections.article.comment_posted' | t }}{%- endif -%}</p>
+          </div>
+        {%- else -%}
+          {%- if form.errors -%}
+            <div class="pt-contact-error">{{ form.errors | default_errors }}</div>
+          {%- endif -%}
+          <h3 class="pt-comment-form-h">{{ 'blog.comment_form_title' | t }}</h3>
+          <div class="pt-grid">
+            <label class="pt-fld pt-fld--half">
+              <span class="pt-fld-lbl">{{ 'blog.comment_form_name' | t }}</span>
+              <input class="pt-input" type="text" name="comment[author]" id="CommentAuthor" value="{{ form.author }}" autocomplete="name" required>
+            </label>
+            <label class="pt-fld pt-fld--half">
+              <span class="pt-fld-lbl">{{ 'blog.comment_form_email' | t }}</span>
+              <input class="pt-input" type="email" name="comment[email]" id="CommentEmail" value="{{ form.email }}" autocomplete="email" required>
+            </label>
+            <label class="pt-fld pt-fld--full">
+              <span class="pt-fld-lbl">{{ 'blog.comment_form_body' | t }}</span>
+              <textarea class="pt-input" name="comment[body]" id="CommentBody" rows="4" required>{{ form.body }}</textarea>
+            </label>
+          </div>
+          <button type="submit" class="pt-btn pt-btn--solid">{{ 'blog.comment_form_submit' | t }}</button>
+        {%- endif -%}
+      {%- endform -%}
     </div>
+  {%- endif -%}
+</article>
 
-    <div>
-      <label for="email">{{ 'blog.comment_form_email' | t }}</label>
-      <input type="email" name="comment[email]" id="email" value="{{ form.email }}" required>
-    </div>
+{% stylesheet %}
+  .pt-article-hero { padding: 0; margin: 8px 0 0; }
+  .pt-article-wrap { max-width: 760px; }
+  .pt-article-content { font-family: var(--pt-font-body); font-size: 16.5px; line-height: 1.8; color: var(--pt-ink); }
+  .pt-article-content > * + * { margin-top: 22px; }
+  .pt-article-content h2 { font-family: var(--pt-font-head); font-size: 28px; line-height: 1.2; color: var(--pt-ink); }
+  .pt-article-content h3 { font-family: var(--pt-font-head); font-size: 22px; line-height: 1.25; color: var(--pt-ink); }
+  .pt-article-content a { color: var(--pt-accent-deep); text-decoration: underline; text-underline-offset: 2px; }
+  .pt-article-content img { width: 100%; height: auto; border-radius: var(--pt-radius); display: block; }
+  .pt-article-content blockquote { margin: 0; padding: 4px 0 4px 22px; border-left: 3px solid var(--pt-accent); font-family: var(--pt-font-head); font-size: 20px; font-style: italic; color: var(--pt-ink-soft); }
+  .pt-article-content ul, .pt-article-content ol { padding-left: 22px; }
+  .pt-article-content li + li { margin-top: 8px; }
+  .pt-article-share { margin-top: 40px; padding-top: 28px; border-top: 1px solid var(--pt-line); }
+  .pt-article-back { display: inline-flex; align-items: center; gap: 8px; margin-top: 28px; font-size: 13.5px; font-weight: 600; color: var(--pt-ink-soft); font-family: var(--pt-font-body); }
+  .pt-article-back:hover { color: var(--pt-accent-deep); }
+  .pt-article-comments { margin-top: 56px; padding-top: 40px; border-top: 1px solid var(--pt-line); font-family: var(--pt-font-body); }
+  .pt-comments-count { color: var(--pt-ink-faint); font-family: var(--pt-font-body); font-size: 20px; margin-left: 6px; }
+  .pt-comments-empty { color: var(--pt-ink-soft); font-size: 14.5px; margin-top: 14px; }
+  .pt-comment-list { margin-top: 24px; display: flex; flex-direction: column; gap: 22px; }
+  .pt-comment { display: flex; gap: 14px; }
+  .pt-comment-body { flex: 1; min-width: 0; }
+  .pt-comment-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+  .pt-comment-head b { font-size: 14.5px; color: var(--pt-ink); }
+  .pt-comment-head span { font-size: 12px; color: var(--pt-ink-faint); }
+  .pt-comment-body p { margin: 0; font-size: 14.5px; color: var(--pt-ink-soft); line-height: 1.6; }
+  .pt-comment-form { margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--pt-line); }
+  .pt-comment-form-h { font-family: var(--pt-font-head); font-size: 22px; font-weight: 500; margin-bottom: 18px; }
+  .pt-comment-thanks { display: flex; align-items: center; gap: 12px; background: var(--pt-accent-soft); border-radius: var(--pt-radius); padding: 18px 20px; }
+  .pt-comment-thanks p { margin: 0; font-size: 14.5px; color: var(--pt-ink); }
+  .pt-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .pt-comment-form .pt-btn { margin-top: 18px; }
+  @media (max-width: 640px) {
+    .pt-grid { grid-template-columns: 1fr; }
+    .pt-fld--half { grid-column: 1 / -1; }
+  }
+{% endstylesheet %}
 
-    <div>
-      <label for="body">{{ 'blog.comment_form_body' | t }}</label>
-      <textarea name="comment[body]" id="body" required>{{ form.body }}</textarea>
-    </div>
-
-    <input type="submit" value="{{ 'blog.comment_form_submit' | t }}">
-  {% endform %}
-{% endif %}
+{% javascript %}
+  (function () {
+    var copyBtn = document.querySelector('[data-article-copy-link]');
+    var copiedEl = document.querySelector('[data-article-copied]');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        var url = window.location.href;
+        if (navigator.clipboard) navigator.clipboard.writeText(url).catch(function () {});
+        if (copiedEl) {
+          copiedEl.hidden = false;
+          setTimeout(function () { copiedEl.hidden = true; }, 1800);
+        }
+      });
+    }
+  })();
+{% endjavascript %}
 
 {% schema %}
 {

@@ -52,7 +52,8 @@
     "card": "Gift card",
     "expired": "This gift card has expired",
     "expires_on": "Expires on {{ expires_on }}",
-    "use_at_checkout": "Use this gift card at checkout"
+    "use_at_checkout": "Use this gift card at checkout",
+    "print": "Print gift card"
   },
   "general": {
     "accessibility": {
@@ -260,6 +261,32 @@
       "toc_label": "On this page",
       "empty_state": "This policy hasn't been set up yet. Add it in Settings → Policies in the Shopify admin.",
       "fallback_title": "Policy"
+    },
+    "blog": {
+      "empty_heading": "No stories yet",
+      "empty_text": "Check back soon — new stories are on the way.",
+      "read_more": "Read more"
+    },
+    "article": {
+      "by_author": "by {{ author }}",
+      "back_to_blog": "Back to {{ blog }}",
+      "comments_heading": "Comments",
+      "comments_empty": "Be the first to leave a comment.",
+      "comment_posted": "Your comment has been posted.",
+      "comment_pending": "Your comment is awaiting approval and will appear soon."
+    },
+    "search": {
+      "eyebrow": "Search PinkTown",
+      "heading": "What are you looking for?",
+      "empty_heading": "Nothing sparkly found",
+      "empty_text": "Try a different search, or browse the full collection instead.",
+      "results_heading_html": "{{ count }} results for &ldquo;{{ terms }}&rdquo;",
+      "type_product": "Product",
+      "type_article": "Journal",
+      "type_page": "Page"
+    },
+    "password": {
+      "admin_link": "Are you the store owner? Log in here"
     }
   }
 }
