@@ -80,7 +80,8 @@
 
 <div class="pt-scrim" aria-hidden="true"></div>
 
-<aside class="pt-drawer" aria-hidden="true" aria-label="{{ 'cart.title' | t }}">
+<aside class="pt-drawer" aria-hidden="true" aria-label="{{ 'cart.title' | t }}"
+       data-root-url="{{ routes.root_url }}" data-cart-url="{{ routes.cart_url }}">
   <div class="pt-drawer-head">
     <h3>{{ 'cart.your_bag' | t }} <span class="pt-drawer-count">({{ cart.item_count }})</span></h3>
     <button class="pt-drawer-x" aria-label="{{ 'general.accessibility.close' | t }}">✕</button>
@@ -124,9 +125,9 @@
     {% endfor %}
 
     <div class="pt-cart-extras">
-      <form id="pt-promo-form" class="pt-promo-wrap">
+      <form id="pt-promo-form" class="pt-promo-wrap" data-drawer-promo-form>
         <div class="pt-promo-row">
-          <input class="pt-promo-input" type="text" placeholder="{{ 'cart.promo_placeholder' | t }}" aria-label="{{ 'cart.promo_code' | t }}" />
+          <input class="pt-promo-input" type="text" name="discount" placeholder="{{ 'cart.promo_placeholder' | t }}" aria-label="{{ 'cart.promo_code' | t }}" />
           <button type="submit" class="pt-promo-btn">{{ 'cart.apply' | t }}</button>
         </div>
       </form>

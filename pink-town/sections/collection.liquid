@@ -962,12 +962,16 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: qvVariant.id, quantity: qvQtyVal })
-      }).then(function () {
-        closeQuickView();
-        if (window.ptOpenCart) window.ptOpenCart();
-      }).catch(function () {
+      }).then(function (r) {
+        return r.json().then(function (data) {
+          if (!r.ok) throw new Error(data.message || data.description || 'Could not add to bag');
+          closeQuickView();
+          if (window.ptOpenCart) window.ptOpenCart();
+        });
+      }).catch(function (err) {
         qvAdd.disabled = false;
         qvAdd.textContent = original;
+        if (window.ptShowToast) window.ptShowToast(err.message || 'Could not add to bag');
       });
     });
   })();

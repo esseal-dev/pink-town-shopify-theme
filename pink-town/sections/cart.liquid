@@ -285,6 +285,10 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ line: line, quantity: quantity })
+      }).then(function (r) {
+        return r.json().then(function (data) {
+          if (!r.ok && window.ptShowToast) window.ptShowToast(data.message || data.description || 'Could not update your bag');
+        });
       }).then(fetchCart).then(render);
     }
 

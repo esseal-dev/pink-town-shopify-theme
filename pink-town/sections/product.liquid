@@ -794,17 +794,21 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ items: items })
-        }).then(function () {
-          if (redirectToCheckout) {
-            window.location.href = pdp.dataset.checkoutUrl;
-            return;
-          }
-          if (window.ptShowToast) window.ptShowToast(pdp.dataset.productTitle + ' added to bag');
-          if (window.ptOpenCart) window.ptOpenCart();
-          updateAddButtons(variant);
-        }).catch(function () {
+        }).then(function (r) {
+          return r.json().then(function (data) {
+            if (!r.ok) throw new Error(data.message || data.description || 'Could not add to bag');
+            if (redirectToCheckout) {
+              window.location.href = pdp.dataset.checkoutUrl;
+              return;
+            }
+            if (window.ptShowToast) window.ptShowToast(pdp.dataset.productTitle + ' added to bag');
+            if (window.ptOpenCart) window.ptOpenCart();
+            updateAddButtons(variant);
+          });
+        }).catch(function (err) {
           updateAddButtons(variant);
           triggerBtn.textContent = original;
+          if (window.ptShowToast) window.ptShowToast(err.message || 'Could not add to bag');
         });
       }
 

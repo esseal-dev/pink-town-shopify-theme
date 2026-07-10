@@ -34,7 +34,16 @@
   </div>
 
   <div class="pt-footer-bottom">
-    <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright_text | escape }}</span>
+    <div class="pt-footer-bottom-row">
+      <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright_text | escape }}</span>
+      {% if section.settings.show_payment_icons %}
+        <div class="pt-pays">
+          {% for type in shop.enabled_payment_types %}
+            {{ type | payment_type_svg_tag: class: 'pt-pay-icon' }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
     {%- if shop.policies.size > 0 -%}
       <nav class="pt-footer-legal" aria-label="{{ 'general.accessibility.legal' | t }}">
         {%- for policy in shop.policies -%}
@@ -42,13 +51,6 @@
         {%- endfor -%}
       </nav>
     {%- endif -%}
-    {% if section.settings.show_payment_icons %}
-      <div class="pt-pays">
-        {% for type in shop.enabled_payment_types %}
-          {{ type | payment_type_svg_tag: class: 'pt-pay-icon' }}
-        {% endfor %}
-      </div>
-    {% endif %}
   </div>
 </footer>
 
@@ -65,8 +67,9 @@
   .pt-footer-col li { margin-bottom: 9px; }
   .pt-footer-col a { font-size: 14px; color: var(--pt-ink-soft); transition: color .2s; }
   .pt-footer-col a:hover { color: var(--pt-accent-deep); }
-  .pt-footer-bottom { max-width: var(--pt-wrap); margin: 44px auto 0; padding-top: 24px; border-top: 1px solid var(--pt-line); display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; row-gap: 10px; font-size: 12.5px; color: var(--pt-ink-faint); }
-  .pt-footer-legal { display: flex; gap: 18px; }
+  .pt-footer-bottom { max-width: var(--pt-wrap); margin: 44px auto 0; padding-top: 24px; border-top: 1px solid var(--pt-line); display: flex; flex-direction: column; gap: 14px; font-size: 12.5px; color: var(--pt-ink-faint); }
+  .pt-footer-bottom-row { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; row-gap: 10px; }
+  .pt-footer-legal { display: flex; flex-wrap: wrap; gap: 8px 18px; }
   .pt-footer-legal a:hover { color: var(--pt-accent-deep); }
   .pt-pays { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; }
   .pt-pay-icon { height: 24px; width: auto; }
