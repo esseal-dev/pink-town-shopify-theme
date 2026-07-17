@@ -52,7 +52,7 @@
     --pt-font-head: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
     --pt-font-body: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
     --pt-wrap: 1240px;
-    --pt-shadow-sm: 0 4px 18px -8px rgba(120,60,75,.18);
-    --pt-shadow-md: 0 22px 50px -24px rgba(120,60,75,.36);
+    --pt-shadow-sm: 0 4px 18px -8px {{ c_accent | color_darken: 25 | color_modify: 'alpha', 0.18 }};
+    --pt-shadow-md: 0 22px 50px -24px {{ c_accent | color_darken: 25 | color_modify: 'alpha', 0.36 }};
   }
 {% endstyle %}

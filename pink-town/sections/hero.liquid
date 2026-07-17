@@ -30,12 +30,12 @@
     {% endif %}
   </div>
   <div class="pt-hero-floats">
-    <div class="pt-ph" style="width:230px;aspect-ratio:3/4;border-radius:140px 140px 18px 18px;background:#f7dbe6;--d:0s">
+    <div class="pt-ph" style="width:230px;aspect-ratio:3/4;border-radius:140px 140px 18px 18px;background:var(--pt-bg-tint);--d:0s">
       {% if section.settings.image %}
         {{ section.settings.image | image_url: width: 460 | image_tag: class: 'pt-ph-img', loading: 'eager', alt: section.settings.image.alt }}
       {% endif %}
     </div>
-    <div class="pt-ph" style="width:230px;margin-top:40px;aspect-ratio:3/4;border-radius:18px 18px 140px 140px;background:#f3e2ea;--d:0.15s">
+    <div class="pt-ph" style="width:230px;margin-top:40px;aspect-ratio:3/4;border-radius:18px 18px 140px 140px;background:var(--pt-accent-soft);--d:0.15s">
       {% if section.settings.image_2 %}
         {{ section.settings.image_2 | image_url: width: 460 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: section.settings.image_2.alt }}
       {% endif %}
@@ -99,7 +99,7 @@
   </div>
   <div class="pt-hero-art">
     <div class="pt-hero-glow"></div>
-    <div class="pt-ph" style="aspect-ratio:4/5;border-radius:200px 200px 22px 22px;background:#f7dbe6;position:relative;z-index:1;overflow:hidden;">
+    <div class="pt-ph" style="aspect-ratio:4/5;border-radius:200px 200px 22px 22px;background:var(--pt-bg-tint);position:relative;z-index:1;overflow:hidden;">
       {% if section.settings.image %}
         {{ section.settings.image | image_url: width: 900 | image_tag: class: 'pt-ph-img', loading: 'eager', alt: section.settings.image.alt }}
       {% else %}

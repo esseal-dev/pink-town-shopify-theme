@@ -119,7 +119,7 @@
   <div class="pt-drawer-items"{% unless cart.item_count > 0 %} style="display:none"{% endunless %}>
     {% for item in cart.items %}
       <div class="pt-line" data-line="{{ forloop.index }}">
-        <div class="pt-ph" style="width:64px;flex:none;border-radius:12px;aspect-ratio:1/1;background:#f6dde4;overflow:hidden;">
+        <div class="pt-ph" style="width:64px;flex:none;border-radius:12px;aspect-ratio:1/1;background:var(--pt-accent-soft);overflow:hidden;">
           {% if item.image %}
             {{ item.image | image_url: width: 128 | image_tag: width: 64, height: 64, loading: 'lazy', style: 'width:100%;height:100%;object-fit:cover;' }}
           {% endif %}

@@ -1,28 +1,53 @@
 {
-  "current": {
-    "type_heading_font": "cormorant_n5",
-    "type_body_font": "muli_n4",
-    "max_page_width": "90rem",
-    "min_page_margin": 20,
-    "color_background": "#FFFAFB",
-    "color_text": "#4B3138",
-    "color_border": "#F1DDE4",
-    "color_accent": "#B76E79",
-    "color_accent_text": "#FFFFFF",
-    "input_corner_radius": 4
-  },
+  "current": {},
   "presets": {
-    "TriSoul Pink": {
+    "Posy": {
       "type_heading_font": "cormorant_n5",
       "type_body_font": "muli_n4",
       "max_page_width": "90rem",
       "min_page_margin": 20,
+      "input_corner_radius": 4,
       "color_background": "#FFFAFB",
       "color_text": "#4B3138",
       "color_border": "#F1DDE4",
       "color_accent": "#B76E79",
-      "color_accent_text": "#FFFFFF",
-      "input_corner_radius": 4
+      "color_accent_text": "#FFFFFF"
+    },
+    "Amethyst": {
+      "type_heading_font": "cormorant_n5",
+      "type_body_font": "muli_n4",
+      "max_page_width": "90rem",
+      "min_page_margin": 20,
+      "input_corner_radius": 4,
+      "color_background": "#FCFAFF",
+      "color_text": "#3F3552",
+      "color_border": "#E8E0F1",
+      "color_accent": "#7E68A6",
+      "color_accent_text": "#FFFFFF"
+    },
+    "Meadow": {
+      "type_heading_font": "cormorant_n5",
+      "type_body_font": "muli_n4",
+      "max_page_width": "90rem",
+      "min_page_margin": 20,
+      "input_corner_radius": 4,
+      "color_background": "#FAFCF9",
+      "color_text": "#33473B",
+      "color_border": "#DCE9DE",
+      "color_accent": "#4F7D5F",
+      "color_accent_text": "#FFFFFF"
+    },
+    "Sunbeam": {
+      "type_heading_font": "cormorant_n5",
+      "type_body_font": "muli_n4",
+      "max_page_width": "90rem",
+      "min_page_margin": 20,
+      "input_corner_radius": 4,
+      "color_background": "#FFFDF6",
+      "color_text": "#4A3B22",
+      "color_border": "#F1E6CC",
+      "color_accent": "#E8A33C",
+      "color_accent_text": "#3E2C0A"
     }
   }
 }
