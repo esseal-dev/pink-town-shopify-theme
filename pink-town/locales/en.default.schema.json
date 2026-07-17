@@ -13,6 +13,8 @@
     "column": "Column",
     "content": "Content",
     "custom_section": "Custom section",
+    "custom_liquid": "Custom Liquid",
+    "favicon": "Favicon",
     "fonts": "Fonts",
     "footer": "Footer",
     "group": "Group",
@@ -42,6 +44,21 @@
   },
   "labels": {
     "alignment": "Alignment",
+    "full_width": "Full width",
+    "custom_liquid": "Liquid code",
+    "custom_liquid_info": "Add app snippets, custom HTML, or third-party embeds. Learn more about [Liquid](https://shopify.dev/docs/api/liquid).",
+    "product": "Product",
+    "favicon": "Favicon image",
+    "favicon_info": "Displayed in browser tabs and bookmarks. Use a square image, at least 32 x 32px.",
+    "heading_font": "Heading font",
+    "body_font": "Body font",
+    "color_page": "Page",
+    "text_color": "Text",
+    "border_color": "Borders",
+    "color_accent": "Accent",
+    "accent_background": "Accent background",
+    "accent_text": "Accent text",
+    "color_inputs": "Inputs",
     "background": "Background",
     "foreground": "Foreground",
     "input_corner_radius": "Input corner radius",
@@ -215,6 +232,15 @@
     },
     "hero": {
       "name": "Hero"
+    },
+    "featured_product": {
+      "name": "Featured product",
+      "description_info": "Shown instead of the product's own description. Leave blank to use the product's description.",
+      "blocks": {
+        "accordion_item": {
+          "name": "Accordion item"
+        }
+      }
     },
     "featured_collections": {
       "name": "Featured collections"

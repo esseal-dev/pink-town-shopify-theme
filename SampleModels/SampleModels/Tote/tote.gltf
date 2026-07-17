@@ -1,0 +1,246 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v0.9.36",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                0,
+                1,
+                3,
+                6
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "name" : "Light",
+            "rotation" : [
+                0.16907575726509094,
+                0.7558803558349609,
+                -0.27217137813568115,
+                0.570947527885437
+            ],
+            "translation" : [
+                4.076245307922363,
+                5.903861999511719,
+                -1.0054539442062378
+            ]
+        },
+        {
+            "name" : "Camera",
+            "rotation" : [
+                0.483536034822464,
+                0.33687159419059753,
+                -0.20870360732078552,
+                0.7804827094078064
+            ],
+            "translation" : [
+                7.358891487121582,
+                4.958309173583984,
+                6.925790786743164
+            ]
+        },
+        {
+            "name" : "desk_3"
+        },
+        {
+            "children" : [
+                2
+            ],
+            "name" : "root",
+            "rotation" : [
+                0.7071068286895752,
+                0,
+                0,
+                0.7071067094802856
+            ],
+            "scale" : [
+                63.99034118652344,
+                63.99034881591797,
+                63.99034881591797
+            ],
+            "translation" : [
+                0.00551605224609375,
+                36.710662841796875,
+                0.002228901255875826
+            ]
+        },
+        {
+            "mesh" : 0,
+            "name" : "MagnoliaMarketTote:LOW_GRP1.001",
+            "scale" : [
+                0.007910738699138165,
+                0.007910738699138165,
+                0.007910738699138165
+            ],
+            "translation" : [
+                -0.001777180004864931,
+                0.287316232919693,
+                0.08337325602769852
+            ]
+        },
+        {
+            "children" : [
+                4
+            ],
+            "name" : "MagnoliaMarketTote:LOW_GRP1"
+        },
+        {
+            "children" : [
+                5
+            ],
+            "name" : "root.001",
+            "rotation" : [
+                0.7071068286895752,
+                0,
+                0,
+                0.7071067094802856
+            ],
+            "scale" : [
+                32.38530731201172,
+                32.385311126708984,
+                32.385311126708984
+            ],
+            "translation" : [
+                0.06223487854003906,
+                2.7274484634399414,
+                -9.36382007598877
+            ]
+        }
+    ],
+    "materials" : [
+        {
+            "name" : "Tote",
+            "normalTexture" : {
+                "index" : 0,
+                "texCoord" : 0
+            },
+            "occlusionTexture" : {
+                "index" : 1,
+                "texCoord" : 0
+            },
+            "pbrMetallicRoughness" : {
+                "baseColorTexture" : {
+                    "index" : 2,
+                    "texCoord" : 0
+                },
+                "metallicRoughnessTexture" : {
+                    "index" : 1,
+                    "texCoord" : 0
+                }
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "MagnoliaMarketTote:LOW_GRP1",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TEXCOORD_0" : 2
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "textures" : [
+        {
+            "source" : 0
+        },
+        {
+            "source" : 1
+        },
+        {
+            "source" : 2
+        }
+    ],
+    "images" : [
+        {
+            "mimeType" : "image/png",
+            "name" : "Image_2",
+            "uri" : "Image_2.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "Image_1",
+            "uri" : "Image_1.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "Image_0",
+            "uri" : "Image_0.png"
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 10657,
+            "max" : [
+                0.5168011784553528,
+                0.9999998807907104,
+                0.0989813506603241
+            ],
+            "min" : [
+                -0.5168012380599976,
+                -1,
+                -0.0989813506603241
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 10657,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 10657,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5123,
+            "count" : 55224,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 127884,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 127884,
+            "byteOffset" : 127884
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 85256,
+            "byteOffset" : 255768
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 110448,
+            "byteOffset" : 341024
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 451472,
+            "uri" : "tote.bin"
+        }
+    ]
+}

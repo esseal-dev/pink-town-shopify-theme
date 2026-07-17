@@ -8,7 +8,7 @@
       {%- assign left_count = 0 -%}
       {%- for link in section.settings.menu.links -%}
         {%- if left_count < 3 -%}
-          <li><a href="{{ link.url }}" class="pt-navlink">{{ link.title | escape }}</a></li>
+          {%- render 'nav-menu-item', link: link, context: 'desktop', depth: 0 -%}
           {%- assign left_count = left_count | plus: 1 -%}
         {%- endif -%}
       {%- endfor -%}
@@ -16,7 +16,7 @@
 
     <a href="{{ routes.root_url }}" class="pt-logo" aria-label="{{ shop.name }}">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="var(--pt-accent)" style="margin-right:2px" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
-      {{ shop.name }}
+      <span>{{ shop.name }}</span>
     </a>
 
     <ul class="pt-nav-links pt-nav-right" aria-label="{{ 'general.accessibility.nav_right' | t }}">
@@ -24,7 +24,7 @@
       {%- assign right_shown = 0 -%}
       {%- for link in section.settings.menu.links -%}
         {%- if forloop.index0 >= right_start and right_shown < 2 -%}
-          <li><a href="{{ link.url }}" class="pt-navlink">{{ link.title | escape }}</a></li>
+          {%- render 'nav-menu-item', link: link, context: 'desktop', depth: 0 -%}
           {%- assign right_shown = right_shown | plus: 1 -%}
         {%- endif -%}
       {%- endfor -%}
@@ -69,7 +69,7 @@
 
 <div class="pt-nav-scrim" data-nav-scrim aria-hidden="true"></div>
 
-<aside class="pt-nav-drawer" data-nav-drawer aria-hidden="true" aria-label="{{ 'general.accessibility.menu' | t }}">
+<aside class="pt-nav-drawer" data-nav-drawer aria-hidden="true" inert aria-label="{{ 'general.accessibility.menu' | t }}">
   <div class="pt-nav-drawer-head">
     <a href="{{ routes.root_url }}" class="pt-logo">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="var(--pt-accent)" style="margin-right:2px" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
@@ -79,14 +79,14 @@
   </div>
   <nav class="pt-nav-drawer-links" aria-label="{{ 'general.accessibility.nav_left' | t }}">
     {%- for link in section.settings.menu.links -%}
-      <a href="{{ link.url }}" class="pt-nav-drawer-link">{{ link.title | escape }}</a>
+      {%- render 'nav-menu-item', link: link, context: 'mobile', depth: 0 -%}
     {%- endfor -%}
   </nav>
 </aside>
 
 <div class="pt-scrim" aria-hidden="true"></div>
 
-<aside class="pt-drawer" aria-hidden="true" aria-label="{{ 'cart.title' | t }}"
+<aside class="pt-drawer" aria-hidden="true" inert aria-label="{{ 'cart.title' | t }}"
        data-root-url="{{ routes.root_url }}" data-cart-url="{{ routes.cart_url }}">
   <div class="pt-drawer-head">
     <h3>{{ 'cart.your_bag' | t }} <span class="pt-drawer-count">({{ cart.item_count }})</span></h3>
@@ -175,10 +175,31 @@
   .pt-nav-inner { max-width: var(--pt-wrap); margin: 0 auto; padding: 0 32px; height: 72px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; }
   .pt-nav-links { display: flex; align-items: center; gap: 26px; }
   .pt-nav-right { justify-content: flex-end; gap: 18px; }
-  .pt-navlink { font-size: 13.5px; font-weight: 600; color: var(--pt-ink); position: relative; padding: 4px 0; }
+  .pt-nav-item { position: relative; display: flex; align-items: center; }
+  .pt-navlink { font-size: 13.5px; font-weight: 600; color: var(--pt-ink); position: relative; padding: 4px 0; display: inline-flex; align-items: center; gap: 5px; }
   .pt-navlink::after { content: ''; position: absolute; left: 0; bottom: -2px; height: 1.5px; width: 0; background: var(--pt-accent); transition: width .28s ease; }
   .pt-navlink:hover { color: var(--pt-accent-deep); }
   .pt-navlink:hover::after { width: 100%; }
+  .pt-nav-caret { flex: none; transition: transform .2s; color: var(--pt-ink-faint); }
+  .pt-nav-item--parent:hover > .pt-navlink .pt-nav-caret,
+  .pt-nav-item--parent:focus-within > .pt-navlink .pt-nav-caret { transform: rotate(180deg); color: var(--pt-accent-deep); }
+
+  /* Desktop dropdown flyouts (nested to any depth) */
+  .pt-nav-dropdown {
+    position: absolute; top: 100%; left: 0; z-index: 50;
+    min-width: 200px; margin-top: 10px; padding: 8px;
+    background: #fff; border: 1px solid var(--pt-line); border-radius: 14px; box-shadow: var(--pt-shadow-md);
+    opacity: 0; visibility: hidden; transform: translateY(6px);
+    transition: opacity .2s ease, transform .2s ease, visibility .2s;
+    list-style: none;
+  }
+  .pt-nav-item--parent:hover > .pt-nav-dropdown,
+  .pt-nav-item--parent:focus-within > .pt-nav-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+  .pt-nav-dropdown .pt-nav-item { display: block; width: 100%; }
+  .pt-nav-dropdown .pt-navlink { width: 100%; padding: 9px 12px; border-radius: 9px; font-weight: 500; }
+  .pt-nav-dropdown .pt-navlink:hover { background: var(--pt-accent-soft); color: var(--pt-accent-deep); }
+  .pt-nav-dropdown .pt-navlink::after { display: none; }
+  .pt-nav-dropdown .pt-nav-dropdown { top: -8px; left: calc(100% + 6px); margin-top: 0; }
   .pt-logo { font-family: var(--pt-font-head); font-size: 27px; font-weight: 600; letter-spacing: .01em; display: inline-flex; align-items: center; color: var(--pt-ink); }
   .pt-iconbtn { position: relative; display: grid; place-items: center; width: 38px; height: 38px; border: none; background: transparent; color: var(--pt-ink); border-radius: 50%; cursor: pointer; transition: background .2s, color .2s; }
   .pt-iconbtn:hover { background: var(--pt-accent-soft); color: var(--pt-accent-deep); }
@@ -193,8 +214,19 @@
   .pt-nav-drawer.is-open { transform: translateX(0); }
   .pt-nav-drawer-head { display: flex; align-items: center; justify-content: space-between; padding: 20px 20px; border-bottom: 1px solid var(--pt-line); }
   .pt-nav-drawer-links { display: flex; flex-direction: column; padding: 10px 10px; overflow-y: auto; }
-  .pt-nav-drawer-link { padding: 15px 14px; font-size: 15.5px; font-weight: 600; color: var(--pt-ink); border-radius: 12px; transition: background .2s, color .2s; }
+  .pt-nav-drawer-link { padding: 15px 14px; font-size: 15.5px; font-weight: 600; color: var(--pt-ink); border-radius: 12px; transition: background .2s, color .2s; flex: 1; }
   .pt-nav-drawer-link:hover, .pt-nav-drawer-link:active { background: var(--pt-accent-soft); color: var(--pt-accent-deep); }
+  .pt-nav-drawer-link--sub { font-size: 14.5px; font-weight: 500; padding-left: calc(14px + var(--depth, 1) * 16px); }
+
+  .pt-nav-drawer-group-head { display: flex; align-items: stretch; }
+  .pt-nav-drawer-toggle { flex: none; width: 46px; border: none; background: transparent; color: var(--pt-ink-soft); cursor: pointer; border-radius: 12px; display: grid; place-items: center; transition: background .2s, color .2s; }
+  .pt-nav-drawer-toggle:hover { background: var(--pt-accent-soft); color: var(--pt-accent-deep); }
+  .pt-nav-drawer-toggle svg { transition: transform .25s; }
+  .pt-nav-drawer-group[data-open="1"] > .pt-nav-drawer-group-head .pt-nav-drawer-toggle svg { transform: rotate(180deg); }
+  .pt-nav-drawer-sub-wrap { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .3s ease; }
+  .pt-nav-drawer-group[data-open="1"] > .pt-nav-drawer-sub-wrap { grid-template-rows: 1fr; }
+  .pt-nav-drawer-sub-inner { overflow: hidden; }
+  .pt-nav-drawer-sub { display: flex; flex-direction: column; padding-bottom: 4px; }
   /* Cart scrim */
   .pt-scrim { position: fixed; inset: 0; z-index: 90; background: rgba(70,38,48,.34); opacity: 0; pointer-events: none; transition: opacity .35s; backdrop-filter: blur(2px); }
   .pt-scrim.is-open { opacity: 1; pointer-events: auto; }
@@ -248,10 +280,14 @@
   .pt-toast button:hover { background: var(--pt-accent); color: #fff; }
   @media (max-width: 760px) {
     .pt-nav-left { display: none; }
-    .pt-nav-hamburger { display: inline-flex; grid-column: 1; }
-    .pt-nav-right { grid-column: 3; }
-    .pt-nav-inner { padding: 0 16px; position: relative; }
-    .pt-nav-inner > .pt-logo { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+    .pt-nav-hamburger { display: inline-flex; width: auto; }
+    .pt-nav-inner { padding: 0 12px; grid-template-columns: auto 1fr auto; column-gap: 8px; }
+    .pt-nav-inner > .pt-logo { justify-self: center; font-size: 21px; max-width: 100%; min-width: 0; }
+    .pt-nav-inner > .pt-logo span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+    .pt-nav-right { gap: 4px; }
+  }
+  @media (max-width: 360px) {
+    .pt-nav-inner > .pt-logo { font-size: 18px; }
   }
 {% endstylesheet %}
 

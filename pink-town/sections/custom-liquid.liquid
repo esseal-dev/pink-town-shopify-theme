@@ -1,0 +1,39 @@
+{% comment %}
+  Lets merchants paste raw Liquid or HTML directly into the theme editor —
+  used for app snippets, tracking pixels, or one-off markup that doesn't
+  warrant a dedicated section.
+{% endcomment %}
+
+<div class="pt-custom-liquid{% if section.settings.full_width %} full-width{% endif %}">
+  {{ section.settings.custom_liquid }}
+</div>
+
+{% stylesheet %}
+  .pt-custom-liquid:not(.full-width) { max-width: var(--pt-wrap); margin: 0 auto; padding: 0 32px; }
+  @media (max-width: 600px) {
+    .pt-custom-liquid:not(.full-width) { padding: 0 20px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "t:general.custom_liquid",
+  "settings": [
+    {
+      "type": "liquid",
+      "id": "custom_liquid",
+      "label": "t:labels.custom_liquid",
+      "info": "t:labels.custom_liquid_info"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "t:labels.full_width",
+      "default": false
+    }
+  ],
+  "presets": [
+    { "name": "t:general.custom_liquid" }
+  ]
+}
+{% endschema %}

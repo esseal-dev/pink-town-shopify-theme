@@ -1,39 +1,56 @@
 {% doc %}
-  Outputs CSS custom properties for the theme, including PinkTown design tokens and Shopify theme settings variables.
+  Outputs CSS custom properties for the theme. The PinkTown design tokens
+  (--pt-*) are derived from real theme settings — background/text/accent
+  colors and the heading/body font pickers — rather than hardcoded, so
+  changes in the theme editor actually reach every section.
 
   @example
   {% render 'css-variables' %}
 {% enddoc %}
 
+{%- liquid
+  assign c_bg = settings.color_background
+  assign c_text = settings.color_text
+  assign c_border = settings.color_border
+  assign c_accent = settings.color_accent
+  assign c_accent_text = settings.color_accent_text
+-%}
+
 {% style %}
-  {{ settings.type_primary_font | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
-  {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {{ settings.type_heading_font | font_face: font_display: 'swap' }}
+  {{ settings.type_heading_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+  {{ settings.type_heading_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {{ settings.type_heading_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+
+  {{ settings.type_body_font | font_face: font_display: 'swap' }}
+  {{ settings.type_body_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
+  {{ settings.type_body_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
+  {{ settings.type_body_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
 
   :root {
-    --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
-    --font-primary--style: {{ settings.type_primary_font.style }};
-    --font-primary--weight: {{ settings.type_primary_font.weight }};
+    --font-primary--family: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
+    --font-primary--style: {{ settings.type_heading_font.style }};
+    --font-primary--weight: {{ settings.type_heading_font.weight }};
     --page-width: {{ settings.max_page_width }};
     --page-margin: {{ settings.min_page_margin }}px;
-    --color-background: {{ settings.background_color }};
-    --color-foreground: {{ settings.foreground_color }};
+    --color-background: {{ c_bg }};
+    --color-foreground: {{ c_text }};
     --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
 
-    --pt-ink: #4b3138;
-    --pt-ink-soft: #8b727b;
-    --pt-ink-faint: #b6a0a7;
-    --pt-bg: #fffafb;
-    --pt-bg-tint: #fdeef2;
-    --pt-line: #f1dde4;
-    --pt-card: #ffffff;
-    --pt-accent: #b76e79;
-    --pt-accent-deep: #9a5460;
-    --pt-accent-soft: #f4dde2;
+    --pt-ink: {{ c_text }};
+    --pt-ink-soft: {{ c_text | color_lighten: 16 }};
+    --pt-ink-faint: {{ c_text | color_lighten: 22 }};
+    --pt-bg: {{ c_bg }};
+    --pt-bg-tint: {{ c_accent | color_lighten: 39 }};
+    --pt-line: {{ c_border }};
+    --pt-card: {{ c_bg | color_lighten: 1 }};
+    --pt-accent: {{ c_accent }};
+    --pt-accent-deep: {{ c_accent | color_darken: 18 }};
+    --pt-accent-soft: {{ c_accent | color_lighten: 34 }};
+    --pt-accent-text: {{ c_accent_text }};
     --pt-radius: 18px;
-    --pt-font-head: 'Cormorant Garamond', Georgia, serif;
-    --pt-font-body: 'Mulish', system-ui, sans-serif;
+    --pt-font-head: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
+    --pt-font-body: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
     --pt-wrap: 1240px;
     --pt-shadow-sm: 0 4px 18px -8px rgba(120,60,75,.18);
     --pt-shadow-md: 0 22px 50px -24px rgba(120,60,75,.36);

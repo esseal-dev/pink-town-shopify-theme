@@ -1,0 +1,60 @@
+{% doc %}
+  Recursively renders one navigation link with support for nested
+  (multi-level) submenus — a hover/focus flyout on desktop, an
+  expand/collapse accordion group in the mobile drawer.
+
+  @param link {link} - the navigation link to render
+  @param context {string} - 'desktop' or 'mobile'
+  @param depth {number} - nesting depth, 0-based
+
+  @example
+  {% render 'nav-menu-item', link: link, context: 'desktop', depth: 0 %}
+{% enddoc %}
+
+{%- liquid
+  assign has_children = false
+  if link.links.size > 0
+    assign has_children = true
+  endif
+  assign next_depth = depth | plus: 1
+-%}
+
+{%- if context == 'desktop' -%}
+  <li class="pt-nav-item{% if has_children %} pt-nav-item--parent{% endif %}">
+    <a href="{{ link.url }}" class="pt-navlink"{% if has_children %} aria-haspopup="true" aria-expanded="false"{% endif %}>
+      {{ link.title | escape }}
+      {%- if has_children -%}
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" class="pt-nav-caret" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      {%- endif -%}
+    </a>
+    {%- if has_children -%}
+      <ul class="pt-nav-dropdown" aria-label="{{ link.title | escape }}">
+        {%- for child_link in link.links -%}
+          {%- render 'nav-menu-item', link: child_link, context: 'desktop', depth: next_depth -%}
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </li>
+{%- else -%}
+  {%- if has_children -%}
+    <div class="pt-nav-drawer-group" data-nav-drawer-group data-open="0">
+      <div class="pt-nav-drawer-group-head">
+        <a href="{{ link.url }}" class="pt-nav-drawer-link">{{ link.title | escape }}</a>
+        <button type="button" class="pt-nav-drawer-toggle" data-nav-drawer-toggle aria-expanded="false" aria-label="{{ 'general.accessibility.submenu' | t: title: link.title | escape }}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <div class="pt-nav-drawer-sub-wrap">
+        <div class="pt-nav-drawer-sub-inner">
+          <div class="pt-nav-drawer-sub" style="--depth: {{ depth }};">
+            {%- for child_link in link.links -%}
+              {%- render 'nav-menu-item', link: child_link, context: 'mobile', depth: next_depth -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  {%- else -%}
+    <a href="{{ link.url }}" class="pt-nav-drawer-link{% if depth > 0 %} pt-nav-drawer-link--sub{% endif %}" style="--depth: {{ depth }};">{{ link.title | escape }}</a>
+  {%- endif -%}
+{%- endif -%}

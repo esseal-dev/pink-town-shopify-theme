@@ -11,33 +11,10 @@
   assign per_page = section.settings.products_per_page | default: 24
   assign enable_price_filter = section.settings.enable_price_filter
   assign enable_variant_filters = section.settings.enable_variant_filters
-
-  assign categories = collection.products | map: 'type' | uniq | sort
-
-  comment
-    Discover every variant option (Color, Size, Material, …) actually used by
-    products in this collection, so the filter sidebar stays in sync with
-    whatever options merchants set up — no manual configuration needed.
-    Built with plain loops (not `map`/`flatten`) since Shopify Liquid doesn't
-    support flattening nested arrays.
-  endcomment
-  assign option_names_str = '|'
-  for product in collection.products
-    for opt in product.options_with_values
-      assign name_needle = '|' | append: opt.name | append: '|'
-      unless option_names_str contains name_needle
-        assign option_names_str = option_names_str | append: opt.name | append: '|'
-      endunless
-    endfor
-  endfor
-  assign option_name_list = option_names_str | split: '|'
-
-  assign prices = collection.products | map: 'price' | sort
-  assign price_min = prices | first | default: 0
-  assign price_max = prices | last | default: 0
 -%}
 
 <div class="pt-coll-page full-width" id="pt-coll-{{ section.id }}"
+     data-section-id="{{ section.id }}"
      data-i-piece="{{ 'sections.collection.piece' | t | escape }}"
      data-i-pieces="{{ 'sections.collection.pieces' | t | escape }}"
      data-i-clear-all="{{ 'sections.collection.clear_all' | t | escape }}"
@@ -122,131 +99,87 @@
 
   {%- else -%}
 
-    <div class="pt-coll-layout">
+    <form class="pt-coll-layout" data-facets-form action="{{ collection.url }}" method="get">
       <aside class="pt-side" data-side>
         <div class="pt-side-top">
-          <h3>{{ 'sections.collection.filters' | t }}</h3>
-          <button type="button" class="pt-side-clear" data-clear-filters>{{ 'sections.collection.clear_all' | t }}</button>
+          <h2>{{ 'sections.collection.filters' | t }}</h2>
+          <a href="{{ collection.url }}" class="pt-side-clear" data-clear-filters>{{ 'sections.collection.clear_all' | t }}</a>
           <button type="button" class="pt-side-x" data-close-filters aria-label="{{ 'sections.collection.close_filters' | t }}">✕</button>
         </div>
 
-        {%- assign has_categories = false -%}
-        {%- for cat in categories -%}{%- unless cat == blank -%}{%- assign has_categories = true -%}{%- endunless -%}{%- endfor -%}
-
-        {%- if has_categories -%}
-          <div class="pt-fg" data-open="1">
-            <button type="button" class="pt-fg-h" data-fg-toggle>
-              {{ 'sections.collection.category' | t }}
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="pt-fg-body">
-              {%- for cat in categories -%}
-                {%- unless cat == blank -%}
-                  {%- assign cat_count = collection.products | where: 'type', cat | size -%}
-                  <label class="pt-check">
-                    <input type="checkbox" data-filter-cat value="{{ cat | escape }}">
-                    <span class="pt-check-box"></span>
-                    <span class="pt-check-lbl">{{ cat }}</span>
-                    <span class="pt-check-ct">{{ cat_count }}</span>
-                  </label>
-                {%- endunless -%}
-              {%- endfor -%}
-            </div>
-          </div>
-        {%- endif -%}
-
-        {%- if enable_variant_filters -%}
-          {%- for opt_name in option_name_list -%}
-            {%- unless opt_name == blank or opt_name == 'Title' -%}
-              {%- assign opt_name_down = opt_name | downcase -%}
-              {%- assign is_swatch = false -%}
-              {%- if opt_name_down contains 'color' or opt_name_down contains 'finish' -%}
-                {%- assign is_swatch = true -%}
-              {%- endif -%}
-
-              {%- comment -%} Distinct values for this option name, pipe-delimited to avoid substring collisions. {%- endcomment -%}
-              {%- assign opt_values_str = '|' -%}
-              {%- for product in collection.products -%}
-                {%- for opt in product.options_with_values -%}
-                  {%- if opt.name == opt_name -%}
-                    {%- for val in opt.values -%}
-                      {%- assign val_needle = '|' | append: val | append: '|' -%}
-                      {%- unless opt_values_str contains val_needle -%}
-                        {%- assign opt_values_str = opt_values_str | append: val | append: '|' -%}
-                      {%- endunless -%}
-                    {%- endfor -%}
-                  {%- endif -%}
-                {%- endfor -%}
-              {%- endfor -%}
-              {%- assign opt_values = opt_values_str | split: '|' -%}
-
-              {%- comment -%}
-                Skip options with only one possible value — nothing for a
-                shopper to actually filter by.
-              {%- endcomment -%}
-              {%- if opt_values.size > 1 -%}
+        {%- for filter in collection.filters -%}
+          {%- liquid
+            assign skip_filter = false
+            if filter.type == 'price_range'
+              if enable_price_filter == false
+                assign skip_filter = true
+              endif
+            elsif filter.param_name contains 'option' and enable_variant_filters == false
+              assign skip_filter = true
+            endif
+            assign filter_label_down = filter.label | downcase
+            assign is_swatch = false
+            if filter_label_down contains 'color' or filter_label_down contains 'finish'
+              assign is_swatch = true
+            endif
+          -%}
+          {%- unless skip_filter -%}
+            {%- if filter.type == 'price_range' -%}
+              {%- if filter.range_max > filter.range_min -%}
                 <div class="pt-fg" data-open="1">
                   <button type="button" class="pt-fg-h" data-fg-toggle>
-                    {{ opt_name }}
+                    {{ filter.label }}
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   </button>
                   <div class="pt-fg-body">
-                    {%- if is_swatch -%}
-                      <div class="pt-swatches">
-                        {%- for val in opt_values -%}
-                          {%- unless val == blank -%}
-                            <button type="button" class="pt-sw" data-filter-option data-on="0" data-opt-name="{{ opt_name | escape }}" data-opt-value="{{ val | escape }}" title="{{ val | escape }}">
-                              <span style="background:{% render 'finish-hex', name: val %}"></span>
-                              {{ val }}
-                            </button>
-                          {%- endunless -%}
-                        {%- endfor -%}
+                    {%- liquid
+                      assign p_min = filter.range_min | divided_by: 100.0
+                      assign p_max = filter.range_max | divided_by: 100.0
+                      assign p_lo = filter.min_value.value | default: filter.range_min | divided_by: 100.0
+                      assign p_hi = filter.max_value.value | default: filter.range_max | divided_by: 100.0
+                    -%}
+                    <div class="pt-price" data-price-filter data-min="{{ p_min }}" data-max="{{ p_max }}">
+                      <div class="pt-price-vals"><span data-price-lo>{{ p_lo | times: 100 | money }}</span><span data-price-hi>{{ p_hi | times: 100 | money }}</span></div>
+                      <div class="pt-range">
+                        <div class="pt-range-fill" data-range-fill></div>
+                        <input type="range" min="{{ p_min }}" max="{{ p_max }}" value="{{ p_lo }}" data-range-lo name="{{ filter.min_value.param_name }}" aria-label="{{ 'sections.collection.price_min' | t }}">
+                        <input type="range" min="{{ p_min }}" max="{{ p_max }}" value="{{ p_hi }}" data-range-hi name="{{ filter.max_value.param_name }}" aria-label="{{ 'sections.collection.price_max' | t }}">
                       </div>
-                    {%- else -%}
-                      {%- for val in opt_values -%}
-                        {%- unless val == blank -%}
-                          {%- assign val_count = 0 -%}
-                          {%- for product in collection.products -%}
-                            {%- for opt in product.options_with_values -%}
-                              {%- if opt.name == opt_name and opt.values contains val -%}
-                                {%- assign val_count = val_count | plus: 1 -%}
-                              {%- endif -%}
-                            {%- endfor -%}
-                          {%- endfor -%}
-                          <label class="pt-check">
-                            <input type="checkbox" data-filter-option data-opt-name="{{ opt_name | escape }}" value="{{ val | escape }}">
-                            <span class="pt-check-box"></span>
-                            <span class="pt-check-lbl">{{ val }}</span>
-                            <span class="pt-check-ct">{{ val_count }}</span>
-                          </label>
-                        {%- endunless -%}
-                      {%- endfor -%}
-                    {%- endif -%}
+                    </div>
                   </div>
                 </div>
               {%- endif -%}
-            {%- endunless -%}
-          {%- endfor -%}
-        {%- endif -%}
-
-        {%- if enable_price_filter and price_max > price_min -%}
-          <div class="pt-fg" data-open="1">
-            <button type="button" class="pt-fg-h" data-fg-toggle>
-              {{ 'sections.collection.price' | t }}
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            </button>
-            <div class="pt-fg-body">
-              <div class="pt-price" data-price-filter data-min="{{ price_min }}" data-max="{{ price_max }}">
-                <div class="pt-price-vals"><span data-price-lo>{{ price_min | money }}</span><span data-price-hi>{{ price_max | money }}</span></div>
-                <div class="pt-range">
-                  <div class="pt-range-fill" data-range-fill></div>
-                  <input type="range" min="{{ price_min }}" max="{{ price_max }}" value="{{ price_min }}" data-range-lo>
-                  <input type="range" min="{{ price_min }}" max="{{ price_max }}" value="{{ price_max }}" data-range-hi>
+            {%- elsif filter.values.size > 0 -%}
+              <div class="pt-fg" data-open="1">
+                <button type="button" class="pt-fg-h" data-fg-toggle>
+                  {{ filter.label }}
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <div class="pt-fg-body">
+                  {%- if is_swatch -%}
+                    <div class="pt-swatches">
+                      {%- for value in filter.values -%}
+                        <button type="button" class="pt-sw" data-filter-swatch data-on="{% if value.active %}1{% else %}0{% endif %}" data-param="{{ value.param_name }}" data-value="{{ value.value | escape }}" {% if value.count == 0 and value.active == false %}disabled{% endif %} title="{{ value.label | escape }}">
+                          <span style="background:{% render 'finish-hex', name: value.label %}"></span>
+                          {{ value.label }}
+                        </button>
+                      {%- endfor -%}
+                    </div>
+                  {%- else -%}
+                    {%- for value in filter.values -%}
+                      <label class="pt-check">
+                        <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value | escape }}" {% if value.active %}checked{% endif %} {% if value.count == 0 and value.active == false %}disabled{% endif %} data-filter-checkbox>
+                        <span class="pt-check-box"></span>
+                        <span class="pt-check-lbl">{{ value.label }}</span>
+                        <span class="pt-check-ct">{{ value.count }}</span>
+                      </label>
+                    {%- endfor -%}
+                  {%- endif -%}
                 </div>
               </div>
-            </div>
-          </div>
-        {%- endif -%}
+            {%- endif -%}
+          {%- endunless -%}
+        {%- endfor -%}
 
         <button type="button" class="pt-btn pt-btn--solid pt-btn--full pt-side-apply" data-close-filters>{{ 'sections.collection.show_results' | t }}</button>
       </aside>
@@ -266,16 +199,34 @@
             </span>
             <label class="pt-sort">
               <span>{{ 'sections.collection.sort_label' | t }}</span>
-              <select data-sort>
-                <option value="featured">{{ 'sections.collection.sort_featured' | t }}</option>
-                <option value="priceup">{{ 'sections.collection.sort_price_low' | t }}</option>
-                <option value="pricedown">{{ 'sections.collection.sort_price_high' | t }}</option>
-                <option value="newest">{{ 'sections.collection.sort_newest' | t }}</option>
-                <option value="saving">{{ 'sections.collection.sort_saving' | t }}</option>
+              <select name="sort_by" data-sort>
+                {%- for option in collection.sort_options -%}
+                  <option value="{{ option.value }}" {% if option.value == collection.sort_by %}selected{% endif %}>{{ option.name }}</option>
+                {%- endfor -%}
               </select>
             </label>
           </div>
-          <div class="pt-tags" data-active-tags hidden></div>
+          {%- liquid
+            assign has_active_filters = false
+            for filter in collection.filters
+              if filter.active_values.size > 0 or filter.min_value.value != blank or filter.max_value.value != blank
+                assign has_active_filters = true
+              endif
+            endfor
+          -%}
+          <div class="pt-tags" data-active-tags {% unless has_active_filters %}hidden{% endunless %}>
+            {%- for filter in collection.filters -%}
+              {%- for value in filter.active_values -%}
+                <a href="{{ value.url_to_remove }}" class="pt-tag" data-remove-filter>
+                  {{ value.label }}
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+                </a>
+              {%- endfor -%}
+            {%- endfor -%}
+            {%- if has_active_filters -%}
+              <a href="{{ collection.url }}" class="pt-tag-clear" data-clear-filters>{{ 'sections.collection.clear_all' | t }}</a>
+            {%- endif -%}
+          </div>
         </div>
 
         <div class="pt-prod-grid pt-prod-grid--coll" data-coll-grid style="--cols:{{ grid_cols }}">
@@ -285,19 +236,12 @@
               if product.compare_at_price > product.price
                 assign on_sale = true
               endif
-              assign savings_pct = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price
               assign is_new = false
               if product.tags contains 'new' or product.tags contains 'New'
                 assign is_new = true
               endif
             -%}
-            <div class="pt-card pt-card--coll"
-                 data-coll-card
-                 data-cat="{{ product.type | escape }}"
-                 data-price="{{ product.price }}"
-                 data-new="{% if is_new %}1{% else %}0{% endif %}"
-                 data-saving="{{ savings_pct }}"
-                 data-options="{{ product.options_with_values | json | escape }}">
+            <div class="pt-card pt-card--coll">
               <button type="button" class="pt-card-media" data-quick-view data-handle="{{ product.handle }}" aria-label="{{ 'products.quick_view' | t }} — {{ product.title | escape }}">
                 {%- if product.featured_image -%}
                   {{ product.featured_image | image_url: width: 600 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: product.featured_image.alt | default: product.title, style: 'position:absolute;inset:0;height:100%;border-radius:inherit;' }}
@@ -348,16 +292,18 @@
           {%- endfor -%}
         </div>
 
-        <div class="pt-empty" data-no-results hidden>
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--pt-accent)" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
-          <h3>{{ 'sections.collection.no_results_heading' | t }}</h3>
-          <p>{{ 'sections.collection.no_results_text' | t }}</p>
-        </div>
+        {%- if collection.products.size == 0 -%}
+          <div class="pt-empty" data-no-results>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--pt-accent)" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+            <h3>{{ 'sections.collection.no_results_heading' | t }}</h3>
+            <p>{{ 'sections.collection.no_results_text' | t }}</p>
+          </div>
+        {%- endif -%}
 
         <div class="pt-sec-foot">{% render 'pagination', paginate: paginate %}</div>
         {%- endpaginate -%}
       </div>
-    </div>
+    </form>
 
   {%- endif -%}
 </div>
@@ -416,7 +362,7 @@
 
   .pt-side { position: sticky; top: 92px; font-family: var(--pt-font-body); }
   .pt-side-top { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--pt-line); margin-bottom: 6px; }
-  .pt-side-top h3 { font-family: var(--pt-font-head); font-size: 22px; flex: 1; }
+  .pt-side-top h2 { font-family: var(--pt-font-head); font-size: 22px; flex: 1; }
   .pt-side-clear { border: none; background: transparent; color: var(--pt-accent-deep); font-family: var(--pt-font-body); font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
   .pt-side-clear:hover { text-decoration: underline; }
   .pt-side-x { display: none; border: none; background: transparent; font-size: 17px; color: var(--pt-ink-soft); cursor: pointer; }
@@ -446,12 +392,12 @@
   .pt-sw[data-on="1"] { border-color: var(--pt-accent-deep); color: var(--pt-accent-deep); background: var(--pt-accent-soft); }
 
   .pt-price-vals { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: var(--pt-ink); margin-bottom: 10px; }
-  .pt-range { position: relative; height: 22px; }
-  .pt-range::before { content: ''; position: absolute; left: 0; right: 0; top: 10px; height: 3px; border-radius: 2px; background: var(--pt-line); }
-  .pt-range-fill { position: absolute; top: 10px; height: 3px; border-radius: 2px; background: var(--pt-accent); z-index: 1; }
-  .pt-range input { position: absolute; top: 0; left: 0; width: 100%; height: 22px; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; z-index: 2; }
-  .pt-range input::-webkit-slider-thumb { pointer-events: auto; -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 1px solid var(--pt-line); box-shadow: 0 1px 3px rgba(120,60,75,.3); cursor: pointer; }
-  .pt-range input::-moz-range-thumb { pointer-events: auto; width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 1px solid var(--pt-line); box-shadow: 0 1px 3px rgba(120,60,75,.3); cursor: pointer; }
+  .pt-range { position: relative; height: 24px; }
+  .pt-range::before { content: ''; position: absolute; left: 0; right: 0; top: 10.5px; height: 3px; border-radius: 2px; background: var(--pt-line); }
+  .pt-range-fill { position: absolute; top: 10.5px; height: 3px; border-radius: 2px; background: var(--pt-accent); z-index: 1; }
+  .pt-range input { position: absolute; top: 0; left: 0; width: 100%; height: 24px; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; z-index: 2; }
+  .pt-range input::-webkit-slider-thumb { pointer-events: auto; -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 1px solid var(--pt-line); box-shadow: 0 1px 3px rgba(120,60,75,.3); cursor: pointer; }
+  .pt-range input::-moz-range-thumb { pointer-events: auto; width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 1px solid var(--pt-line); box-shadow: 0 1px 3px rgba(120,60,75,.3); cursor: pointer; }
 
   .pt-sortbar { margin-bottom: 24px; font-family: var(--pt-font-body); }
   .pt-sortbar-row { display: flex; align-items: center; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--pt-line); }
@@ -561,209 +507,156 @@
       soldOut: page.dataset.iSoldOut
     };
 
-    // ── Filters + sort ──────────────────────────────────────────────────────
-    var grid = page.querySelector('[data-coll-grid]');
-    var cards = Array.prototype.slice.call(page.querySelectorAll('[data-coll-card]'));
-    var originalOrder = cards.slice();
-    var promo = page.querySelector('[data-promo]');
-    var noResults = page.querySelector('[data-no-results]');
-    var countNum = page.querySelector('[data-result-count-num]');
-    var countWord = page.querySelector('[data-result-count-word]');
-    var activeTagsEl = page.querySelector('[data-active-tags]');
-    var sortSelect = page.querySelector('[data-sort]');
-    var priceFilter = page.querySelector('[data-price-filter]');
-    var priceMin = priceFilter ? parseInt(priceFilter.dataset.min, 10) : 0;
-    var priceMax = priceFilter ? parseInt(priceFilter.dataset.max, 10) : 0;
+    // ── Filters + sort — driven by Shopify's real collection.filters API,
+    // re-fetched via ?section_id= so results, counts, and pagination are
+    // always the true server-side filtered set, not a client-side guess. ──
+    var facetsForm;
 
-    var cardOptions = new Map();
-    cards.forEach(function (card) {
-      var parsed = [];
-      try { parsed = JSON.parse(card.dataset.options || '[]'); } catch (e) { parsed = []; }
-      cardOptions.set(card, parsed);
-    });
-    function cardHasValue(card, name, value) {
-      var opts = cardOptions.get(card) || [];
-      var opt = opts.filter(function (o) { return o.name === name; })[0];
-      return !!(opt && opt.values.indexOf(value) !== -1);
-    }
-
-    var state = { cats: [], options: {}, lo: priceMin, hi: priceMax };
-
-    function toggleIn(list, val) {
-      var i = list.indexOf(val);
-      if (i === -1) list.push(val); else list.splice(i, 1);
-      return list;
-    }
-    function toggleOption(name, value) {
-      if (!state.options[name]) state.options[name] = [];
-      toggleIn(state.options[name], value);
-    }
-
-    function apply() {
-      var visible = 0;
-      cards.forEach(function (card) {
-        var cat = card.dataset.cat || '';
-        var price = parseInt(card.dataset.price, 10) || 0;
-        var okCat = state.cats.length === 0 || state.cats.indexOf(cat) !== -1;
-        var okOptions = Object.keys(state.options).every(function (name) {
-          var values = state.options[name];
-          if (!values.length) return true;
-          return values.some(function (v) { return cardHasValue(card, name, v); });
-        });
-        var okPrice = price >= state.lo && price <= state.hi;
-        var show = okCat && okOptions && okPrice;
-        card.hidden = !show;
-        if (show) visible += 1;
-      });
-
-      if (promo) promo.hidden = visible <= 6;
-      if (noResults) noResults.hidden = visible !== 0;
-      if (countNum) countNum.textContent = visible;
-      if (countWord) countWord.textContent = visible === 1 ? i18n.piece : i18n.pieces;
-
-      renderTags();
-    }
-
-    function renderTags() {
-      if (!activeTagsEl) return;
-      var chips = [];
-      state.cats.forEach(function (c) { chips.push({ group: 'cats', value: c, label: c }); });
-      Object.keys(state.options).forEach(function (name) {
-        state.options[name].forEach(function (v) { chips.push({ group: 'option', name: name, value: v, label: v }); });
-      });
-      if (state.lo > priceMin || state.hi < priceMax) {
-        chips.push({ group: 'price', label: money(state.lo) + '–' + money(state.hi) });
-      }
-      activeTagsEl.innerHTML = '';
-      activeTagsEl.hidden = chips.length === 0;
-      chips.forEach(function (chip) {
-        var btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'pt-tag';
-        btn.innerHTML = chip.label.replace(/&/g, '&amp;').replace(/</g, '&lt;') +
-          '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>';
-        btn.addEventListener('click', function () { removeFilter(chip); });
-        activeTagsEl.appendChild(btn);
-      });
-      if (chips.length) {
-        var clear = document.createElement('button');
-        clear.type = 'button';
-        clear.className = 'pt-tag-clear';
-        clear.textContent = i18n.clearAll;
-        clear.addEventListener('click', clearAll);
-        activeTagsEl.appendChild(clear);
-      }
-    }
-
-    function removeFilter(chip) {
-      if (chip.group === 'price') { state.lo = priceMin; state.hi = priceMax; syncPriceUI(); }
-      else if (chip.group === 'cats') { toggleIn(state.cats, chip.value); syncCatUI(); }
-      else if (chip.group === 'option') { toggleOption(chip.name, chip.value); syncOptionUI(); }
-      apply();
-    }
-
-    function clearAll() {
-      state.cats = []; state.options = {}; state.lo = priceMin; state.hi = priceMax;
-      syncCatUI(); syncOptionUI(); syncPriceUI();
-      apply();
-    }
-
-    function syncCatUI() {
-      page.querySelectorAll('[data-filter-cat]').forEach(function (input) {
-        input.checked = state.cats.indexOf(input.value) !== -1;
+    function bindWishlistState() {
+      var wished = window.ptLoadWishlist ? window.ptLoadWishlist() : [];
+      page.querySelectorAll('.pt-wish-btn').forEach(function (btn) {
+        var on = wished.indexOf(btn.dataset.productHandle) !== -1;
+        btn.dataset.on = on ? '1' : '0';
+        var svg = btn.querySelector('svg');
+        if (svg) svg.setAttribute('fill', on ? 'currentColor' : 'none');
       });
     }
-    function syncOptionUI() {
-      page.querySelectorAll('input[data-filter-option]').forEach(function (input) {
-        var vals = state.options[input.dataset.optName] || [];
-        input.checked = vals.indexOf(input.value) !== -1;
-      });
-      page.querySelectorAll('button[data-filter-option]').forEach(function (btn) {
-        var vals = state.options[btn.dataset.optName] || [];
-        btn.dataset.on = vals.indexOf(btn.dataset.optValue) !== -1 ? '1' : '0';
-      });
-    }
-    function syncPriceUI() {
-      if (!priceFilter) return;
+
+    function syncPriceFill(priceFilter) {
       var loInput = priceFilter.querySelector('[data-range-lo]');
       var hiInput = priceFilter.querySelector('[data-range-hi]');
       var loLbl = priceFilter.querySelector('[data-price-lo]');
       var hiLbl = priceFilter.querySelector('[data-price-hi]');
       var fill = priceFilter.querySelector('[data-range-fill]');
-      if (loInput) loInput.value = state.lo;
-      if (hiInput) hiInput.value = state.hi;
-      if (loLbl) loLbl.textContent = money(state.lo);
-      if (hiLbl) hiLbl.textContent = money(state.hi);
-      if (fill && priceMax > priceMin) {
-        var left = ((state.lo - priceMin) / (priceMax - priceMin)) * 100;
-        var right = 100 - ((state.hi - priceMin) / (priceMax - priceMin)) * 100;
-        fill.style.left = left + '%';
-        fill.style.right = right + '%';
+      var pMin = parseFloat(priceFilter.dataset.min);
+      var pMax = parseFloat(priceFilter.dataset.max);
+      var lo = parseFloat(loInput.value);
+      var hi = parseFloat(hiInput.value);
+      if (loLbl) loLbl.textContent = money(Math.round(lo * 100));
+      if (hiLbl) hiLbl.textContent = money(Math.round(hi * 100));
+      if (fill && pMax > pMin) {
+        fill.style.left = (((lo - pMin) / (pMax - pMin)) * 100) + '%';
+        fill.style.right = (100 - ((hi - pMin) / (pMax - pMin)) * 100) + '%';
       }
     }
 
-    page.querySelectorAll('[data-filter-cat]').forEach(function (input) {
-      input.addEventListener('change', function () { toggleIn(state.cats, input.value); apply(); });
-    });
-    page.querySelectorAll('input[data-filter-option]').forEach(function (input) {
-      input.addEventListener('change', function () { toggleOption(input.dataset.optName, input.value); apply(); });
-    });
-    page.querySelectorAll('button[data-filter-option]').forEach(function (btn) {
-      btn.addEventListener('click', function () { toggleOption(btn.dataset.optName, btn.dataset.optValue); syncOptionUI(); apply(); });
-    });
-    if (priceFilter) {
-      var loInput = priceFilter.querySelector('[data-range-lo]');
-      var hiInput = priceFilter.querySelector('[data-range-hi]');
-      if (loInput) loInput.addEventListener('input', function () {
-        state.lo = Math.min(parseInt(loInput.value, 10), state.hi - 1);
-        syncPriceUI(); apply();
+    function buildQuery() {
+      var params = new URLSearchParams();
+      if (!facetsForm) return params;
+      facetsForm.querySelectorAll('[data-filter-checkbox]:checked').forEach(function (input) {
+        params.append(input.name, input.value);
       });
-      if (hiInput) hiInput.addEventListener('input', function () {
-        state.hi = Math.max(parseInt(hiInput.value, 10), state.lo + 1);
-        syncPriceUI(); apply();
+      facetsForm.querySelectorAll('[data-filter-swatch][data-on="1"]').forEach(function (btn) {
+        params.append(btn.dataset.param, btn.dataset.value);
       });
-      syncPriceUI();
-    }
-
-    var clearBtn = page.querySelector('[data-clear-filters]');
-    if (clearBtn) clearBtn.addEventListener('click', clearAll);
-
-    // filter groups collapse
-    page.querySelectorAll('[data-fg-toggle]').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var fg = btn.closest('.pt-fg');
-        fg.dataset.open = fg.dataset.open === '1' ? '0' : '1';
-      });
-    });
-
-    // mobile filter drawer
-    var side = page.querySelector('[data-side]');
-    var sideScrim = page.querySelector('[data-side-scrim]');
-    function openSide() { if (side) side.classList.add('is-open'); if (sideScrim) sideScrim.classList.add('is-open'); }
-    function closeSide() { if (side) side.classList.remove('is-open'); if (sideScrim) sideScrim.classList.remove('is-open'); }
-    page.querySelectorAll('[data-open-filters]').forEach(function (btn) { btn.addEventListener('click', openSide); });
-    page.querySelectorAll('[data-close-filters]').forEach(function (btn) { btn.addEventListener('click', closeSide); });
-    if (sideScrim) sideScrim.addEventListener('click', closeSide);
-
-    // sort
-    function sortCards(mode) {
-      var list = cards.slice();
-      if (mode === 'priceup') list.sort(function (a, b) { return (a.dataset.price | 0) - (b.dataset.price | 0); });
-      else if (mode === 'pricedown') list.sort(function (a, b) { return (b.dataset.price | 0) - (a.dataset.price | 0); });
-      else if (mode === 'newest') list.sort(function (a, b) { return (b.dataset.new | 0) - (a.dataset.new | 0); });
-      else if (mode === 'saving') list.sort(function (a, b) { return (b.dataset.saving | 0) - (a.dataset.saving | 0); });
-      else list = originalOrder.slice();
-
-      list.forEach(function (card) { grid.appendChild(card); });
-      if (promo) {
-        if (list.length > 6) grid.insertBefore(promo, list[6]);
-        else grid.appendChild(promo);
+      var priceFilter = facetsForm.querySelector('[data-price-filter]');
+      if (priceFilter) {
+        var loInput = priceFilter.querySelector('[data-range-lo]');
+        var hiInput = priceFilter.querySelector('[data-range-hi]');
+        var pMin = parseFloat(priceFilter.dataset.min);
+        var pMax = parseFloat(priceFilter.dataset.max);
+        if (loInput && parseFloat(loInput.value) > pMin) params.append(loInput.name, Math.round(parseFloat(loInput.value) * 100));
+        if (hiInput && parseFloat(hiInput.value) < pMax) params.append(hiInput.name, Math.round(parseFloat(hiInput.value) * 100));
       }
-      cards = list;
+      var sortSelect = facetsForm.querySelector('[data-sort]');
+      if (sortSelect && sortSelect.value) params.append('sort_by', sortSelect.value);
+      return params;
     }
-    if (sortSelect) sortSelect.addEventListener('change', function () { sortCards(sortSelect.value); apply(); });
 
-    apply();
+    function submitFacets() {
+      var params = buildQuery();
+      var base = facetsForm.getAttribute('action') || window.location.pathname;
+      var url = base + (params.toString() ? '?' + params.toString() : '');
+      fetchAndSwap(url);
+    }
+
+    function fetchAndSwap(url) {
+      var layout = page.querySelector('.pt-coll-layout');
+      if (layout) layout.classList.add('is-loading');
+      var sep = url.indexOf('?') === -1 ? '?' : '&';
+      fetch(url + sep + 'section_id=' + page.dataset.sectionId)
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+          var newLayout = doc.querySelector('.pt-coll-layout');
+          if (newLayout && layout) layout.replaceWith(newLayout);
+          history.pushState({ ptFacets: true }, '', url);
+          bindFacets();
+          bindWishlistState();
+          var top = page.getBoundingClientRect().top + window.scrollY - 96;
+          if (window.scrollY > top) window.scrollTo({ top: top, behavior: 'smooth' });
+        })
+        .catch(function () { window.location.href = url; });
+    }
+
+    function bindFacets() {
+      facetsForm = page.querySelector('[data-facets-form]');
+      if (!facetsForm) return;
+
+      facetsForm.querySelectorAll('[data-filter-checkbox]').forEach(function (input) {
+        input.addEventListener('change', submitFacets);
+      });
+      facetsForm.querySelectorAll('[data-filter-swatch]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (btn.disabled) return;
+          btn.dataset.on = btn.dataset.on === '1' ? '0' : '1';
+          submitFacets();
+        });
+      });
+
+      var priceFilter = facetsForm.querySelector('[data-price-filter]');
+      if (priceFilter) {
+        var loInput = priceFilter.querySelector('[data-range-lo]');
+        var hiInput = priceFilter.querySelector('[data-range-hi]');
+        syncPriceFill(priceFilter);
+        if (loInput) {
+          loInput.addEventListener('input', function () {
+            if (parseFloat(loInput.value) > parseFloat(hiInput.value) - 1) loInput.value = parseFloat(hiInput.value) - 1;
+            syncPriceFill(priceFilter);
+          });
+          loInput.addEventListener('change', submitFacets);
+        }
+        if (hiInput) {
+          hiInput.addEventListener('input', function () {
+            if (parseFloat(hiInput.value) < parseFloat(loInput.value) + 1) hiInput.value = parseFloat(loInput.value) + 1;
+            syncPriceFill(priceFilter);
+          });
+          hiInput.addEventListener('change', submitFacets);
+        }
+      }
+
+      var sortSelect = facetsForm.querySelector('[data-sort]');
+      if (sortSelect) sortSelect.addEventListener('change', submitFacets);
+
+      page.querySelectorAll('[data-remove-filter], .pt-tag-clear, .pt-side-clear').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          fetchAndSwap(link.getAttribute('href'));
+        });
+      });
+
+      page.querySelectorAll('[data-fg-toggle]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var fg = btn.closest('.pt-fg');
+          fg.dataset.open = fg.dataset.open === '1' ? '0' : '1';
+        });
+      });
+
+      var side = page.querySelector('[data-side]');
+      var sideScrim = page.querySelector('[data-side-scrim]');
+      function openSide() { if (side) side.classList.add('is-open'); if (sideScrim) sideScrim.classList.add('is-open'); }
+      function closeSide() { if (side) side.classList.remove('is-open'); if (sideScrim) sideScrim.classList.remove('is-open'); }
+      page.querySelectorAll('[data-open-filters]').forEach(function (btn) { btn.addEventListener('click', openSide); });
+      page.querySelectorAll('[data-close-filters]').forEach(function (btn) { btn.addEventListener('click', closeSide); });
+      if (sideScrim) sideScrim.addEventListener('click', closeSide);
+    }
+
+    bindFacets();
+
+    window.addEventListener('popstate', function (e) {
+      if (!e.state || !e.state.ptFacets) return;
+      fetchAndSwap(window.location.pathname + window.location.search);
+    });
 
     // ── Quick view ───────────────────────────────────────────────────────────
     var scrim = document.querySelector('[data-qv-scrim]');
@@ -932,8 +825,9 @@
       setTimeout(function () { scrim.hidden = true; }, 250);
     }
 
-    page.querySelectorAll('[data-quick-view]').forEach(function (btn) {
-      btn.addEventListener('click', function () { openQuickView(btn.dataset.handle); });
+    page.addEventListener('click', function (e) {
+      var qvBtn = e.target.closest('[data-quick-view]');
+      if (qvBtn) openQuickView(qvBtn.dataset.handle);
     });
     if (qvClose) qvClose.addEventListener('click', closeQuickView);
     scrim.addEventListener('click', function (e) { if (e.target === scrim) closeQuickView(); });

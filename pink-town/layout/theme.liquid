@@ -3,16 +3,21 @@
   <head>
     {% render 'css-variables' %}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Mulish:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-
-    {% unless settings.type_primary_font.system? %}
+    {% unless settings.type_heading_font.system? and settings.type_body_font.system? %}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
-      {{ settings.type_primary_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+      {% unless settings.type_heading_font.system? %}
+        {{ settings.type_heading_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+      {% endunless %}
+      {% unless settings.type_body_font.system? %}
+        {{ settings.type_body_font | font_url | preload_tag: as: 'font', crossorigin: 'anonymous' }}
+      {% endunless %}
     {% endunless %}
 
     {{ 'critical.css' | asset_url | stylesheet_tag: preload: true }}
+
+    {% if settings.favicon != blank %}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    {% endif %}
 
     {% render 'meta-tags' %}
 
@@ -20,20 +25,24 @@
   </head>
 
   <body>
+    <a class="pt-skip-link" href="#main-content">{{ 'general.accessibility.skip_to_content' | t }}</a>
+
     {% sections 'header-group' %}
 
-    {%- comment -%}
-      Shopify always renders its own built-in markup for shop policy pages
-      (Privacy Policy, Terms of Service, Refund Policy, Shipping Policy) and
-      ignores any templates/policy.liquid or .json file entirely. The only
-      documented way to apply theme styling to them is to intercept here in
-      the layout and render our own section instead of the default output.
-    {%- endcomment -%}
-    {%- if request.path contains '/policies/' -%}
-      {% section 'main-policy' %}
-    {%- else -%}
-      {{ content_for_layout }}
-    {%- endif -%}
+    <main id="main-content">
+      {%- comment -%}
+        Shopify always renders its own built-in markup for shop policy pages
+        (Privacy Policy, Terms of Service, Refund Policy, Shipping Policy) and
+        ignores any templates/policy.liquid or .json file entirely. The only
+        documented way to apply theme styling to them is to intercept here in
+        the layout and render our own section instead of the default output.
+      {%- endcomment -%}
+      {%- if request.path contains '/policies/' -%}
+        {% section 'main-policy' %}
+      {%- else -%}
+        {{ content_for_layout }}
+      {%- endif -%}
+    </main>
 
     {% sections 'footer-group' %}
 

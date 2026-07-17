@@ -10,7 +10,7 @@
 
   <div class="pt-insta-grid">
     {%- for block in section.blocks -%}
-      <a href="{{ block.settings.url | default: '#' }}" class="pt-insta-tile" {{ block.shopify_attributes }} {% if block.settings.url != blank %}target="_blank" rel="noopener"{% endif %}>
+      <a href="{{ block.settings.url | default: '#' }}" class="pt-insta-tile" aria-label="{{ 'sections.instagram.view_post' | t }}" {{ block.shopify_attributes }} {% if block.settings.url != blank %}target="_blank" rel="noopener"{% endif %}>
         {%- if block.settings.image -%}
           {{ block.settings.image | image_url: width: 600 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: '' }}
         {%- else -%}

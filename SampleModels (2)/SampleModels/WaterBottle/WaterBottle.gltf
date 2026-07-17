@@ -1,0 +1,278 @@
+{
+    "asset" : {
+        "generator" : "Khronos glTF Blender I/O v0.9.36",
+        "version" : "2.0"
+    },
+    "scene" : 0,
+    "scenes" : [
+        {
+            "name" : "Scene",
+            "nodes" : [
+                0,
+                1,
+                3,
+                5,
+                8
+            ]
+        }
+    ],
+    "nodes" : [
+        {
+            "name" : "Light",
+            "rotation" : [
+                0.16907575726509094,
+                0.7558803558349609,
+                -0.27217137813568115,
+                0.570947527885437
+            ],
+            "translation" : [
+                4.076245307922363,
+                5.903861999511719,
+                -1.0054539442062378
+            ]
+        },
+        {
+            "name" : "Camera",
+            "rotation" : [
+                0.483536034822464,
+                0.33687159419059753,
+                -0.20870360732078552,
+                0.7804827094078064
+            ],
+            "translation" : [
+                7.358891487121582,
+                4.958309173583984,
+                6.925790786743164
+            ]
+        },
+        {
+            "name" : "desk_3"
+        },
+        {
+            "children" : [
+                2
+            ],
+            "name" : "root",
+            "rotation" : [
+                0.7071068286895752,
+                0,
+                0,
+                0.7071067094802856
+            ],
+            "scale" : [
+                63.99034118652344,
+                63.99034881591797,
+                63.99034881591797
+            ],
+            "translation" : [
+                0.00551605224609375,
+                36.710662841796875,
+                0.002228901255875826
+            ]
+        },
+        {
+            "name" : "MagnoliaMarketTote:LOW_GRP1"
+        },
+        {
+            "children" : [
+                4
+            ],
+            "name" : "root.001",
+            "rotation" : [
+                0.7071068286895752,
+                0,
+                0,
+                0.7071067094802856
+            ],
+            "scale" : [
+                32.38530731201172,
+                32.385311126708984,
+                32.385311126708984
+            ],
+            "translation" : [
+                0.06223487854003906,
+                2.7274484634399414,
+                -9.36382007598877
+            ]
+        },
+        {
+            "mesh" : 0,
+            "name" : "WaterBottle:bottle3.001",
+            "rotation" : [
+                0,
+                0,
+                -0.7198297381401062,
+                0.6941508054733276
+            ],
+            "scale" : [
+                0.010281117632985115,
+                0.010281139053404331,
+                0.010281139053404331
+            ],
+            "translation" : [
+                0.0007695581298321486,
+                0.00013649160973727703,
+                0.984928548336029
+            ]
+        },
+        {
+            "children" : [
+                6
+            ],
+            "name" : "WaterBottle:bottle3"
+        },
+        {
+            "children" : [
+                7
+            ],
+            "name" : "root.002",
+            "rotation" : [
+                0.7071068286895752,
+                0,
+                0,
+                0.7071067094802856
+            ],
+            "scale" : [
+                12.890946388244629,
+                12.890948295593262,
+                12.890948295593262
+            ],
+            "translation" : [
+                -0.00919485092163086,
+                12.829540252685547,
+                -0.00045198685256764293
+            ]
+        }
+    ],
+    "materials" : [
+        {
+            "name" : "lambert1.001",
+            "normalTexture" : {
+                "index" : 0,
+                "texCoord" : 0
+            },
+            "occlusionTexture" : {
+                "index" : 1,
+                "texCoord" : 0
+            },
+            "pbrMetallicRoughness" : {
+                "baseColorTexture" : {
+                    "index" : 2,
+                    "texCoord" : 0
+                },
+                "metallicRoughnessTexture" : {
+                    "index" : 1,
+                    "texCoord" : 0
+                }
+            }
+        }
+    ],
+    "meshes" : [
+        {
+            "name" : "WaterBottle:bottle3",
+            "primitives" : [
+                {
+                    "attributes" : {
+                        "POSITION" : 0,
+                        "NORMAL" : 1,
+                        "TEXCOORD_0" : 2
+                    },
+                    "indices" : 3,
+                    "material" : 0
+                }
+            ]
+        }
+    ],
+    "textures" : [
+        {
+            "source" : 0
+        },
+        {
+            "source" : 1
+        },
+        {
+            "source" : 2
+        }
+    ],
+    "images" : [
+        {
+            "mimeType" : "image/png",
+            "name" : "Image_2",
+            "uri" : "Image_2.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "Image_1",
+            "uri" : "Image_1.png"
+        },
+        {
+            "mimeType" : "image/png",
+            "name" : "Image_0",
+            "uri" : "Image_0.png"
+        }
+    ],
+    "accessors" : [
+        {
+            "bufferView" : 0,
+            "componentType" : 5126,
+            "count" : 4857,
+            "max" : [
+                0.26462864875793457,
+                0.2646298110485077,
+                0.999222993850708
+            ],
+            "min" : [
+                -0.26462867856025696,
+                -0.2646297812461853,
+                -0.9681854844093323
+            ],
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 1,
+            "componentType" : 5126,
+            "count" : 4857,
+            "type" : "VEC3"
+        },
+        {
+            "bufferView" : 2,
+            "componentType" : 5126,
+            "count" : 4857,
+            "type" : "VEC2"
+        },
+        {
+            "bufferView" : 3,
+            "componentType" : 5123,
+            "count" : 20658,
+            "type" : "SCALAR"
+        }
+    ],
+    "bufferViews" : [
+        {
+            "buffer" : 0,
+            "byteLength" : 58284,
+            "byteOffset" : 0
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 58284,
+            "byteOffset" : 58284
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 38856,
+            "byteOffset" : 116568
+        },
+        {
+            "buffer" : 0,
+            "byteLength" : 41316,
+            "byteOffset" : 155424
+        }
+    ],
+    "buffers" : [
+        {
+            "byteLength" : 196740,
+            "uri" : "WaterBottle.bin"
+        }
+    ]
+}

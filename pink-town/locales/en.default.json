@@ -61,6 +61,7 @@
       "close": "Close",
       "account": "Account",
       "search": "Search",
+      "submenu": "{{ title }} submenu",
       "wishlist": "Wishlist",
       "nav_left": "Main navigation",
       "nav_right": "Secondary navigation",
@@ -137,9 +138,14 @@
     "placeholder": "Search articles, pages, or products",
     "submit": "Search",
     "no_results_html": "No results found for {{ terms }}",
-    "results_for_html": "{{ count }} results found for {{ terms }}"
+    "results_for_html": "{{ count }} results found for {{ terms }}",
+    "result": "result",
+    "results": "results"
   },
   "sections": {
+    "featured_product": {
+      "pick_product": "Select a product to feature in section settings."
+    },
     "hero": {
       "image_placeholder": "Product image",
       "from_price": "From $18",
@@ -199,6 +205,8 @@
       "show_results": "Show results",
       "category": "Category",
       "price": "Price",
+      "price_min": "Minimum price",
+      "price_max": "Maximum price",
       "sort_label": "Sort",
       "sort_featured": "Featured",
       "sort_price_low": "Price: low to high",
@@ -224,6 +232,9 @@
       "breadcrumb": "Collections",
       "empty_heading": "No collections yet",
       "empty_text": "Check back soon — collections are on the way."
+    },
+    "instagram": {
+      "view_post": "View post on Instagram"
     },
     "contact": {
       "breadcrumb": "Contact",
@@ -284,7 +295,9 @@
       "results_heading_html": "{{ count }} results for &ldquo;{{ terms }}&rdquo;",
       "type_product": "Product",
       "type_article": "Journal",
-      "type_page": "Page"
+      "type_page": "Page",
+      "no_filtered_results_heading": "Nothing matches those filters",
+      "no_filtered_results_text": "Try loosening a filter or two — there's magic in here somewhere."
     },
     "password": {
       "admin_link": "Are you the store owner? Log in here"

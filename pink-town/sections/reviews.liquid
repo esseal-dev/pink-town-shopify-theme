@@ -21,7 +21,7 @@
     <div class="pt-rev-track">
       {%- for block in section.blocks -%}
         <figure class="pt-rev" {{ block.shopify_attributes }}>
-          <span class="pt-stars" aria-label="{{ block.settings.stars }} {{ 'sections.reviews.stars_label' | t }}">
+          <span class="pt-stars" role="img" aria-label="{{ block.settings.stars }} {{ 'sections.reviews.stars_label' | t }}">
             {%- for i in (1..5) -%}
               {%- if i <= block.settings.stars -%}
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.4"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8L3.5 9.7l5.9-.9L12 3.5z" stroke-linejoin="round"/></svg>

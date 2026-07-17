@@ -1,6 +1,8 @@
 {% comment %}
   This section is used in the search template to render search results for
-  products, articles, and pages.
+  products, articles, and pages. Product results can be narrowed with a
+  real faceted filter sidebar (search.filters), using the same
+  fetch-and-swap pattern as sections/collection.liquid.
 
   https://shopify.dev/docs/storefronts/themes/architecture/templates/search
 {% endcomment %}
@@ -40,56 +42,194 @@
 
   {%- else -%}
 
-    <section class="pt-section pt-search-results full-width">
+    <section class="pt-section pt-search-results full-width" data-section-id="{{ section.id }}">
       <p class="pt-search-count">{{ 'sections.search.results_heading_html' | t: count: search.results_count, terms: search.terms }}</p>
 
-      {%- paginate search.results by 20 -%}
-        <div class="pt-search-grid">
-          {%- for result in search.results -%}
-            {%- if result.object_type == 'product' -%}
-              <a href="{{ result.url }}" class="pt-card pt-search-card">
-                <div class="pt-card-media">
-                  <div class="pt-ph">
-                    {%- if result.featured_image -%}
-                      {{ result.featured_image | image_url: width: 600 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: result.featured_image.alt | default: result.title }}
-                    {%- endif -%}
-                  </div>
-                  <span class="pt-search-type">{{ 'sections.search.type_product' | t }}</span>
-                </div>
-                <div class="pt-card-info">
-                  <h3 class="pt-card-name">{{ result.title | escape }}</h3>
-                  <div class="pt-card-price">
-                    <span class="pt-price-now">{{ result.price | money }}</span>
-                  </div>
-                </div>
-              </a>
-            {%- else -%}
-              <a href="{{ result.url }}" class="pt-card pt-search-card pt-search-card--doc">
-                <div class="pt-card-media">
-                  <div class="pt-ph">
-                    {%- if result.image -%}
-                      {{ result.image | image_url: width: 600 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: result.image.alt | default: result.title }}
-                    {%- else -%}
-                      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--pt-accent)" stroke-width="1.6" aria-hidden="true"><path d="M6 3h9l3 3v15H6z" stroke-linejoin="round"/><path d="M9 12h6M9 16h6M9 8h3"/></svg>
-                    {%- endif -%}
-                  </div>
-                  <span class="pt-search-type">{%- if result.object_type == 'article' -%}{{ 'sections.search.type_article' | t }}{%- else -%}{{ 'sections.search.type_page' | t }}{%- endif -%}</span>
-                </div>
-                <div class="pt-card-info">
-                  <h3 class="pt-card-name">{{ result.title | escape }}</h3>
-                  {%- if result.excerpt != blank -%}
-                    <p class="pt-search-excerpt">{{ result.excerpt | strip_html | truncate: 90 }}</p>
-                  {%- elsif result.content != blank -%}
-                    <p class="pt-search-excerpt">{{ result.content | strip_html | truncate: 90 }}</p>
-                  {%- endif -%}
-                </div>
-              </a>
-            {%- endif -%}
-          {%- endfor -%}
-        </div>
+      <form class="pt-coll-layout" data-facets-form action="{{ routes.search_url }}" method="get">
+        <input type="hidden" name="q" value="{{ search.terms | escape }}">
+        <input type="hidden" name="type" value="product,article,page">
 
-        <div class="pt-sec-foot">{% render 'pagination', paginate: paginate %}</div>
-      {%- endpaginate -%}
+        {%- if search.filters.size > 0 -%}
+          <aside class="pt-side" data-side>
+            <div class="pt-side-top">
+              <h2>{{ 'sections.collection.filters' | t }}</h2>
+              <a href="{{ routes.search_url }}?q={{ search.terms | url_encode }}&type=product,article,page" class="pt-side-clear" data-clear-filters>{{ 'sections.collection.clear_all' | t }}</a>
+              <button type="button" class="pt-side-x" data-close-filters aria-label="{{ 'sections.collection.close_filters' | t }}">✕</button>
+            </div>
+
+            {%- for filter in search.filters -%}
+              {%- liquid
+                assign filter_label_down = filter.label | downcase
+                assign is_swatch = false
+                if filter_label_down contains 'color' or filter_label_down contains 'finish'
+                  assign is_swatch = true
+                endif
+              -%}
+              {%- if filter.type == 'price_range' -%}
+                {%- if filter.range_max > filter.range_min -%}
+                  <div class="pt-fg" data-open="1">
+                    <button type="button" class="pt-fg-h" data-fg-toggle>
+                      {{ filter.label }}
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <div class="pt-fg-body">
+                      {%- liquid
+                        assign p_min = filter.range_min | divided_by: 100.0
+                        assign p_max = filter.range_max | divided_by: 100.0
+                        assign p_lo = filter.min_value.value | default: filter.range_min | divided_by: 100.0
+                        assign p_hi = filter.max_value.value | default: filter.range_max | divided_by: 100.0
+                      -%}
+                      <div class="pt-price" data-price-filter data-min="{{ p_min }}" data-max="{{ p_max }}">
+                        <div class="pt-price-vals"><span data-price-lo>{{ p_lo | times: 100 | money }}</span><span data-price-hi>{{ p_hi | times: 100 | money }}</span></div>
+                        <div class="pt-range">
+                          <div class="pt-range-fill" data-range-fill></div>
+                          <input type="range" min="{{ p_min }}" max="{{ p_max }}" value="{{ p_lo }}" data-range-lo name="{{ filter.min_value.param_name }}" aria-label="{{ 'sections.collection.price_min' | t }}">
+                          <input type="range" min="{{ p_min }}" max="{{ p_max }}" value="{{ p_hi }}" data-range-hi name="{{ filter.max_value.param_name }}" aria-label="{{ 'sections.collection.price_max' | t }}">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                {%- endif -%}
+              {%- elsif filter.values.size > 0 -%}
+                <div class="pt-fg" data-open="1">
+                  <button type="button" class="pt-fg-h" data-fg-toggle>
+                    {{ filter.label }}
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  </button>
+                  <div class="pt-fg-body">
+                    {%- if is_swatch -%}
+                      <div class="pt-swatches">
+                        {%- for value in filter.values -%}
+                          <button type="button" class="pt-sw" data-filter-swatch data-on="{% if value.active %}1{% else %}0{% endif %}" data-param="{{ value.param_name }}" data-value="{{ value.value | escape }}" {% if value.count == 0 and value.active == false %}disabled{% endif %} title="{{ value.label | escape }}">
+                            <span style="background:{% render 'finish-hex', name: value.label %}"></span>
+                            {{ value.label }}
+                          </button>
+                        {%- endfor -%}
+                      </div>
+                    {%- else -%}
+                      {%- for value in filter.values -%}
+                        <label class="pt-check">
+                          <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value | escape }}" {% if value.active %}checked{% endif %} {% if value.count == 0 and value.active == false %}disabled{% endif %} data-filter-checkbox>
+                          <span class="pt-check-box"></span>
+                          <span class="pt-check-lbl">{{ value.label }}</span>
+                          <span class="pt-check-ct">{{ value.count }}</span>
+                        </label>
+                      {%- endfor -%}
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- endif -%}
+            {%- endfor -%}
+
+            <button type="button" class="pt-btn pt-btn--solid pt-btn--full pt-side-apply" data-close-filters>{{ 'sections.collection.show_results' | t }}</button>
+          </aside>
+          <div class="pt-side-scrim" data-side-scrim></div>
+        {%- endif -%}
+
+        <div class="pt-coll-main">
+          {%- paginate search.results by 20 -%}
+          <div class="pt-sortbar">
+            <div class="pt-sortbar-row">
+              {%- if search.filters.size > 0 -%}
+                <button type="button" class="pt-filter-btn" data-open-filters>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 5h18M6 12h12M10 19h4" stroke-linecap="round"/></svg>
+                  {{ 'sections.collection.filters' | t }}
+                </button>
+              {%- endif -%}
+              <span class="pt-count" data-result-count>
+                <b data-result-count-num>{{ search.results.size }}</b>
+                <span data-result-count-word>{% if search.results.size == 1 %}{{ 'search.result' | t }}{% else %}{{ 'search.results' | t }}{% endif %}</span>
+              </span>
+              {%- if search.sort_options.size > 0 -%}
+                <label class="pt-sort">
+                  <span>{{ 'sections.collection.sort_label' | t }}</span>
+                  <select name="sort_by" data-sort>
+                    {%- for option in search.sort_options -%}
+                      <option value="{{ option.value }}" {% if option.value == search.sort_by %}selected{% endif %}>{{ option.name }}</option>
+                    {%- endfor -%}
+                  </select>
+                </label>
+              {%- endif -%}
+            </div>
+            {%- liquid
+              assign has_active_filters = false
+              for filter in search.filters
+                if filter.active_values.size > 0 or filter.min_value.value != blank or filter.max_value.value != blank
+                  assign has_active_filters = true
+                endif
+              endfor
+            -%}
+            <div class="pt-tags" data-active-tags {% unless has_active_filters %}hidden{% endunless %}>
+              {%- for filter in search.filters -%}
+                {%- for value in filter.active_values -%}
+                  <a href="{{ value.url_to_remove }}" class="pt-tag" data-remove-filter>
+                    {{ value.label }}
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6L6 18" stroke-linecap="round"/></svg>
+                  </a>
+                {%- endfor -%}
+              {%- endfor -%}
+              {%- if has_active_filters -%}
+                <a href="{{ routes.search_url }}?q={{ search.terms | url_encode }}&type=product,article,page" class="pt-tag-clear" data-clear-filters>{{ 'sections.collection.clear_all' | t }}</a>
+              {%- endif -%}
+            </div>
+          </div>
+
+          <div class="pt-search-grid" data-coll-grid>
+            {%- for result in search.results -%}
+              {%- if result.object_type == 'product' -%}
+                <a href="{{ result.url }}" class="pt-card pt-search-card">
+                  <div class="pt-card-media">
+                    <div class="pt-ph">
+                      {%- if result.featured_image -%}
+                        {{ result.featured_image | image_url: width: 600 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: result.featured_image.alt | default: result.title }}
+                      {%- endif -%}
+                    </div>
+                    <span class="pt-search-type">{{ 'sections.search.type_product' | t }}</span>
+                  </div>
+                  <div class="pt-card-info">
+                    <h3 class="pt-card-name">{{ result.title | escape }}</h3>
+                    <div class="pt-card-price">
+                      <span class="pt-price-now">{{ result.price | money }}</span>
+                    </div>
+                  </div>
+                </a>
+              {%- else -%}
+                <a href="{{ result.url }}" class="pt-card pt-search-card pt-search-card--doc">
+                  <div class="pt-card-media">
+                    <div class="pt-ph">
+                      {%- if result.image -%}
+                        {{ result.image | image_url: width: 600 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: result.image.alt | default: result.title }}
+                      {%- else -%}
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="var(--pt-accent)" stroke-width="1.6" aria-hidden="true"><path d="M6 3h9l3 3v15H6z" stroke-linejoin="round"/><path d="M9 12h6M9 16h6M9 8h3"/></svg>
+                      {%- endif -%}
+                    </div>
+                    <span class="pt-search-type">{%- if result.object_type == 'article' -%}{{ 'sections.search.type_article' | t }}{%- else -%}{{ 'sections.search.type_page' | t }}{%- endif -%}</span>
+                  </div>
+                  <div class="pt-card-info">
+                    <h3 class="pt-card-name">{{ result.title | escape }}</h3>
+                    {%- if result.excerpt != blank -%}
+                      <p class="pt-search-excerpt">{{ result.excerpt | strip_html | truncate: 90 }}</p>
+                    {%- elsif result.content != blank -%}
+                      <p class="pt-search-excerpt">{{ result.content | strip_html | truncate: 90 }}</p>
+                    {%- endif -%}
+                  </div>
+                </a>
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+
+          {%- if search.results.size == 0 -%}
+            <div class="pt-empty" data-no-results>
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--pt-accent)" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+              <h3>{{ 'sections.search.no_filtered_results_heading' | t }}</h3>
+              <p>{{ 'sections.search.no_filtered_results_text' | t }}</p>
+            </div>
+          {%- endif -%}
+
+          <div class="pt-sec-foot">{% render 'pagination', paginate: paginate %}</div>
+          {%- endpaginate -%}
+        </div>
+      </form>
     </section>
 
   {%- endif -%}
@@ -103,20 +243,233 @@
   .pt-search-input::placeholder { color: var(--pt-ink-faint); }
   .pt-search-form .pt-btn { flex: none; padding: 12px 22px; }
   .pt-search-count { text-align: center; color: var(--pt-ink-soft); font-size: 14px; margin: 0 0 36px; font-family: var(--pt-font-body); }
-  .pt-search-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px 22px; }
+  .pt-search-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px 22px; }
   .pt-search-card .pt-card-media { position: relative; border-radius: var(--pt-radius); overflow: hidden; aspect-ratio: 1/1; box-shadow: var(--pt-shadow-sm); }
   .pt-search-card--doc .pt-card-media .pt-ph { display: flex; align-items: center; justify-content: center; }
   .pt-search-type { position: absolute; top: 12px; left: 12px; z-index: 3; background: rgba(255,255,255,.94); color: var(--pt-accent-deep); font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; font-family: var(--pt-font-body); }
   .pt-search-excerpt { font-size: 13px; color: var(--pt-ink-soft); line-height: 1.55; margin: 6px 0 0; }
+
+  /* Facets sidebar — mirrors sections/collection.liquid's filter styling */
+  .pt-coll-layout { max-width: var(--pt-wrap); margin: 0 auto; padding: 0 32px 90px; display: grid; grid-template-columns: 244px 1fr; gap: 40px; align-items: start; }
+  .pt-coll-layout:has(.pt-coll-main:only-child) { grid-template-columns: 1fr; }
+  .pt-coll-main { min-width: 0; }
+  .pt-side { position: sticky; top: 92px; font-family: var(--pt-font-body); }
+  .pt-side-top { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 1px solid var(--pt-line); margin-bottom: 6px; }
+  .pt-side-top h2 { font-family: var(--pt-font-head); font-size: 22px; flex: 1; }
+  .pt-side-clear { border: none; background: transparent; color: var(--pt-accent-deep); font-family: var(--pt-font-body); font-size: 12.5px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+  .pt-side-clear:hover { text-decoration: underline; }
+  .pt-side-x { display: none; border: none; background: transparent; font-size: 17px; color: var(--pt-ink-soft); cursor: pointer; }
+  .pt-side-apply { display: none; margin-top: 18px; }
+  .pt-side-scrim { display: none; }
+  .pt-fg { border-bottom: 1px solid var(--pt-line); padding: 6px 0; }
+  .pt-fg-h { width: 100%; display: flex; align-items: center; justify-content: space-between; border: none; background: none; font-family: var(--pt-font-body); font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--pt-ink); padding: 14px 0; cursor: pointer; }
+  .pt-fg-h svg { transition: transform .25s; color: var(--pt-ink-faint); }
+  .pt-fg[data-open="0"] .pt-fg-h svg { transform: rotate(-90deg); }
+  .pt-fg[data-open="0"] .pt-fg-body { display: none; }
+  .pt-fg-body { padding-bottom: 16px; display: flex; flex-direction: column; gap: 11px; }
+  .pt-check { display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px; color: var(--pt-ink-soft); }
+  .pt-check input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .pt-check-box { width: 17px; height: 17px; border: 1.5px solid var(--pt-line); border-radius: 5px; flex: none; display: grid; place-items: center; transition: all .18s; background: #fff; }
+  .pt-check input:checked + .pt-check-box { background: var(--pt-accent-deep); border-color: var(--pt-accent-deep); }
+  .pt-check input:checked + .pt-check-box::after { content: ''; width: 9px; height: 5px; border: 2px solid #fff; border-top: 0; border-right: 0; transform: rotate(-45deg) translateY(-1px); }
+  .pt-check:hover .pt-check-lbl { color: var(--pt-ink); }
+  .pt-check-lbl { flex: 1; transition: color .18s; }
+  .pt-check-ct { font-size: 12px; color: var(--pt-ink-faint); font-variant-numeric: tabular-nums; }
+  .pt-swatches { display: flex; flex-wrap: wrap; gap: 7px; }
+  .pt-sw { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--pt-line); background: #fff; border-radius: 999px; padding: 5px 11px 5px 5px; font-size: 12.5px; font-weight: 600; color: var(--pt-ink-soft); cursor: pointer; transition: all .18s; font-family: var(--pt-font-body); }
+  .pt-sw span { width: 16px; height: 16px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+  .pt-sw:hover { border-color: var(--pt-accent); }
+  .pt-sw[data-on="1"] { border-color: var(--pt-accent-deep); color: var(--pt-accent-deep); background: var(--pt-accent-soft); }
+  .pt-price-vals { display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; color: var(--pt-ink); margin-bottom: 10px; }
+  .pt-range { position: relative; height: 24px; }
+  .pt-range::before { content: ''; position: absolute; left: 0; right: 0; top: 10.5px; height: 3px; border-radius: 2px; background: var(--pt-line); }
+  .pt-range-fill { position: absolute; top: 10.5px; height: 3px; border-radius: 2px; background: var(--pt-accent); z-index: 1; }
+  .pt-range input { position: absolute; top: 0; left: 0; width: 100%; height: 24px; margin: 0; background: none; pointer-events: none; -webkit-appearance: none; appearance: none; z-index: 2; }
+  .pt-range input::-webkit-slider-thumb { pointer-events: auto; -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 1px solid var(--pt-line); box-shadow: 0 1px 3px rgba(120,60,75,.3); cursor: pointer; }
+  .pt-range input::-moz-range-thumb { pointer-events: auto; width: 24px; height: 24px; border-radius: 50%; background: #fff; border: 1px solid var(--pt-line); box-shadow: 0 1px 3px rgba(120,60,75,.3); cursor: pointer; }
+  .pt-sortbar { margin-bottom: 24px; font-family: var(--pt-font-body); }
+  .pt-sortbar-row { display: flex; align-items: center; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--pt-line); }
+  .pt-filter-btn { display: none; align-items: center; gap: 7px; border: 1px solid var(--pt-line); background: #fff; color: var(--pt-ink); font-family: var(--pt-font-body); font-size: 13px; font-weight: 600; padding: 9px 15px; border-radius: 999px; cursor: pointer; }
+  .pt-count { font-size: 13.5px; color: var(--pt-ink-soft); margin-right: auto; white-space: nowrap; }
+  .pt-count b { color: var(--pt-ink); font-variant-numeric: tabular-nums; }
+  .pt-sort { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--pt-ink-soft); }
+  .pt-sort select { font-family: var(--pt-font-body); font-size: 13px; font-weight: 600; color: var(--pt-ink); border: 1px solid var(--pt-line); background: #fff; border-radius: 999px; padding: 8px 30px 8px 14px; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%239a5460' d='M0 0h10L5 6z'/></svg>"); background-repeat: no-repeat; background-position: right 12px center; }
+  .pt-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .pt-tag { display: inline-flex; align-items: center; gap: 6px; background: var(--pt-accent-soft); color: var(--pt-accent-deep); border: none; border-radius: 999px; padding: 6px 10px 6px 13px; font-family: var(--pt-font-body); font-size: 12.5px; font-weight: 600; cursor: pointer; }
+  .pt-tag:hover { background: var(--pt-accent); color: #fff; }
+  .pt-tag-clear { border: none; background: none; color: var(--pt-ink-faint); font-family: var(--pt-font-body); font-size: 12.5px; font-weight: 600; cursor: pointer; padding: 6px 4px; }
+  .pt-tag-clear:hover { color: var(--pt-accent-deep); text-decoration: underline; }
+  .pt-coll-layout.is-loading { opacity: .6; pointer-events: none; }
+
   @media (max-width: 980px) { .pt-search-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 900px) {
+    .pt-coll-layout { grid-template-columns: 1fr; gap: 0; }
+    .pt-filter-btn { display: inline-flex; }
+    .pt-side { position: fixed; top: 0; left: 0; z-index: 110; width: min(330px, 86vw); height: 100%; background: var(--pt-bg); padding: 22px; overflow-y: auto; transform: translateX(-100%); transition: transform .35s cubic-bezier(.3,.7,.4,1); box-shadow: 20px 0 60px -30px rgba(70,38,48,.5); }
+    .pt-side.is-open { transform: translateX(0); }
+    .pt-side-x, .pt-side-apply { display: block; }
+    .pt-side-apply { display: flex; }
+    .pt-side-scrim { display: block; position: fixed; inset: 0; z-index: 105; background: rgba(70,38,48,.34); backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity .3s; }
+    .pt-side-scrim.is-open { opacity: 1; pointer-events: auto; }
+  }
   @media (max-width: 640px) {
     .pt-search-grid { grid-template-columns: repeat(2, 1fr); gap: 20px 14px; }
     .pt-search-form { flex-wrap: wrap; padding: 6px; border-radius: 22px; }
     .pt-search-form .pt-search-input { order: 1; flex-basis: 100%; padding: 10px 12px; }
     .pt-search-form .pt-search-ic { display: none; }
     .pt-search-form .pt-btn { order: 2; flex: 1; }
+    .pt-coll-layout { padding: 0 20px 70px; }
   }
 {% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    var section = document.querySelector('.pt-search-results[data-section-id]');
+    if (!section) return;
+
+    function money(cents) {
+      return '$' + (cents / 100).toFixed(2).replace(/\.00$/, '');
+    }
+
+    var facetsForm;
+
+    function syncPriceFill(priceFilter) {
+      var loInput = priceFilter.querySelector('[data-range-lo]');
+      var hiInput = priceFilter.querySelector('[data-range-hi]');
+      var loLbl = priceFilter.querySelector('[data-price-lo]');
+      var hiLbl = priceFilter.querySelector('[data-price-hi]');
+      var fill = priceFilter.querySelector('[data-range-fill]');
+      var pMin = parseFloat(priceFilter.dataset.min);
+      var pMax = parseFloat(priceFilter.dataset.max);
+      var lo = parseFloat(loInput.value);
+      var hi = parseFloat(hiInput.value);
+      if (loLbl) loLbl.textContent = money(Math.round(lo * 100));
+      if (hiLbl) hiLbl.textContent = money(Math.round(hi * 100));
+      if (fill && pMax > pMin) {
+        fill.style.left = (((lo - pMin) / (pMax - pMin)) * 100) + '%';
+        fill.style.right = (100 - ((hi - pMin) / (pMax - pMin)) * 100) + '%';
+      }
+    }
+
+    function buildQuery() {
+      var params = new URLSearchParams();
+      if (!facetsForm) return params;
+      params.append('q', facetsForm.querySelector('input[name="q"]').value);
+      params.append('type', 'product,article,page');
+      facetsForm.querySelectorAll('[data-filter-checkbox]:checked').forEach(function (input) {
+        params.append(input.name, input.value);
+      });
+      facetsForm.querySelectorAll('[data-filter-swatch][data-on="1"]').forEach(function (btn) {
+        params.append(btn.dataset.param, btn.dataset.value);
+      });
+      var priceFilter = facetsForm.querySelector('[data-price-filter]');
+      if (priceFilter) {
+        var loInput = priceFilter.querySelector('[data-range-lo]');
+        var hiInput = priceFilter.querySelector('[data-range-hi]');
+        var pMin = parseFloat(priceFilter.dataset.min);
+        var pMax = parseFloat(priceFilter.dataset.max);
+        if (loInput && parseFloat(loInput.value) > pMin) params.append(loInput.name, Math.round(parseFloat(loInput.value) * 100));
+        if (hiInput && parseFloat(hiInput.value) < pMax) params.append(hiInput.name, Math.round(parseFloat(hiInput.value) * 100));
+      }
+      var sortSelect = facetsForm.querySelector('[data-sort]');
+      if (sortSelect && sortSelect.value) params.append('sort_by', sortSelect.value);
+      return params;
+    }
+
+    function submitFacets() {
+      var params = buildQuery();
+      var url = (facetsForm.getAttribute('action') || window.location.pathname) + '?' + params.toString();
+      fetchAndSwap(url);
+    }
+
+    function fetchAndSwap(url) {
+      var layout = section.querySelector('.pt-coll-layout');
+      if (layout) layout.classList.add('is-loading');
+      var sep = url.indexOf('?') === -1 ? '?' : '&';
+      fetch(url + sep + 'section_id=' + section.dataset.sectionId)
+        .then(function (r) { return r.text(); })
+        .then(function (html) {
+          var doc = new DOMParser().parseFromString(html, 'text/html');
+          var newLayout = doc.querySelector('.pt-coll-layout');
+          if (newLayout && layout) layout.replaceWith(newLayout);
+          history.pushState({ ptFacets: true }, '', url);
+          bindFacets();
+          var top = section.getBoundingClientRect().top + window.scrollY - 96;
+          if (window.scrollY > top) window.scrollTo({ top: top, behavior: 'smooth' });
+        })
+        .catch(function () { window.location.href = url; });
+    }
+
+    function bindFacets() {
+      facetsForm = section.querySelector('[data-facets-form]');
+      if (!facetsForm) return;
+
+      facetsForm.querySelectorAll('[data-filter-checkbox]').forEach(function (input) {
+        input.addEventListener('change', submitFacets);
+      });
+      facetsForm.querySelectorAll('[data-filter-swatch]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          if (btn.disabled) return;
+          btn.dataset.on = btn.dataset.on === '1' ? '0' : '1';
+          submitFacets();
+        });
+      });
+
+      var priceFilter = facetsForm.querySelector('[data-price-filter]');
+      if (priceFilter) {
+        var loInput = priceFilter.querySelector('[data-range-lo]');
+        var hiInput = priceFilter.querySelector('[data-range-hi]');
+        syncPriceFill(priceFilter);
+        if (loInput) {
+          loInput.addEventListener('input', function () {
+            if (parseFloat(loInput.value) > parseFloat(hiInput.value) - 1) loInput.value = parseFloat(hiInput.value) - 1;
+            syncPriceFill(priceFilter);
+          });
+          loInput.addEventListener('change', submitFacets);
+        }
+        if (hiInput) {
+          hiInput.addEventListener('input', function () {
+            if (parseFloat(hiInput.value) < parseFloat(loInput.value) + 1) hiInput.value = parseFloat(loInput.value) + 1;
+            syncPriceFill(priceFilter);
+          });
+          hiInput.addEventListener('change', submitFacets);
+        }
+      }
+
+      var sortSelect = facetsForm.querySelector('[data-sort]');
+      if (sortSelect) sortSelect.addEventListener('change', submitFacets);
+
+      section.querySelectorAll('[data-remove-filter], .pt-tag-clear, .pt-side-clear').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          fetchAndSwap(link.getAttribute('href'));
+        });
+      });
+
+      section.querySelectorAll('[data-fg-toggle]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var fg = btn.closest('.pt-fg');
+          fg.dataset.open = fg.dataset.open === '1' ? '0' : '1';
+        });
+      });
+
+      var side = section.querySelector('[data-side]');
+      var sideScrim = section.querySelector('[data-side-scrim]');
+      function openSide() { if (side) side.classList.add('is-open'); if (sideScrim) sideScrim.classList.add('is-open'); }
+      function closeSide() { if (side) side.classList.remove('is-open'); if (sideScrim) sideScrim.classList.remove('is-open'); }
+      section.querySelectorAll('[data-open-filters]').forEach(function (btn) { btn.addEventListener('click', openSide); });
+      section.querySelectorAll('[data-close-filters]').forEach(function (btn) { btn.addEventListener('click', closeSide); });
+      if (sideScrim) sideScrim.addEventListener('click', closeSide);
+    }
+
+    bindFacets();
+
+    window.addEventListener('popstate', function (e) {
+      if (!e.state || !e.state.ptFacets) return;
+      fetchAndSwap(window.location.pathname + window.location.search);
+    });
+  })();
+{% endjavascript %}
 
 {% schema %}
 {

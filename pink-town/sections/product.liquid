@@ -250,6 +250,14 @@
             </div>
           {%- endif -%}
 
+          {%- for block in section.blocks -%}
+            {%- if block.type == '@app' -%}
+              <div class="pt-pdp-app-block" {{ block.shopify_attributes }}>
+                {%- render block -%}
+              </div>
+            {%- endif -%}
+          {%- endfor -%}
+
           {%- liquid
             assign has_addons = false
             for block in section.blocks
@@ -537,6 +545,7 @@
   .pt-pdp-buynow { width: 100%; margin-top: 10px; }
   .pt-pdp-buynow[disabled] { opacity: .55; cursor: not-allowed; transform: none !important; }
   .pt-pdp-dynamic { margin-top: 12px; }
+  .pt-pdp-app-block { margin-top: 12px; }
   .pt-pdp-shake { animation: ptPdpShake .4s; }
   @keyframes ptPdpShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
 
@@ -1049,6 +1058,7 @@
     }
   ],
   "blocks": [
+    { "type": "@app" },
     {
       "type": "accordion_item",
       "name": "t:sections.product.blocks.accordion_item.name",
