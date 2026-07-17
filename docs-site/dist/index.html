@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Getting started | Posy Theme Documentation | TriSoul Digital</title>
+
+    <link rel="icon" type="image/webp" href="https://trisouldigital.com/trisoul-favicon.webp">
+
+    <meta name="description" content="Install Posy, choose one of its four theme styles, and take a tour of the theme settings.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://themes.trisouldigital.com/posy/">
+
+    <!-- Fonts: Inter for UI, Playfair Display for brand alignment -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #FAFAFA;
+            --surface: #FFFFFF;
+            --border: #E5E7EB;
+            --text: #111827;
+            --light-text: #6B7280;
+            --soul-blue: #0692D4;
+            --soul-teal: #00BDD6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.65;
+            font-size: 16px;
+        }
+        a { color: var(--soul-blue); text-decoration: none; }
+        a:hover { color: var(--soul-teal); }
+        ::selection { background: var(--soul-blue); color: #fff; }
+
+        /* ---- Header ---- */
+        .site-header {
+            position: sticky; top: 0; z-index: 20;
+            border-bottom: 1px solid var(--border);
+            background: rgba(250, 250, 250, .85);
+            backdrop-filter: blur(8px);
+        }
+        .site-header-inner {
+            max-width: 76rem; margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+        }
+        .site-brand { display: flex; align-items: center; gap: .9rem; min-width: 0; }
+        .site-brand img { height: 1.9rem; width: auto; display: block; }
+        .site-brand .sep { color: var(--border); }
+        .site-brand .site-name { color: var(--light-text); font-size: .875rem; font-weight: 500; letter-spacing: .02em; white-space: nowrap; }
+        .header-link { font-size: .875rem; font-weight: 500; white-space: nowrap; }
+
+        /* ---- Layout ---- */
+        .layout {
+            max-width: 76rem; margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+            display: grid; grid-template-columns: 15.5rem 1fr; gap: 3rem;
+            align-items: start;
+        }
+        .sidebar { position: sticky; top: 5.2rem; }
+        .nav-group {
+            font-size: .72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: .08em; color: var(--light-text);
+            margin: 1.4rem 0 .4rem;
+        }
+        .nav-group:first-child { margin-top: 0; }
+        .nav-list { list-style: none; }
+        .nav-list a {
+            display: block; padding: .32rem .7rem;
+            border-radius: .5rem; color: var(--text);
+            font-size: .9rem;
+        }
+        .nav-list a:hover { background: #fff; color: var(--soul-blue); }
+        .nav-list a.active {
+            background: #fff; color: var(--soul-blue); font-weight: 600;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0,0,0,.04);
+        }
+
+        /* Mobile nav */
+        .mobile-nav { display: none; }
+        @media (max-width: 860px) {
+            .layout { grid-template-columns: 1fr; gap: 1.5rem; padding-top: 1.25rem; }
+            .sidebar { display: none; }
+            .mobile-nav { display: block; }
+            .mobile-nav details {
+                background: var(--surface); border: 1px solid var(--border);
+                border-radius: .75rem; padding: .7rem 1rem;
+            }
+            .mobile-nav summary {
+                cursor: pointer; font-weight: 600; font-size: .9rem;
+                color: var(--soul-blue); list-style: none;
+            }
+            .mobile-nav summary::after { content: " ▾"; }
+            .site-brand .site-name, .site-brand .sep { display: none; }
+        }
+
+        /* ---- Article ---- */
+        article { min-width: 0; }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,.04);
+            padding: 2.2rem 2.4rem;
+        }
+        @media (max-width: 640px) { .card { padding: 1.4rem 1.2rem; } }
+
+        article h1 {
+            font-size: 2rem; font-weight: 700; letter-spacing: -.02em;
+            line-height: 1.2; margin-bottom: .5rem;
+        }
+        article .lead { color: var(--light-text); font-size: 1.06rem; margin-bottom: 1.8rem; }
+        article h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.45rem; font-weight: 600;
+            margin: 2.2rem 0 .7rem;
+            padding-top: 1.4rem;
+            border-top: 1px solid var(--border);
+        }
+        article h2:first-of-type { border-top: 0; padding-top: 0; margin-top: 1rem; }
+        article h3 { font-size: 1.05rem; font-weight: 600; margin: 1.5rem 0 .4rem; }
+        article p { margin: .65rem 0; }
+        article ul, article ol { margin: .65rem 0 .65rem 1.4rem; }
+        article li { margin: .3rem 0; }
+        article strong { font-weight: 600; }
+
+        /* Exact editor labels get a pill so merchants can match them on sight. */
+        .lbl {
+            font-family: 'Inter', sans-serif; font-size: .855em; font-weight: 500;
+            background: #EEF6FB; border: 1px solid #D3E9F5; color: #085E86;
+            border-radius: .375rem; padding: .05rem .42rem; white-space: nowrap;
+        }
+        /* Editor navigation paths (Theme settings → Colors) */
+        .path {
+            font-size: .875em; font-weight: 500; color: var(--text);
+            background: #F3F4F6; border: 1px solid var(--border);
+            border-radius: .375rem; padding: .05rem .42rem;
+        }
+        article code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: .855em; background: #F3F4F6;
+            border: 1px solid var(--border); border-radius: .375rem;
+            padding: .05rem .35rem;
+        }
+
+        .note {
+            border: 1px solid #D3E9F5; background: #F4FAFE;
+            border-radius: .75rem; padding: .85rem 1.1rem;
+            margin: 1rem 0; font-size: .93rem;
+        }
+        .note.warn { border-color: #F5E3C8; background: #FEFAF2; }
+        .note strong:first-child { display: block; margin-bottom: .15rem; }
+
+        article table {
+            width: 100%; border-collapse: collapse; margin: 1rem 0;
+            font-size: .9rem;
+        }
+        article th, article td {
+            text-align: left; padding: .55rem .8rem;
+            border-bottom: 1px solid var(--border); vertical-align: top;
+        }
+        article th { font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--light-text); }
+        .table-wrap { overflow-x: auto; }
+
+        /* FAQ accordions */
+        article details.faq {
+            border: 1px solid var(--border); border-radius: .75rem;
+            background: var(--surface); margin: .6rem 0; padding: .85rem 1.1rem;
+        }
+        article details.faq summary { cursor: pointer; font-weight: 600; }
+
+        /* Pager */
+        .pager {
+            display: flex; justify-content: space-between; gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .pager-link {
+            display: flex; flex-direction: column; gap: .1rem;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: .75rem; padding: .7rem 1.1rem;
+            max-width: 48%;
+        }
+        .pager-link span { font-size: .75rem; color: var(--light-text); }
+        .pager-next { margin-left: auto; text-align: right; }
+
+        .site-footer {
+            border-top: 1px solid var(--border);
+            padding: 1.2rem 1.5rem; text-align: center;
+            font-size: .875rem; color: var(--light-text);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="site-header-inner">
+            <div class="site-brand">
+                <a href="https://www.trisouldigital.com"><img src="https://trisouldigital.com/trisoul-logo.webp" alt="TriSoul Digital"></a>
+                <span class="sep">|</span>
+                <span class="site-name">Posy Documentation</span>
+            </div>
+            <nav>
+                <a class="header-link" href="https://support.trisouldigital.com">Get support &rarr;</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="layout">
+        <div class="mobile-nav">
+            <details>
+                <summary>Documentation menu</summary>
+                <nav aria-label="Documentation"><p class="nav-group">Start here</p>
+<ul class="nav-list">
+<li><a href="index.html" class="active">Getting started</a></li>
+</ul>
+<p class="nav-group">Customize</p>
+<ul class="nav-list">
+<li><a href="header-footer.html">Header & footer</a></li>
+<li><a href="homepage.html">Home page sections</a></li>
+<li><a href="product.html">Product pages</a></li>
+<li><a href="collections-search.html">Collections & search</a></li>
+<li><a href="cart.html">Cart</a></li>
+<li><a href="pages-sections.html">Other pages & sections</a></li>
+<li><a href="localization.html">Localization & gift cards</a></li>
+</ul>
+<p class="nav-group">Help</p>
+<ul class="nav-list">
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="support.html">Support policy</a></li>
+<li><a href="changelog.html">Changelog</a></li>
+</ul></nav>
+            </details>
+        </div>
+
+        <aside class="sidebar">
+            <nav aria-label="Documentation"><p class="nav-group">Start here</p>
+<ul class="nav-list">
+<li><a href="index.html" class="active">Getting started</a></li>
+</ul>
+<p class="nav-group">Customize</p>
+<ul class="nav-list">
+<li><a href="header-footer.html">Header & footer</a></li>
+<li><a href="homepage.html">Home page sections</a></li>
+<li><a href="product.html">Product pages</a></li>
+<li><a href="collections-search.html">Collections & search</a></li>
+<li><a href="cart.html">Cart</a></li>
+<li><a href="pages-sections.html">Other pages & sections</a></li>
+<li><a href="localization.html">Localization & gift cards</a></li>
+</ul>
+<p class="nav-group">Help</p>
+<ul class="nav-list">
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="support.html">Support policy</a></li>
+<li><a href="changelog.html">Changelog</a></li>
+</ul></nav>
+        </aside>
+
+        <article>
+            <div class="card">
+<h1>Getting started with Posy</h1>
+<p class="lead">Posy is a soft, editorial Shopify theme by TriSoul Digital, made for boutique stores — jewelry, beauty, fashion, and gifts. This guide walks you through installing the theme, picking a style, and finding your way around the settings.</p>
+
+<h2>Install Posy</h2>
+<ol>
+    <li>From the Shopify Theme Store, open the Posy listing and click <strong>Try theme</strong> to preview it on your store, or <strong>Add theme</strong> to install it.</li>
+    <li>In your Shopify admin, go to <span class="path">Online Store → Themes</span>. Posy appears in your theme library.</li>
+    <li>Click <strong>Customize</strong> to open the theme editor and start editing, then <strong>Publish</strong> when you are ready to go live.</li>
+</ol>
+<div class="note warn">
+    <strong>Duplicate before major edits</strong>
+    Before making big changes — and always before touching code — duplicate the theme (<span class="path">Online Store → Themes → &#8942; → Duplicate</span>). If anything goes wrong, you can publish the copy and be back where you started.
+</div>
+
+<h2>Choose a theme style</h2>
+<p>Posy ships with four ready-made styles. Each one is a complete color scheme built for a different kind of store:</p>
+<div class="table-wrap">
+<table>
+    <tr><th>Style</th><th>Palette</th><th>Made for</th></tr>
+    <tr><td><strong>Posy</strong></td><td>Blush pink</td><td>Fashion &amp; jewelry</td></tr>
+    <tr><td><strong>Amethyst</strong></td><td>Violet</td><td>Beauty &amp; crystals</td></tr>
+    <tr><td><strong>Meadow</strong></td><td>Sage green</td><td>Herbal &amp; organic</td></tr>
+    <tr><td><strong>Sunbeam</strong></td><td>Warm amber, with dark button text</td><td>Kids, toys &amp; books</td></tr>
+</table>
+</div>
+<p>To switch styles, open the theme editor, go to <span class="path">Theme settings</span>, and use <strong>Change theme style</strong>. Switching styles re-applies all five base colors at once.</p>
+
+<h3>How Posy's colors work</h3>
+<p>A style sets just five base colors, found in <span class="path">Theme settings → Colors</span>:</p>
+<ul>
+    <li><span class="lbl">Background</span> — the page background.</li>
+    <li><span class="lbl">Text</span> — headings and body copy.</li>
+    <li><span class="lbl">Borders</span> — card outlines, dividers, and input borders.</li>
+    <li><span class="lbl">Accent background</span> — buttons, badges, and highlights.</li>
+    <li><span class="lbl">Accent text</span> — the text shown on top of the accent color.</li>
+</ul>
+<p>Every other tone in the theme — soft tints, deeper accent shades, shadows, and placeholder colors — is derived from these five automatically. That means you can retint the entire store by adjusting a handful of pickers, and everything stays coordinated.</p>
+<div class="note">
+    <strong>Fine-tuning</strong>
+    After applying a style, you can adjust any of the five pickers individually in <span class="path">Theme settings → Colors</span>. Your changes persist until you apply another style, which overwrites all five again.
+</div>
+
+<h2>Theme settings tour</h2>
+<p>All global settings live in <span class="path">Theme settings</span> at the bottom of the theme editor's sidebar.</p>
+
+<h3>Favicon</h3>
+<p><span class="lbl">Favicon image</span> — the small icon shown in browser tabs and bookmarks. Use a square image, at least 32 × 32&nbsp;px.</p>
+
+<h3>Typography</h3>
+<p>Two font pickers control all text in the theme: <span class="lbl">Heading font</span> and <span class="lbl">Body font</span>. Both draw from Shopify's font library, which includes system fonts (fastest) and a wide range of licensed web fonts.</p>
+
+<h3>Layout</h3>
+<ul>
+    <li><span class="lbl">Page width</span> — choose <strong>Narrow</strong> or <strong>Wide</strong> for the maximum content width.</li>
+    <li><span class="lbl">Page margin</span> — the breathing room between your content and the edge of the screen.</li>
+</ul>
+
+<h3>Colors</h3>
+<p>The five base color pickers described above, plus <span class="lbl">Input corner radius</span>, which rounds the corners of form fields, search boxes, and quantity selectors across the store.</p>
+
+<h3>Cart</h3>
+<p><span class="lbl">Free shipping threshold</span> — powers the free-shipping progress bar in the cart and cart drawer. See the <a href="cart.html">Cart</a> page for details, including the one rule that matters: it must match your store's real shipping settings.</p>
+
+<h2>Where to next</h2>
+<ul>
+    <li><a href="header-footer.html">Header &amp; footer</a> — navigation, announcement bar, cart drawer, and footer columns.</li>
+    <li><a href="homepage.html">Home page sections</a> — the hero and everything below it.</li>
+    <li><a href="product.html">Product pages</a> — blocks, media, variants, and recommendations.</li>
+    <li><a href="faq.html">FAQ</a> — quick answers to the most common questions.</li>
+</ul>
+            </div>
+            <nav class="pager" aria-label="Documentation pages"><span></span><a class="pager-link pager-next" href="header-footer.html"><span>Next &rarr;</span><strong>Header & footer</strong></a></nav>
+        </article>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 TriSoul Digital. All rights reserved. &middot; <a href="https://support.trisouldigital.com">Support</a></p>
+    </footer>
+
+</body>
+</html>

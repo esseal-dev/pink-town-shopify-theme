@@ -1,0 +1,44 @@
+<!-- title: Collections & search | desc: Collection page layouts, faceted filters, sorting, promo banners, and the search results page in Posy. -->
+<h1>Collections &amp; search</h1>
+<p class="lead">Collection pages are where most shopping happens. Posy gives them flexible headers, faceted filtering with swatches, quick view, and an optional in-grid promo banner. The search page shares the same filtering.</p>
+
+<h2>Collection header</h2>
+<ul>
+    <li><span class="lbl">Header layout</span> — <strong>Split</strong> (text beside the collection image), <strong>Centered</strong>, or <strong>Full bleed</strong> (text over the image).</li>
+    <li><span class="lbl">Eyebrow text</span> — the small line above the collection title.</li>
+    <li><span class="lbl">Image badge text</span> — a badge overlaid on the collection image.</li>
+    <li><span class="lbl">Show rating</span> with <span class="lbl">Overall rating</span> and <span class="lbl">Review count</span> — an optional rating line in the header. These fields are typed by you, so only display numbers backed by real reviews (off by default).</li>
+</ul>
+
+<h2>Product grid</h2>
+<ul>
+    <li><span class="lbl">Grid columns</span> — <strong>3 across</strong> or <strong>4 across</strong> on desktop.</li>
+    <li><span class="lbl">Products per page</span> — 12 to 48; pagination appears beyond that.</li>
+    <li><strong>Quick view</strong> — shoppers can open a product dialog from the grid to pick a variant and add to cart without leaving the collection.</li>
+    <li><strong>Sorting</strong> — the standard Shopify sort orders (best selling, price, newest…).</li>
+</ul>
+
+<h2>Filters</h2>
+<p>Posy renders the filters you have enabled in the <strong>Search &amp; Discovery</strong> app (<span class="path">Apps → Search &amp; Discovery → Filters</span>) — availability, price, and product options all work. Two theme settings shape them:</p>
+<ul>
+    <li><span class="lbl">Enable variant filters</span> — automatically builds a filter (Color, Size, Material, …) for every variant option used by products in the collection. Options whose name contains "color" or "finish" render as <strong>swatches</strong>, using the same swatch system as the <a href="product.html">product page</a>.</li>
+    <li><span class="lbl">Enable price filter</span> — a dual-handle price range slider.</li>
+</ul>
+<p>Active filters are shown as removable chips, with a clear-all link.</p>
+
+<h2>Promo banner block</h2>
+<p>An optional banner placed <em>inside</em> the product grid — useful for a seasonal offer or a collection story. Add up to two <span class="lbl">Promo banner</span> blocks per collection section.</p>
+<ul>
+    <li><span class="lbl">Position in product grid</span> — which grid slot the banner occupies.</li>
+    <li><span class="lbl">Eyebrow text</span>, <span class="lbl">Heading</span>, <span class="lbl">Text</span>, <span class="lbl">Promo badge text</span> — the banner copy. All blank by default: the banner shows only what you write.</li>
+</ul>
+<div class="note warn">
+    <strong>Honest promos only</strong>
+    A promo banner is advertising. Only announce offers that are real and current — an expired "20% off" banner is the fastest way to lose a customer's trust (and can violate consumer protection rules).
+</div>
+
+<h2>Collections list page</h2>
+<p>The <strong>Collections grid</strong> section powers your <code>/collections</code> page, listing every collection with <span class="lbl">Eyebrow text</span>, <span class="lbl">Heading</span>, <span class="lbl">Subheading</span>, and <span class="lbl">Collections per page</span> settings.</p>
+
+<h2>Search page</h2>
+<p>The search results page groups matches by <strong>products</strong>, <strong>pages</strong>, and <strong>articles</strong>, and offers the same filtering and sorting as collection pages for product results. Most shoppers will get there through the header's <a href="header-footer.html">predictive search overlay</a>; the page itself is the full-results and no-JavaScript fallback.</p>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Other pages & sections | Posy Theme Documentation | TriSoul Digital</title>
+
+    <link rel="icon" type="image/webp" href="https://trisouldigital.com/trisoul-favicon.webp">
+
+    <meta name="description" content="Posy's About, Contact, and FAQ page templates, blog, policy and password pages, and the Custom section and Custom Liquid tools.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://themes.trisouldigital.com/posy/pages-sections.html">
+
+    <!-- Fonts: Inter for UI, Playfair Display for brand alignment -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #FAFAFA;
+            --surface: #FFFFFF;
+            --border: #E5E7EB;
+            --text: #111827;
+            --light-text: #6B7280;
+            --soul-blue: #0692D4;
+            --soul-teal: #00BDD6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.65;
+            font-size: 16px;
+        }
+        a { color: var(--soul-blue); text-decoration: none; }
+        a:hover { color: var(--soul-teal); }
+        ::selection { background: var(--soul-blue); color: #fff; }
+
+        /* ---- Header ---- */
+        .site-header {
+            position: sticky; top: 0; z-index: 20;
+            border-bottom: 1px solid var(--border);
+            background: rgba(250, 250, 250, .85);
+            backdrop-filter: blur(8px);
+        }
+        .site-header-inner {
+            max-width: 76rem; margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+        }
+        .site-brand { display: flex; align-items: center; gap: .9rem; min-width: 0; }
+        .site-brand img { height: 1.9rem; width: auto; display: block; }
+        .site-brand .sep { color: var(--border); }
+        .site-brand .site-name { color: var(--light-text); font-size: .875rem; font-weight: 500; letter-spacing: .02em; white-space: nowrap; }
+        .header-link { font-size: .875rem; font-weight: 500; white-space: nowrap; }
+
+        /* ---- Layout ---- */
+        .layout {
+            max-width: 76rem; margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+            display: grid; grid-template-columns: 15.5rem 1fr; gap: 3rem;
+            align-items: start;
+        }
+        .sidebar { position: sticky; top: 5.2rem; }
+        .nav-group {
+            font-size: .72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: .08em; color: var(--light-text);
+            margin: 1.4rem 0 .4rem;
+        }
+        .nav-group:first-child { margin-top: 0; }
+        .nav-list { list-style: none; }
+        .nav-list a {
+            display: block; padding: .32rem .7rem;
+            border-radius: .5rem; color: var(--text);
+            font-size: .9rem;
+        }
+        .nav-list a:hover { background: #fff; color: var(--soul-blue); }
+        .nav-list a.active {
+            background: #fff; color: var(--soul-blue); font-weight: 600;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0,0,0,.04);
+        }
+
+        /* Mobile nav */
+        .mobile-nav { display: none; }
+        @media (max-width: 860px) {
+            .layout { grid-template-columns: 1fr; gap: 1.5rem; padding-top: 1.25rem; }
+            .sidebar { display: none; }
+            .mobile-nav { display: block; }
+            .mobile-nav details {
+                background: var(--surface); border: 1px solid var(--border);
+                border-radius: .75rem; padding: .7rem 1rem;
+            }
+            .mobile-nav summary {
+                cursor: pointer; font-weight: 600; font-size: .9rem;
+                color: var(--soul-blue); list-style: none;
+            }
+            .mobile-nav summary::after { content: " ▾"; }
+            .site-brand .site-name, .site-brand .sep { display: none; }
+        }
+
+        /* ---- Article ---- */
+        article { min-width: 0; }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,.04);
+            padding: 2.2rem 2.4rem;
+        }
+        @media (max-width: 640px) { .card { padding: 1.4rem 1.2rem; } }
+
+        article h1 {
+            font-size: 2rem; font-weight: 700; letter-spacing: -.02em;
+            line-height: 1.2; margin-bottom: .5rem;
+        }
+        article .lead { color: var(--light-text); font-size: 1.06rem; margin-bottom: 1.8rem; }
+        article h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.45rem; font-weight: 600;
+            margin: 2.2rem 0 .7rem;
+            padding-top: 1.4rem;
+            border-top: 1px solid var(--border);
+        }
+        article h2:first-of-type { border-top: 0; padding-top: 0; margin-top: 1rem; }
+        article h3 { font-size: 1.05rem; font-weight: 600; margin: 1.5rem 0 .4rem; }
+        article p { margin: .65rem 0; }
+        article ul, article ol { margin: .65rem 0 .65rem 1.4rem; }
+        article li { margin: .3rem 0; }
+        article strong { font-weight: 600; }
+
+        /* Exact editor labels get a pill so merchants can match them on sight. */
+        .lbl {
+            font-family: 'Inter', sans-serif; font-size: .855em; font-weight: 500;
+            background: #EEF6FB; border: 1px solid #D3E9F5; color: #085E86;
+            border-radius: .375rem; padding: .05rem .42rem; white-space: nowrap;
+        }
+        /* Editor navigation paths (Theme settings → Colors) */
+        .path {
+            font-size: .875em; font-weight: 500; color: var(--text);
+            background: #F3F4F6; border: 1px solid var(--border);
+            border-radius: .375rem; padding: .05rem .42rem;
+        }
+        article code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: .855em; background: #F3F4F6;
+            border: 1px solid var(--border); border-radius: .375rem;
+            padding: .05rem .35rem;
+        }
+
+        .note {
+            border: 1px solid #D3E9F5; background: #F4FAFE;
+            border-radius: .75rem; padding: .85rem 1.1rem;
+            margin: 1rem 0; font-size: .93rem;
+        }
+        .note.warn { border-color: #F5E3C8; background: #FEFAF2; }
+        .note strong:first-child { display: block; margin-bottom: .15rem; }
+
+        article table {
+            width: 100%; border-collapse: collapse; margin: 1rem 0;
+            font-size: .9rem;
+        }
+        article th, article td {
+            text-align: left; padding: .55rem .8rem;
+            border-bottom: 1px solid var(--border); vertical-align: top;
+        }
+        article th { font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--light-text); }
+        .table-wrap { overflow-x: auto; }
+
+        /* FAQ accordions */
+        article details.faq {
+            border: 1px solid var(--border); border-radius: .75rem;
+            background: var(--surface); margin: .6rem 0; padding: .85rem 1.1rem;
+        }
+        article details.faq summary { cursor: pointer; font-weight: 600; }
+
+        /* Pager */
+        .pager {
+            display: flex; justify-content: space-between; gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .pager-link {
+            display: flex; flex-direction: column; gap: .1rem;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: .75rem; padding: .7rem 1.1rem;
+            max-width: 48%;
+        }
+        .pager-link span { font-size: .75rem; color: var(--light-text); }
+        .pager-next { margin-left: auto; text-align: right; }
+
+        .site-footer {
+            border-top: 1px solid var(--border);
+            padding: 1.2rem 1.5rem; text-align: center;
+            font-size: .875rem; color: var(--light-text);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="site-header-inner">
+            <div class="site-brand">
+                <a href="https://www.trisouldigital.com"><img src="https://trisouldigital.com/trisoul-logo.webp" alt="TriSoul Digital"></a>
+                <span class="sep">|</span>
+                <span class="site-name">Posy Documentation</span>
+            </div>
+            <nav>
+                <a class="header-link" href="https://support.trisouldigital.com">Get support &rarr;</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="layout">
+        <div class="mobile-nav">
+            <details>
+                <summary>Documentation menu</summary>
+                <nav aria-label="Documentation"><p class="nav-group">Start here</p>
+<ul class="nav-list">
+<li><a href="index.html">Getting started</a></li>
+</ul>
+<p class="nav-group">Customize</p>
+<ul class="nav-list">
+<li><a href="header-footer.html">Header & footer</a></li>
+<li><a href="homepage.html">Home page sections</a></li>
+<li><a href="product.html">Product pages</a></li>
+<li><a href="collections-search.html">Collections & search</a></li>
+<li><a href="cart.html">Cart</a></li>
+<li><a href="pages-sections.html" class="active">Other pages & sections</a></li>
+<li><a href="localization.html">Localization & gift cards</a></li>
+</ul>
+<p class="nav-group">Help</p>
+<ul class="nav-list">
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="support.html">Support policy</a></li>
+<li><a href="changelog.html">Changelog</a></li>
+</ul></nav>
+            </details>
+        </div>
+
+        <aside class="sidebar">
+            <nav aria-label="Documentation"><p class="nav-group">Start here</p>
+<ul class="nav-list">
+<li><a href="index.html">Getting started</a></li>
+</ul>
+<p class="nav-group">Customize</p>
+<ul class="nav-list">
+<li><a href="header-footer.html">Header & footer</a></li>
+<li><a href="homepage.html">Home page sections</a></li>
+<li><a href="product.html">Product pages</a></li>
+<li><a href="collections-search.html">Collections & search</a></li>
+<li><a href="cart.html">Cart</a></li>
+<li><a href="pages-sections.html" class="active">Other pages & sections</a></li>
+<li><a href="localization.html">Localization & gift cards</a></li>
+</ul>
+<p class="nav-group">Help</p>
+<ul class="nav-list">
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="support.html">Support policy</a></li>
+<li><a href="changelog.html">Changelog</a></li>
+</ul></nav>
+        </aside>
+
+        <article>
+            <div class="card">
+<h1>Other pages &amp; sections</h1>
+<p class="lead">Beyond the home, product, collection, and cart experiences, Posy ships ready-made templates for About, Contact, and FAQ pages, plus styled blog, policy, 404, and password pages — and two build-your-own tools.</p>
+
+<h2 id="templates">Using the page templates</h2>
+<p>Create a page in <span class="path">Shopify admin → Content → Pages</span> (previously <span class="path">Online Store → Pages</span>), then in the <strong>Theme template</strong> picker on the right, choose <strong>about</strong>, <strong>contact</strong>, or <strong>faq</strong>. Open the theme editor on that page to customize its sections.</p>
+
+<h2 id="about">About page</h2>
+<p>Three sections tell your story, followed by the same Reviews and Newsletter sections as the home page:</p>
+<ul>
+    <li><strong>About hero</strong> — <span class="lbl">Eyebrow text</span>, <span class="lbl">Heading</span>, <span class="lbl">Subheading</span>, and an optional stats row (<span class="lbl">Show stats</span> with three value/label pairs, e.g. <span class="lbl">Stat 1 — value</span> / <span class="lbl">Stat 1 — label</span>). As always, use real numbers.</li>
+    <li><strong>About story</strong> — <span class="lbl">Eyebrow text</span>, <span class="lbl">Heading</span>, <span class="lbl">Paragraph 1</span>, <span class="lbl">Paragraph 2</span>, and an <span class="lbl">Image</span>.</li>
+    <li><strong>About values</strong> — a heading plus <span class="lbl">Value</span> blocks, each with an <span class="lbl">Icon</span> (<strong>Heart</strong>, <strong>Checkmark</strong>, <strong>Sparkle</strong>, or <strong>Gift</strong>), a <span class="lbl">Title</span>, and <span class="lbl">Text</span>.</li>
+</ul>
+
+<h2 id="contact">Contact page</h2>
+<ul>
+    <li><strong>Contact hero</strong> — the page introduction (<span class="lbl">Eyebrow text</span>, <span class="lbl">Heading</span>, <span class="lbl">Subheading</span>).</li>
+    <li><strong>Contact form</strong> — submissions arrive via Shopify's contact form, emailed to your store's sender email. Settings:
+        <ul>
+            <li><span class="lbl">Subject options (comma-separated)</span> — the choices in the form's subject dropdown.</li>
+            <li><span class="lbl">Thank-you heading</span> and <span class="lbl">Thank-you message</span> — shown after submission. Use <code>[name]</code> and <code>[email]</code> as placeholders — they'll be replaced with the submitted values.</li>
+            <li><span class="lbl">Button text</span>, plus the info card fields: <span class="lbl">Email address</span>, <span class="lbl">Phone number</span>, <span class="lbl">Support hours</span>, <span class="lbl">Social handle</span>, <span class="lbl">Social platforms</span>. Replace the sample values with your store's real details.</li>
+        </ul>
+    </li>
+    <li id="store-locations"><strong>Store locations</strong> — a stylized map with pins. Each <span class="lbl">Location</span> block has a <span class="lbl">Location name</span>, <span class="lbl">Location code</span> (the short pin label, e.g. "NY"), <span class="lbl">Address</span>, <span class="lbl">Support hours</span>, <span class="lbl">Phone number</span>, and two sliders — <span class="lbl">Map pin — horizontal position</span> and <span class="lbl">Map pin — vertical position</span> — to place the pin.</li>
+</ul>
+
+<h2 id="faq">FAQ page</h2>
+<ul>
+    <li><strong>FAQ hero</strong> — the page introduction.</li>
+    <li><strong>FAQ accordion</strong> — one <span class="lbl">Question</span> block per question, each with <span class="lbl">Group</span>, <span class="lbl">Question</span>, and <span class="lbl">Answer</span>. Questions with the same group name are shown together under one heading — keep same-group questions next to each other in the block list.</li>
+    <li><strong>FAQ contact CTA</strong> — a closing "still stuck?" card with <span class="lbl">Button text</span> and <span class="lbl">Link URL</span> (point it at your contact page).</li>
+</ul>
+<p>The FAQ accordion and FAQ contact CTA sections can also be added to any other page.</p>
+
+<h2 id="blog">Blog &amp; articles</h2>
+<p>The blog list page has <span class="lbl">Eyebrow text</span> and <span class="lbl">Subheading</span> settings; article pages are styled automatically, including author, date, and featured image. Comments follow your blog's comment settings in the Shopify admin.</p>
+
+<h2 id="utility">Utility pages</h2>
+<ul>
+    <li><strong>Policy pages</strong> — your refund, privacy, and terms pages (from <span class="path">Settings → Policies</span>) render in a clean reading layout with an <span class="lbl">Eyebrow text</span> setting.</li>
+    <li><strong>404 page</strong> — a friendly not-found page with <span class="lbl">Heading</span>, <span class="lbl">Subheading</span>, and <span class="lbl">Quick links</span> (a menu picker) to route shoppers back to shopping.</li>
+    <li><strong>Password page</strong> — shown when your store is password-protected: <span class="lbl">Eyebrow text</span>, <span class="lbl">Heading</span>, <span class="lbl">Subheading</span>, and optional social URLs, plus the password form.</li>
+</ul>
+
+<h2 id="custom">Build-your-own sections</h2>
+<ul>
+    <li><strong>Custom section</strong> — an empty canvas with an optional <span class="lbl">Background</span> image that accepts <strong>theme blocks</strong>, letting you compose your own layouts from Posy's building blocks directly in the editor.</li>
+    <li><strong>Custom Liquid</strong> — a <span class="lbl">Liquid code</span> field for app snippets, custom HTML, or third-party embeds, with a <span class="lbl">Full width</span> toggle. Code you add here is your own: test it on a duplicate theme first, and see our <a href="support.html">support policy</a> for what we can help with.</li>
+</ul>
+            </div>
+            <nav class="pager" aria-label="Documentation pages"><a class="pager-link pager-prev" href="cart.html"><span>&larr; Previous</span><strong>Cart</strong></a><a class="pager-link pager-next" href="localization.html"><span>Next &rarr;</span><strong>Localization & gift cards</strong></a></nav>
+        </article>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 TriSoul Digital. All rights reserved. &middot; <a href="https://support.trisouldigital.com">Support</a></p>
+    </footer>
+
+</body>
+</html>

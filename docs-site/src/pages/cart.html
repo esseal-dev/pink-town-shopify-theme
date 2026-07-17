@@ -1,0 +1,29 @@
+<!-- title: Cart | desc: Posy's cart page and drawer — order notes, discounts, express checkout, and the free shipping progress bar. -->
+<h1>Cart</h1>
+<p class="lead">Posy has two carts that stay in sync: the cart page and the sliding cart drawer that opens from the header's bag icon. Configure the page under the <strong>Cart</strong> section of the cart template; the drawer follows automatically.</p>
+
+<h2>Cart page settings</h2>
+<ul>
+    <li><span class="lbl">Eyebrow text</span> and <span class="lbl">Heading</span> — the page title area.</li>
+    <li><span class="lbl">Show order note field</span> — lets shoppers leave a note that arrives with the order.</li>
+    <li><span class="lbl">Show additional checkout buttons</span> — displays Shop Pay, PayPal, Apple Pay, or other express payment buttons below "Buy it now", based on what's enabled in <span class="path">Settings → Payments</span>.</li>
+    <li><span class="lbl">Delivery note</span> — a short line under the subtotal (e.g. a dispatch-time promise). Leave it empty to hide it.</li>
+</ul>
+
+<h2>What shoppers can do</h2>
+<ul>
+    <li><strong>Edit quantities</strong> — stepper controls on every line, with remove links; totals update instantly.</li>
+    <li><strong>See discounts clearly</strong> — line-level discounts appear on the affected items, cart-level discounts in the totals, each with the discount's name.</li>
+    <li><strong>Apply a promo code</strong> — a promo-code field applies the code before checkout (via Shopify's discount link), so the discounted total is visible in the cart rather than surprising shoppers at checkout.</li>
+    <li><strong>Know about taxes</strong> — the standard tax and shipping note shows above checkout, reflecting your store's tax settings.</li>
+</ul>
+
+<h2>Free shipping progress bar</h2>
+<p>Set <span class="lbl">Free shipping threshold</span> in <span class="path">Theme settings → Cart</span> and both the cart page and drawer show a progress bar: "you're $X away from free shipping", then a celebration when the threshold is reached. It updates live as quantities change.</p>
+<div class="note warn">
+    <strong>Match your real shipping settings</strong>
+    The bar is a display — it does not create a shipping rate. Set it <em>only</em> if your store actually offers free shipping above that amount (configured in <span class="path">Settings → Shipping and delivery</span>), enter the amount in your store currency, and keep the two in sync if your rates change. Leave the setting empty to hide the bar entirely (the default).
+</div>
+
+<h2>Cart drawer</h2>
+<p>The drawer mirrors the essentials — line items with quantity controls, subtotal, the free-shipping bar, and a checkout button — and links to the full cart page for notes and promo codes. It opens whenever a shopper adds to cart or selects the bag icon, so there is nothing separate to configure.</p>

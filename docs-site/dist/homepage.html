@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home page sections | Posy Theme Documentation | TriSoul Digital</title>
+
+    <link rel="icon" type="image/webp" href="https://trisouldigital.com/trisoul-favicon.webp">
+
+    <meta name="description" content="Configure Posy's home page — hero, featured collections, best sellers, reviews, Instagram gallery, and newsletter.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://themes.trisouldigital.com/posy/homepage.html">
+
+    <!-- Fonts: Inter for UI, Playfair Display for brand alignment -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #FAFAFA;
+            --surface: #FFFFFF;
+            --border: #E5E7EB;
+            --text: #111827;
+            --light-text: #6B7280;
+            --soul-blue: #0692D4;
+            --soul-teal: #00BDD6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { -webkit-text-size-adjust: 100%; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.65;
+            font-size: 16px;
+        }
+        a { color: var(--soul-blue); text-decoration: none; }
+        a:hover { color: var(--soul-teal); }
+        ::selection { background: var(--soul-blue); color: #fff; }
+
+        /* ---- Header ---- */
+        .site-header {
+            position: sticky; top: 0; z-index: 20;
+            border-bottom: 1px solid var(--border);
+            background: rgba(250, 250, 250, .85);
+            backdrop-filter: blur(8px);
+        }
+        .site-header-inner {
+            max-width: 76rem; margin: 0 auto;
+            padding: 1rem 1.5rem;
+            display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+        }
+        .site-brand { display: flex; align-items: center; gap: .9rem; min-width: 0; }
+        .site-brand img { height: 1.9rem; width: auto; display: block; }
+        .site-brand .sep { color: var(--border); }
+        .site-brand .site-name { color: var(--light-text); font-size: .875rem; font-weight: 500; letter-spacing: .02em; white-space: nowrap; }
+        .header-link { font-size: .875rem; font-weight: 500; white-space: nowrap; }
+
+        /* ---- Layout ---- */
+        .layout {
+            max-width: 76rem; margin: 0 auto;
+            padding: 2rem 1.5rem 3rem;
+            display: grid; grid-template-columns: 15.5rem 1fr; gap: 3rem;
+            align-items: start;
+        }
+        .sidebar { position: sticky; top: 5.2rem; }
+        .nav-group {
+            font-size: .72rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: .08em; color: var(--light-text);
+            margin: 1.4rem 0 .4rem;
+        }
+        .nav-group:first-child { margin-top: 0; }
+        .nav-list { list-style: none; }
+        .nav-list a {
+            display: block; padding: .32rem .7rem;
+            border-radius: .5rem; color: var(--text);
+            font-size: .9rem;
+        }
+        .nav-list a:hover { background: #fff; color: var(--soul-blue); }
+        .nav-list a.active {
+            background: #fff; color: var(--soul-blue); font-weight: 600;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 2px rgba(0,0,0,.04);
+        }
+
+        /* Mobile nav */
+        .mobile-nav { display: none; }
+        @media (max-width: 860px) {
+            .layout { grid-template-columns: 1fr; gap: 1.5rem; padding-top: 1.25rem; }
+            .sidebar { display: none; }
+            .mobile-nav { display: block; }
+            .mobile-nav details {
+                background: var(--surface); border: 1px solid var(--border);
+                border-radius: .75rem; padding: .7rem 1rem;
+            }
+            .mobile-nav summary {
+                cursor: pointer; font-weight: 600; font-size: .9rem;
+                color: var(--soul-blue); list-style: none;
+            }
+            .mobile-nav summary::after { content: " ▾"; }
+            .site-brand .site-name, .site-brand .sep { display: none; }
+        }
+
+        /* ---- Article ---- */
+        article { min-width: 0; }
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,.04);
+            padding: 2.2rem 2.4rem;
+        }
+        @media (max-width: 640px) { .card { padding: 1.4rem 1.2rem; } }
+
+        article h1 {
+            font-size: 2rem; font-weight: 700; letter-spacing: -.02em;
+            line-height: 1.2; margin-bottom: .5rem;
+        }
+        article .lead { color: var(--light-text); font-size: 1.06rem; margin-bottom: 1.8rem; }
+        article h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.45rem; font-weight: 600;
+            margin: 2.2rem 0 .7rem;
+            padding-top: 1.4rem;
+            border-top: 1px solid var(--border);
+        }
+        article h2:first-of-type { border-top: 0; padding-top: 0; margin-top: 1rem; }
+        article h3 { font-size: 1.05rem; font-weight: 600; margin: 1.5rem 0 .4rem; }
+        article p { margin: .65rem 0; }
+        article ul, article ol { margin: .65rem 0 .65rem 1.4rem; }
+        article li { margin: .3rem 0; }
+        article strong { font-weight: 600; }
+
+        /* Exact editor labels get a pill so merchants can match them on sight. */
+        .lbl {
+            font-family: 'Inter', sans-serif; font-size: .855em; font-weight: 500;
+            background: #EEF6FB; border: 1px solid #D3E9F5; color: #085E86;
+            border-radius: .375rem; padding: .05rem .42rem; white-space: nowrap;
+        }
+        /* Editor navigation paths (Theme settings → Colors) */
+        .path {
+            font-size: .875em; font-weight: 500; color: var(--text);
+            background: #F3F4F6; border: 1px solid var(--border);
+            border-radius: .375rem; padding: .05rem .42rem;
+        }
+        article code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+            font-size: .855em; background: #F3F4F6;
+            border: 1px solid var(--border); border-radius: .375rem;
+            padding: .05rem .35rem;
+        }
+
+        .note {
+            border: 1px solid #D3E9F5; background: #F4FAFE;
+            border-radius: .75rem; padding: .85rem 1.1rem;
+            margin: 1rem 0; font-size: .93rem;
+        }
+        .note.warn { border-color: #F5E3C8; background: #FEFAF2; }
+        .note strong:first-child { display: block; margin-bottom: .15rem; }
+
+        article table {
+            width: 100%; border-collapse: collapse; margin: 1rem 0;
+            font-size: .9rem;
+        }
+        article th, article td {
+            text-align: left; padding: .55rem .8rem;
+            border-bottom: 1px solid var(--border); vertical-align: top;
+        }
+        article th { font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--light-text); }
+        .table-wrap { overflow-x: auto; }
+
+        /* FAQ accordions */
+        article details.faq {
+            border: 1px solid var(--border); border-radius: .75rem;
+            background: var(--surface); margin: .6rem 0; padding: .85rem 1.1rem;
+        }
+        article details.faq summary { cursor: pointer; font-weight: 600; }
+
+        /* Pager */
+        .pager {
+            display: flex; justify-content: space-between; gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .pager-link {
+            display: flex; flex-direction: column; gap: .1rem;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: .75rem; padding: .7rem 1.1rem;
+            max-width: 48%;
+        }
+        .pager-link span { font-size: .75rem; color: var(--light-text); }
+        .pager-next { margin-left: auto; text-align: right; }
+
+        .site-footer {
+            border-top: 1px solid var(--border);
+            padding: 1.2rem 1.5rem; text-align: center;
+            font-size: .875rem; color: var(--light-text);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">
+        <div class="site-header-inner">
+            <div class="site-brand">
+                <a href="https://www.trisouldigital.com"><img src="https://trisouldigital.com/trisoul-logo.webp" alt="TriSoul Digital"></a>
+                <span class="sep">|</span>
+                <span class="site-name">Posy Documentation</span>
+            </div>
+            <nav>
+                <a class="header-link" href="https://support.trisouldigital.com">Get support &rarr;</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="layout">
+        <div class="mobile-nav">
+            <details>
+                <summary>Documentation menu</summary>
+                <nav aria-label="Documentation"><p class="nav-group">Start here</p>
+<ul class="nav-list">
+<li><a href="index.html">Getting started</a></li>
+</ul>
+<p class="nav-group">Customize</p>
+<ul class="nav-list">
+<li><a href="header-footer.html">Header & footer</a></li>
+<li><a href="homepage.html" class="active">Home page sections</a></li>
+<li><a href="product.html">Product pages</a></li>
+<li><a href="collections-search.html">Collections & search</a></li>
+<li><a href="cart.html">Cart</a></li>
+<li><a href="pages-sections.html">Other pages & sections</a></li>
+<li><a href="localization.html">Localization & gift cards</a></li>
+</ul>
+<p class="nav-group">Help</p>
+<ul class="nav-list">
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="support.html">Support policy</a></li>
+<li><a href="changelog.html">Changelog</a></li>
+</ul></nav>
+            </details>
+        </div>
+
+        <aside class="sidebar">
+            <nav aria-label="Documentation"><p class="nav-group">Start here</p>
+<ul class="nav-list">
+<li><a href="index.html">Getting started</a></li>
+</ul>
+<p class="nav-group">Customize</p>
+<ul class="nav-list">
+<li><a href="header-footer.html">Header & footer</a></li>
+<li><a href="homepage.html" class="active">Home page sections</a></li>
+<li><a href="product.html">Product pages</a></li>
+<li><a href="collections-search.html">Collections & search</a></li>
+<li><a href="cart.html">Cart</a></li>
+<li><a href="pages-sections.html">Other pages & sections</a></li>
+<li><a href="localization.html">Localization & gift cards</a></li>
+</ul>
+<p class="nav-group">Help</p>
+<ul class="nav-list">
+<li><a href="faq.html">FAQ</a></li>
+<li><a href="support.html">Support policy</a></li>
+<li><a href="changelog.html">Changelog</a></li>
+</ul></nav>
+        </aside>
+
+        <article>
+            <div class="card">
+<h1>Home page sections</h1>
+<p class="lead">Posy's home page ships with six sections in this order: Hero, Featured collections, Best sellers, Reviews, Instagram gallery, and Newsletter. Add, remove, and reorder them freely in the theme editor — this page documents each one.</p>
+
+<h2>Hero</h2>
+<p>The opening statement of your store. Three layouts are available under <span class="lbl">Hero layout</span>:</p>
+<ul>
+    <li><strong>Split</strong> — text beside a single large image.</li>
+    <li><strong>Centered</strong> — centered text between two images (<span class="lbl">Image</span> and <span class="lbl">Second image (centered layout)</span>).</li>
+    <li><strong>Editorial</strong> — a full-width, magazine-style composition with an <span class="lbl">Editorial tag (top corner)</span>.</li>
+</ul>
+<p>Content settings: <span class="lbl">Eyebrow text</span>, <span class="lbl">Heading</span> (supports italics for an accent word), <span class="lbl">Subheading</span>, plus two calls to action — <span class="lbl">Primary button text</span> / <span class="lbl">Primary button link</span> and <span class="lbl">Secondary button text</span> / <span class="lbl">Secondary button link</span>.</p>
+<h3>Stats and chips</h3>
+<p>With <span class="lbl">Show stats</span> enabled, up to three stat pairs (<span class="lbl">Stat 1 — value</span> / <span class="lbl">Stat 1 — label</span>, and so on) render under the hero text, and two floating chips (<span class="lbl">Floating chip text</span>, <span class="lbl">Floating review chip text</span>) can decorate the image. All of these are <strong>blank by default</strong> — they appear only when you write them, and they should state facts that are true for your store.</p>
+
+<h2>Featured collections</h2>
+<p>A showcase of hand-picked collections. Settings: <span class="lbl">Eyebrow text</span>, <span class="lbl">Heading</span>, and <span class="lbl">Collections</span> — pick the collections to feature and their order.</p>
+
+<h2>Best sellers</h2>
+<p>A product grid pulled from a collection of your choice.</p>
+<ul>
+    <li><span class="lbl">Collection</span> — the source collection (a "best sellers" collection works well, but any collection can power it).</li>
+    <li><span class="lbl">Collection filters</span> — optionally pick additional collections to show as filter chips above the grid, letting shoppers flip between them without leaving the page.</li>
+    <li><span class="lbl">Number of products</span> — show 4, 8, or 12 products.</li>
+    <li><span class="lbl">View all button text</span> and <span class="lbl">View all button link</span> — the button below the grid.</li>
+</ul>
+
+<h2>Reviews</h2>
+<p>A section for quoting customer reviews, with <span class="lbl">Eyebrow text</span> and <span class="lbl">Heading</span> settings and up to six <span class="lbl">Review</span> blocks. Each block has <span class="lbl">Reviewer name</span>, <span class="lbl">Reviewer handle</span>, <span class="lbl">Star rating</span>, <span class="lbl">Text</span>, and a <span class="lbl">Verified buyer</span> checkbox.</p>
+<div class="note warn">
+    <strong>Real reviews only</strong>
+    These quotes are written by you, so treat them like advertising: quote real customers, and tick <span class="lbl">Verified buyer</span> only for reviews that come from actual purchases. If you want automatically collected reviews on product pages, see the <a href="product.html">product reviews section</a>, which hosts review apps.
+</div>
+
+<h2>Instagram gallery</h2>
+<p>A curated grid of up to six <span class="lbl">Post</span> blocks, headed by your <span class="lbl">Hashtag</span>, <span class="lbl">Heading</span>, and <span class="lbl">Instagram handle</span>. Each post has an <span class="lbl">Image</span>, a <span class="lbl">Like count</span>, and a <span class="lbl">Link URL</span> (link each tile to the matching post or to your profile).</p>
+<div class="note">
+    <strong>This is a curated grid, not a live feed</strong>
+    You choose the images and type the like counts yourself — nothing is pulled from Instagram automatically, so the section works without connecting an account or an app. Keep the numbers honest and refresh the grid now and then so it matches your actual profile.
+</div>
+
+<h2>Newsletter</h2>
+<p>An email sign-up form wired to Shopify: subscribers land in <span class="path">Customers</span> with their marketing status set, ready for Shopify Email or any connected email app.</p>
+<ul>
+    <li><span class="lbl">Heading</span>, <span class="lbl">Subheading</span>, <span class="lbl">Button text</span> — the pitch. The defaults advertise a 15% welcome offer; edit them to match what you actually offer.</li>
+    <li><span class="lbl">Success message</span> — shown after sign-up. The default mentions a sample discount code (<code>HELLO15</code>), so replace it with your own code — or remove the mention — before launch.</li>
+    <li><span class="lbl">Fine print</span> — the small reassurance line under the form.</li>
+</ul>
+
+<h2>More sections to add</h2>
+<p>Beyond the defaults, the <strong>Add section</strong> picker also offers: <a href="product.html#featured-product">Featured product</a>, <a href="pages-sections.html#faq">FAQ accordion</a> and FAQ contact CTA, <a href="pages-sections.html#store-locations">Store locations</a>, the <a href="pages-sections.html#about">About and Contact sections</a>, and two power-user tools — <a href="pages-sections.html#custom">Custom section and Custom Liquid</a>.</p>
+            </div>
+            <nav class="pager" aria-label="Documentation pages"><a class="pager-link pager-prev" href="header-footer.html"><span>&larr; Previous</span><strong>Header & footer</strong></a><a class="pager-link pager-next" href="product.html"><span>Next &rarr;</span><strong>Product pages</strong></a></nav>
+        </article>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2026 TriSoul Digital. All rights reserved. &middot; <a href="https://support.trisouldigital.com">Support</a></p>
+    </footer>
+
+</body>
+</html>

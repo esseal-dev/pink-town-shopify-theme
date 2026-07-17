@@ -1,0 +1,62 @@
+<!-- title: Product pages | desc: Posy's product page — reorderable blocks, media gallery, variants and swatches, recommendations, and review apps. -->
+<h1>Product pages</h1>
+<p class="lead">Posy's product page is built from reorderable blocks, so you decide what appears and in what order. Below the main section, two recommendation sections and a review-app host complete the default template.</p>
+
+<h2>Section settings</h2>
+<ul>
+    <li><span class="lbl">Image position</span> — media gallery on the <strong>Left</strong> or <strong>Right</strong> of the product details.</li>
+    <li><span class="lbl">Show low-stock countdown</span> with <span class="lbl">Low-stock threshold</span> — when the selected variant's inventory drops to the threshold or below, an "only X left" notice appears. It reads your <strong>real inventory</strong> and only that: with the setting off, or stock above the threshold, nothing is shown, and it never invents scarcity.</li>
+    <li><span class="lbl">Add-ons heading</span> — the heading above the "Complete the look" add-on products (see the Add-on product block below).</li>
+    <li><span class="lbl">Show share buttons</span> — social sharing links for the product.</li>
+    <li><span class="lbl">Details section heading</span> and <span class="lbl">Highlights</span> — an at-a-glance list of product facts, one per line.</li>
+</ul>
+
+<h2>Blocks</h2>
+<p>Add, remove, and drag to reorder in the theme editor:</p>
+<div class="table-wrap">
+<table>
+    <tr><th>Block</th><th>What it does</th></tr>
+    <tr><td><span class="lbl">Vendor &amp; type</span></td><td>Shows the product's vendor and product type from the product record.</td></tr>
+    <tr><td><span class="lbl">Title</span></td><td>The product title.</td></tr>
+    <tr><td><span class="lbl">Price</span></td><td>Price and compare-at price, unit prices when set on a variant, and Shop Pay installments when enabled for your store.</td></tr>
+    <tr><td><span class="lbl">Variant picker</span></td><td>Option pills, with swatches for color-like options. See "Swatches" below.</td></tr>
+    <tr><td><span class="lbl">Buy buttons</span></td><td>Quantity selector and add-to-cart. <span class="lbl">Show additional checkout buttons</span> toggles express payment buttons (Shop Pay, PayPal, Apple Pay…) based on what's enabled in <span class="path">Settings → Payments</span>. When a product has subscription plans, the selling-plan selector appears here; on gift card products, the recipient form appears here.</td></tr>
+    <tr><td><span class="lbl">Description</span></td><td>The product description from the product record.</td></tr>
+    <tr><td><span class="lbl">Highlight line</span></td><td>A one-line perk row (e.g. free shipping, warranty). Add several to build a perk list; each has a single <span class="lbl">Text</span> setting.</td></tr>
+    <tr><td><span class="lbl">Accordion item</span></td><td>A collapsible row with a <span class="lbl">Title</span> and rich-text <span class="lbl">Text</span> — ideal for shipping &amp; returns, materials, or care instructions.</td></tr>
+    <tr><td><span class="lbl">Add-on product</span></td><td>An optional add-on (e.g. a gift box) the shopper can tick to add alongside the main product. Pick the <span class="lbl">Product</span>; multiple blocks build the "Complete the look" list.</td></tr>
+    <tr><td>App blocks</td><td>Blocks provided by apps you've installed (size charts, wishlists, reviews…) can be added anywhere in the block order.</td></tr>
+</table>
+</div>
+
+<h2>Media gallery</h2>
+<p>The gallery displays everything attached to the product in <span class="path">Products → [product] → Media</span>: images, videos, external videos (YouTube/Vimeo), and 3D models, each with the appropriate player or viewer. When a variant has its own image, selecting that variant switches the gallery to it automatically.</p>
+
+<h2>Swatches</h2>
+<p>The <span class="lbl">Variant picker</span> renders color-like options (Color, Finish…) as swatches instead of text pills. It supports Shopify's native swatch attributes — set a color or image per option value in <span class="path">Settings → Custom data</span> or on the product's options — and falls back to a built-in library of common finish and color names when no native swatch is defined, so swatches work out of the box.</p>
+
+<h2>Pickup availability</h2>
+<p>If your store has local pickup configured (<span class="path">Settings → Shipping and delivery → Local pickup</span>), the product page shows pickup availability for the selected variant, with a store list. No theme settings are needed — it appears automatically when pickup locations exist.</p>
+
+<h2>Product recommendations</h2>
+<p>The default template includes two instances of the same section, distinguished by <span class="lbl">Recommendation type</span>:</p>
+<ul>
+    <li><strong>"Pairs well with"</strong> — set to <strong>Complementary products</strong>. These come from the <strong>Search &amp; Discovery</strong> app (free, by Shopify): install it and define complementary products per product. Until you do, this section stays empty — that is expected.</li>
+    <li><strong>"You may also like"</strong> — set to <strong>Related products</strong>, generated automatically by Shopify from product data and behavior.</li>
+</ul>
+<p>Each instance also has <span class="lbl">Eyebrow text</span>, <span class="lbl">Heading</span>, and <span class="lbl">Products to show</span> settings.</p>
+
+<h2 id="reviews">Product reviews</h2>
+<p>The <strong>Loved by customers</strong> section is a host for review apps — Posy deliberately ships no built-in review widget, so your reviews always come from a real collection system:</p>
+<ol>
+    <li>Install a reviews app (Judge.me, Loox, Air Reviews, or any app that provides theme blocks).</li>
+    <li>In the theme editor, select the <strong>Loved by customers</strong> section on the product template and choose <strong>Add block</strong> — the app's review widget appears in the block list.</li>
+    <li>Optionally set the section's <span class="lbl">Heading</span>.</li>
+</ol>
+<div class="note">
+    <strong>Seeing an empty section?</strong>
+    Until an app block is added, the section renders nothing on your live store. That's by design — see the <a href="faq.html">FAQ</a>.
+</div>
+
+<h2 id="featured-product">Featured product (section)</h2>
+<p>A home-page-friendly spotlight for a single product, with the same buy experience: pick the <span class="lbl">Product</span>, choose <span class="lbl">Image position</span> (<strong>Left</strong> / <strong>Right</strong>), and optionally enable <span class="lbl">Show vendor</span> and <span class="lbl">Show additional checkout buttons</span>. Use <span class="lbl">Eyebrow text</span>, <span class="lbl">Heading</span>, and the rich-text <span class="lbl">Text</span> setting to frame it — <span class="lbl">Text</span> replaces the product's own description when filled in, or leave it blank to use the product's description. App blocks are supported here too.</p>
