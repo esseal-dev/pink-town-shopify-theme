@@ -253,11 +253,6 @@
                 {%- endif -%}
                 <span class="pt-add">{{ 'products.quick_view' | t }}</span>
               </button>
-              <button class="pt-wish pt-wish-btn" data-product-handle="{{ product.handle }}" data-on="0" aria-label="{{ 'products.save_to_wishlist' | t }}">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                  <path d="M12 21C12 21 4 14.5 4 9.5C4 6.8 6.2 4.5 9 4.5C10.5 4.5 11.6 5.2 12 6.3C12.4 5.2 13.5 4.5 15 4.5C17.8 4.5 20 6.8 20 9.5C20 14.5 12 21 12 21Z" stroke-linejoin="round"/>
-                </svg>
-              </button>
               <div class="pt-card-info">
                 <span class="pt-card-cat">{{ product.type | escape }}</span>
                 <h3 class="pt-card-name"><a href="{{ product.url }}">{{ product.title | escape }}</a></h3>
@@ -275,20 +270,35 @@
                     {%- endfor -%}
                   </span>
                 </div>
+                {%- render 'unit-price', item: variant -%}
               </div>
             </div>
 
-            {%- if forloop.index == 6 and collection.products.size > 6 and section.settings.show_promo -%}
-              <div class="pt-promo" data-promo>
-                <div class="pt-promo-glow"></div>
-                <span class="pt-eyebrow" style="color:#fff">{{ section.settings.promo_eyebrow | escape }}</span>
-                <h3 class="pt-promo-h">{{ section.settings.promo_heading | escape }}</h3>
-                <p class="pt-promo-sub">{{ section.settings.promo_text | escape }}</p>
-                {%- if section.settings.promo_badge != blank -%}
-                  <span class="pt-promo-code">{{ section.settings.promo_badge | escape }}</span>
+            {%- assign product_position = forloop.index -%}
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'promo' and block.settings.position == product_position -%}
+                {%- if block.settings.heading != blank -%}
+                  <div class="pt-promo" data-promo {{ block.shopify_attributes }}>
+                    <div class="pt-promo-glow"></div>
+                    {%- if block.settings.eyebrow != blank -%}
+                      <span class="pt-eyebrow" style="color:#fff">{{ block.settings.eyebrow | escape }}</span>
+                    {%- endif -%}
+                    <h3 class="pt-promo-h">{{ block.settings.heading | escape }}</h3>
+                    {%- if block.settings.text != blank -%}
+                      <p class="pt-promo-sub">{{ block.settings.text | escape }}</p>
+                    {%- endif -%}
+                    {%- if block.settings.badge != blank -%}
+                      <span class="pt-promo-code">{{ block.settings.badge | escape }}</span>
+                    {%- endif -%}
+                  </div>
+                {%- elsif request.design_mode -%}
+                  <div class="pt-promo" data-promo {{ block.shopify_attributes }}>
+                    <div class="pt-promo-glow"></div>
+                    <h3 class="pt-promo-h">{{ 'sections.collection.promo_placeholder' | t }}</h3>
+                  </div>
                 {%- endif -%}
-              </div>
-            {%- endif -%}
+              {%- endif -%}
+            {%- endfor -%}
           {%- endfor -%}
         </div>
 
@@ -330,11 +340,6 @@
         </div>
         <button type="button" class="pt-btn pt-btn--solid pt-qv-add" data-qv-add>{{ 'products.add_to_cart' | t }}</button>
       </div>
-      <ul class="pt-qv-perks">
-        <li>{{ 'products.perk_tarnish_free' | t }}</li>
-        <li>{{ 'products.perk_free_shipping' | t }}</li>
-        <li>{{ 'products.perk_returns' | t }}</li>
-      </ul>
       <a class="pt-qv-details" data-qv-link href="#">
         {{ 'products.view_full_details' | t }}
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -512,15 +517,6 @@
     // always the true server-side filtered set, not a client-side guess. ──
     var facetsForm;
 
-    function bindWishlistState() {
-      var wished = window.ptLoadWishlist ? window.ptLoadWishlist() : [];
-      page.querySelectorAll('.pt-wish-btn').forEach(function (btn) {
-        var on = wished.indexOf(btn.dataset.productHandle) !== -1;
-        btn.dataset.on = on ? '1' : '0';
-        var svg = btn.querySelector('svg');
-        if (svg) svg.setAttribute('fill', on ? 'currentColor' : 'none');
-      });
-    }
 
     function syncPriceFill(priceFilter) {
       var loInput = priceFilter.querySelector('[data-range-lo]');
@@ -582,7 +578,6 @@
           if (newLayout && layout) layout.replaceWith(newLayout);
           history.pushState({ ptFacets: true }, '', url);
           bindFacets();
-          bindWishlistState();
           var top = page.getBoundingClientRect().top + window.scrollY - 96;
           if (window.scrollY > top) window.scrollTo({ top: top, behavior: 'smooth' });
         })
@@ -880,9 +875,18 @@
       "id": "header_layout",
       "label": "t:labels.header_layout",
       "options": [
-        { "value": "split", "label": "t:options.collection_layout.split" },
-        { "value": "centered", "label": "t:options.collection_layout.centered" },
-        { "value": "fullbleed", "label": "t:options.collection_layout.fullbleed" }
+        {
+          "value": "split",
+          "label": "t:options.collection_layout.split"
+        },
+        {
+          "value": "centered",
+          "label": "t:options.collection_layout.centered"
+        },
+        {
+          "value": "fullbleed",
+          "label": "t:options.collection_layout.fullbleed"
+        }
       ],
       "default": "split"
     },
@@ -902,27 +906,31 @@
       "type": "checkbox",
       "id": "show_rating",
       "label": "t:labels.show_rating",
-      "default": true
+      "default": false
     },
     {
       "type": "text",
       "id": "rating",
-      "label": "t:labels.rating",
-      "default": "4.9"
+      "label": "t:labels.rating"
     },
     {
       "type": "text",
       "id": "review_count",
-      "label": "t:labels.review_count",
-      "default": "218"
+      "label": "t:labels.review_count"
     },
     {
       "type": "select",
       "id": "grid_columns",
       "label": "t:labels.grid_columns",
       "options": [
-        { "value": "3", "label": "t:options.grid_columns.three" },
-        { "value": "4", "label": "t:options.grid_columns.four" }
+        {
+          "value": "3",
+          "label": "t:options.grid_columns.three"
+        },
+        {
+          "value": "4",
+          "label": "t:options.grid_columns.four"
+        }
       ],
       "default": "3"
     },
@@ -947,36 +955,44 @@
       "id": "enable_price_filter",
       "label": "t:labels.enable_price_filter",
       "default": true
-    },
+    }
+  ],
+  "blocks": [
     {
-      "type": "checkbox",
-      "id": "show_promo",
-      "label": "t:labels.show_promo",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "promo_eyebrow",
-      "label": "t:labels.promo_eyebrow",
-      "default": "Limited time"
-    },
-    {
-      "type": "text",
-      "id": "promo_heading",
-      "label": "t:labels.promo_heading",
-      "default": "Buy 2, get 1 free"
-    },
-    {
-      "type": "textarea",
-      "id": "promo_text",
-      "label": "t:labels.promo_text",
-      "default": "Mix & match any pieces — your lowest-priced item is on us. Auto-applied at checkout."
-    },
-    {
-      "type": "text",
-      "id": "promo_badge",
-      "label": "t:labels.promo_badge",
-      "default": "No code needed ♡"
+      "type": "promo",
+      "name": "t:labels.promo_banner",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "range",
+          "id": "position",
+          "label": "t:labels.promo_position",
+          "min": 2,
+          "max": 24,
+          "step": 1,
+          "default": 6
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "t:labels.eyebrow"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:labels.heading"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "t:labels.text"
+        },
+        {
+          "type": "text",
+          "id": "badge",
+          "label": "t:labels.promo_badge"
+        }
+      ]
     }
   ]
 }

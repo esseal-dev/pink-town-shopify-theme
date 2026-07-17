@@ -28,9 +28,6 @@
   endfor
 
   assign related_source = product.collections.first
-  if section.settings.show_related and related_source
-    assign related_count = section.settings.related_count | default: 4
-  endif
 
   assign show_stock = false
   if section.settings.show_stock_countdown and current_variant.inventory_management == 'shopify' and current_variant.inventory_policy != 'continue'
@@ -42,8 +39,9 @@
 
 <div class="pt-pdp full-width" id="pt-pdp-{{ section.id }}" data-pdp
      data-has-model="{{ has_model }}"
-     data-checkout-url="{{ routes.cart_url }}/checkout"
      data-product-title="{{ product.title | escape }}"
+     data-i-added-to-bag="{{ 'products.added_to_bag_html' | t: title: '%%TITLE%%' | escape }}"
+     data-i-add-error="{{ 'products.add_error' | t | escape }}"
      data-stock-threshold="{{ section.settings.stock_threshold }}"
      data-show-stock="{{ section.settings.show_stock_countdown }}"
      data-i-add-to-cart="{{ 'products.add_to_cart' | t }}"
@@ -132,130 +130,214 @@
       </div>
 
       <div class="pt-pdp-info">
-        {%- if section.settings.show_vendor and product.vendor != blank -%}
-          <span class="pt-pdp-vendor">{{ product.vendor }}</span>
-        {%- endif -%}
+        {%- assign product_form_id = 'pt-product-form-' | append: section.id -%}
+        {%- form 'product', product, id: product_form_id -%}
+          {%- for block in section.blocks -%}
+            {%- case block.type -%}
+              {%- when 'vendor' -%}
+                <div class="pt-pdp-vendor-row" {{ block.shopify_attributes }}>
+                  {%- if product.vendor != blank -%}
+                    <span class="pt-pdp-vendor">{{ product.vendor }}</span>
+                  {%- endif -%}
+                  {%- if product.type != blank -%}
+                    <span class="pt-card-cat">{{ product.type | escape }}</span>
+                  {%- endif -%}
+                </div>
 
-        {%- if product.type != blank -%}
-          <span class="pt-card-cat">{{ product.type | escape }}</span>
-        {%- endif -%}
+              {%- when 'title' -%}
+                <h1 class="pt-pdp-title" {{ block.shopify_attributes }}>{{ product.title }}</h1>
 
-        <h1 class="pt-pdp-title">{{ product.title }}</h1>
-
-        {%- if section.settings.show_rating -%}
-          <button type="button" class="pt-rating-line" data-pdp-reviews-jump>
-            <span class="pt-stars" aria-hidden="true">
-              {%- for i in (1..5) -%}<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.4"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8L3.5 9.7l5.9-.9L12 3.5z" stroke-linejoin="round"/></svg>{%- endfor -%}
-            </span>
-            <strong>{{ section.settings.rating }}</strong>
-            {{ 'products.reviews_count' | t: count: section.settings.review_count }}
-          </button>
-        {%- endif -%}
-
-        {%- form 'product', product -%}
-          <div class="pt-pdp-price" data-pdp-price>
-            <span class="pt-price-now">{{ current_variant.price | money }}</span>
-            {%- if on_sale -%}
-              <span class="pt-price-was">{{ current_variant.compare_at_price | money }}</span>
-              <span class="pt-price-save">{{ 'products.save_pct' | t: pct: savings_pct }}</span>
-            {%- endif -%}
-          </div>
-          {%- if on_sale -%}
-            <p class="pt-pdp-cap" data-pdp-cap>{{ 'products.savings_caption_html' | t: amount: savings_amount | money }}</p>
-          {%- endif -%}
-          <div class="pt-pdp-terms">{{ form | payment_terms }}</div>
-
-          {%- unless product.has_only_default_variant -%}
-            <div class="pt-pdp-options">
-              {%- for option in product.options_with_values -%}
-                {%- liquid
-                  assign opt_down = option.name | downcase
-                  assign current_value = current_variant.options[forloop.index0]
-                  assign is_swatch = false
-                  if opt_down contains 'color' or opt_down contains 'finish'
-                    assign is_swatch = true
-                  endif
-                  if opt_down contains 'size'
-                    assign opt_label = 'products.size' | t
-                  elsif opt_down contains 'length'
-                    assign opt_label = 'products.length' | t
-                  else
-                    assign opt_label = option.name
-                  endif
-                -%}
-                <div class="pt-pdp-field" data-pdp-field data-opt-index="{{ forloop.index0 }}" data-opt-name="{{ option.name | escape }}">
-                  <span class="pt-pdp-flabel" data-pdp-flabel>
-                    {%- if is_swatch -%}
-                      {{ 'products.finish_html' | t: value: current_value }}
-                    {%- else -%}
-                      {{ 'products.size_selected_html' | t: label: opt_label, value: current_value }}
+              {%- when 'price' -%}
+                <div {{ block.shopify_attributes }}>
+                  <div class="pt-pdp-price" data-pdp-price>
+                    <span class="pt-price-now">{{ current_variant.price | money }}</span>
+                    {%- if on_sale -%}
+                      <span class="pt-price-was">{{ current_variant.compare_at_price | money }}</span>
+                      <span class="pt-price-save">{{ 'products.save_pct' | t: pct: savings_pct }}</span>
                     {%- endif -%}
-                  </span>
-                  <div class="{% if is_swatch %}pt-pdp-colors{% else %}pt-pdp-pills{% endif %}">
-                    {%- for value in option.values -%}
-                      <button type="button"
-                              class="{% if is_swatch %}pt-pdp-color{% else %}pt-pdp-pill{% endif %}"
-                              data-pdp-option data-opt-index="{{ forloop.parentloop.index0 }}" data-opt-value="{{ value | escape }}"
-                              data-on="{% if value == current_value %}1{% else %}0{% endif %}"
-                              title="{{ value | escape }}">
-                        {%- if is_swatch -%}
-                          <span style="background:{% render 'finish-hex', name: value %}"></span>
-                        {%- else -%}
-                          {{ value }}
-                        {%- endif -%}
-                      </button>
-                    {%- endfor -%}
+                  </div>
+                  {%- render 'unit-price', item: current_variant -%}
+                  {%- if on_sale -%}
+                    <p class="pt-pdp-cap" data-pdp-cap>{{ 'products.savings_caption_html' | t: amount: savings_amount | money }}</p>
+                  {%- endif -%}
+                  <div class="pt-pdp-terms">{{ form | payment_terms }}</div>
+                </div>
+
+              {%- when 'variant_picker' -%}
+                <div {{ block.shopify_attributes }}>
+                  {%- unless product.has_only_default_variant -%}
+                    <div class="pt-pdp-options">
+                      {%- for option in product.options_with_values -%}
+                        {%- liquid
+                          assign opt_down = option.name | downcase
+                          assign current_value = current_variant.options[forloop.index0]
+                          assign is_swatch = false
+                          if opt_down contains 'color' or opt_down contains 'finish'
+                            assign is_swatch = true
+                          endif
+                          assign first_value = option.values | first
+                          if first_value.swatch
+                            assign is_swatch = true
+                          endif
+                          if opt_down contains 'size'
+                            assign opt_label = 'products.size' | t
+                          elsif opt_down contains 'length'
+                            assign opt_label = 'products.length' | t
+                          else
+                            assign opt_label = option.name
+                          endif
+                        -%}
+                        <div class="pt-pdp-field" data-pdp-field data-opt-index="{{ forloop.index0 }}" data-opt-name="{{ option.name | escape }}">
+                          <span class="pt-pdp-flabel" data-pdp-flabel>
+                            {%- if is_swatch -%}
+                              {{ 'products.finish_html' | t: value: current_value }}
+                            {%- else -%}
+                              {{ 'products.size_selected_html' | t: label: opt_label, value: current_value }}
+                            {%- endif -%}
+                          </span>
+                          <div class="{% if is_swatch %}pt-pdp-colors{% else %}pt-pdp-pills{% endif %}">
+                            {%- for value in option.values -%}
+                              {%- liquid
+                                assign val_name = value.name | default: value
+                                assign swatch_style = ''
+                                if value.swatch.color
+                                  assign swatch_style = 'background:rgb(' | append: value.swatch.color.rgb | append: ')'
+                                elsif value.swatch.image
+                                  assign swatch_img = value.swatch.image | image_url: width: 80
+                                  assign swatch_style = 'background-image:url(' | append: swatch_img | append: ');background-size:cover'
+                                endif
+                              -%}
+                              <button type="button"
+                                      class="{% if is_swatch %}pt-pdp-color{% else %}pt-pdp-pill{% endif %}"
+                                      data-pdp-option data-opt-index="{{ forloop.parentloop.index0 }}" data-opt-value="{{ val_name | escape }}"
+                                      data-on="{% if val_name == current_value %}1{% else %}0{% endif %}"
+                                      title="{{ val_name | escape }}">
+                                {%- if is_swatch -%}
+                                  {%- if swatch_style != '' -%}
+                                    <span style="{{ swatch_style }}"></span>
+                                  {%- else -%}
+                                    <span style="background:{% render 'finish-hex', name: val_name %}"></span>
+                                  {%- endif -%}
+                                {%- else -%}
+                                  {{ val_name }}
+                                {%- endif -%}
+                              </button>
+                            {%- endfor -%}
+                          </div>
+                        </div>
+                      {%- endfor -%}
+                    </div>
+                  {%- endunless -%}
+
+                  <input type="hidden" name="id" value="{{ current_variant.id }}" data-pdp-variant-select>
+                  <noscript>
+                    {%- unless product.has_only_default_variant -%}
+                      <label class="pt-pdp-flabel" for="pt-noscript-variant-{{ section.id }}">{{ 'products.variant_label' | t }}</label>
+                      <select id="pt-noscript-variant-{{ section.id }}" name="id" class="pt-pdp-noscript-select">
+                        {%- for variant in product.variants -%}
+                          <option value="{{ variant.id }}" {% if variant.id == current_variant.id %}selected{% endif %} {% unless variant.available %}disabled{% endunless %}>
+                            {{ variant.title }} — {{ variant.price | money }}
+                          </option>
+                        {%- endfor -%}
+                      </select>
+                    {%- endunless -%}
+                  </noscript>
+
+                  <script type="application/json" data-pdp-variants>{{ product.variants | json }}</script>
+
+                  <div class="pt-pdp-stock" data-pdp-stock {% unless show_stock %}hidden{% endunless %}>
+                    <div class="pt-pdp-stock-bar"><i data-pdp-stock-bar></i></div>
+                    <span data-pdp-stock-msg>{{ 'products.stock_low_html' | t: count: current_variant.inventory_quantity }}</span>
                   </div>
                 </div>
-              {%- endfor -%}
-            </div>
-          {%- endunless -%}
 
-          <select name="id" class="pt-visually-hidden" data-pdp-variant-select aria-hidden="true" tabindex="-1">
-            {%- for variant in product.variants -%}
-              <option value="{{ variant.id }}" {% if variant.id == current_variant.id %}selected{% endif %}>{{ variant.title }}</option>
-            {%- endfor -%}
-          </select>
+              {%- when 'buy_buttons' -%}
+                <div {{ block.shopify_attributes }}>
+                  {%- if product.selling_plan_groups.size > 0 -%}
+                    <div class="pt-pdp-plans">
+                      <label class="pt-pdp-flabel" for="pt-plan-{{ section.id }}">{{ 'products.purchase_options' | t }}</label>
+                      <select id="pt-plan-{{ section.id }}" name="selling_plan" class="pt-pdp-plan-select" data-pdp-plan>
+                        {%- unless product.requires_selling_plan -%}
+                          <option value="">{{ 'products.one_time_purchase' | t }}</option>
+                        {%- endunless -%}
+                        {%- for group in product.selling_plan_groups -%}
+                          <optgroup label="{{ group.name | escape }}">
+                            {%- for plan in group.selling_plans -%}
+                              <option value="{{ plan.id }}">{{ plan.name | escape }}</option>
+                            {%- endfor -%}
+                          </optgroup>
+                        {%- endfor -%}
+                      </select>
+                    </div>
+                  {%- endif -%}
 
-          <script type="application/json" data-pdp-variants>{{ product.variants | json }}</script>
+                  {%- if product.gift_card? -%}
+                    <div class="pt-gift-recipient">
+                      <input type="checkbox" id="pt-gift-{{ section.id }}" class="pt-gift-toggle"
+                             name="properties[__shopify_send_as_a_gift]" value="on"
+                             {% if form.errors %}checked{% endif %}>
+                      <label for="pt-gift-{{ section.id }}" class="pt-gift-label">{{ 'products.gift_recipient_label' | t }}</label>
+                      <div class="pt-gift-fields">
+                        <label>{{ 'products.gift_recipient_email' | t }}
+                          <input type="email" name="properties[Recipient email]" value="{{ form.email }}">
+                        </label>
+                        <label>{{ 'products.gift_recipient_name' | t }}
+                          <input type="text" name="properties[Recipient name]" value="{{ form.name }}">
+                        </label>
+                        <label>{{ 'products.gift_recipient_message' | t }}
+                          <textarea name="properties[Message]" maxlength="200" rows="2">{{ form.message }}</textarea>
+                        </label>
+                        <label>{{ 'products.gift_recipient_send_on' | t }}
+                          <input type="date" name="properties[Send on]" value="{{ form.send_on }}">
+                        </label>
+                        {%- if form.errors -%}
+                          <div class="pt-gift-errors" role="alert">
+                            {%- for field in form.errors -%}
+                              <p>{{ form.errors.messages[field] }}</p>
+                            {%- endfor -%}
+                          </div>
+                        {%- endif -%}
+                      </div>
+                    </div>
+                  {%- endif -%}
 
-          <div class="pt-pdp-stock" data-pdp-stock {% unless show_stock %}hidden{% endunless %}>
-            <div class="pt-pdp-stock-bar"><i data-pdp-stock-bar></i></div>
-            <span data-pdp-stock-msg>{{ 'products.stock_low_html' | t: count: current_variant.inventory_quantity }}</span>
-          </div>
+                  <div class="pt-pdp-actions">
+                    <div class="pt-qty pt-pdp-qty">
+                      <button type="button" data-pdp-qty-dec aria-label="{{ 'cart.decrease' | t }}">&minus;</button>
+                      <input type="number" name="quantity" value="1" min="1" inputmode="numeric" class="pt-qty-input" data-pdp-qty aria-label="{{ 'cart.quantity_label' | t }}">
+                      <button type="button" data-pdp-qty-inc aria-label="{{ 'cart.increase' | t }}">+</button>
+                    </div>
+                    <button type="submit" name="add" class="pt-btn pt-btn--solid pt-pdp-add" data-pdp-add {% unless current_variant.available %}disabled{% endunless %}>
+                      {%- if current_variant.available -%}{{ 'products.add_to_cart' | t }} &middot; {{ current_variant.price | money }}{%- else -%}{{ 'products.sold_out' | t }}{%- endif -%}
+                    </button>
+                  </div>
 
-          <div class="pt-pdp-actions">
-            <div class="pt-qty pt-pdp-qty">
-              <button type="button" data-pdp-qty-dec aria-label="{{ 'cart.decrease' | t }}">&minus;</button>
-              <span data-pdp-qty>1</span>
-              <button type="button" data-pdp-qty-inc aria-label="{{ 'cart.increase' | t }}">+</button>
-            </div>
-            <button type="button" class="pt-btn pt-btn--solid pt-pdp-add" data-pdp-add {% unless current_variant.available %}disabled{% endunless %}>
-              {%- if current_variant.available -%}{{ 'products.add_to_cart' | t }} &middot; {{ current_variant.price | money }}{%- else -%}{{ 'products.sold_out' | t }}{%- endif -%}
-            </button>
-            <button type="button" class="pt-wish-btn pt-pdp-wish" data-product-handle="{{ product.handle }}" data-on="0" aria-label="{{ 'products.save_to_wishlist' | t }}">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                <path d="M12 21C12 21 4 14.5 4 9.5C4 6.8 6.2 4.5 9 4.5C10.5 4.5 11.6 5.2 12 6.3C12.4 5.2 13.5 4.5 15 4.5C17.8 4.5 20 6.8 20 9.5C20 14.5 12 21 12 21Z" stroke-linejoin="round"/>
-              </svg>
-            </button>
-          </div>
+                  {%- if block.settings.show_dynamic_checkout -%}
+                    <div class="pt-pdp-dynamic" data-pdp-dynamic {% unless current_variant.available %}hidden{% endunless %}>
+                      {{ form | payment_button }}
+                    </div>
+                  {%- endif -%}
 
-          <button type="button" class="pt-btn pt-btn--ghost pt-btn--full pt-pdp-buynow" data-pdp-buynow {% unless current_variant.available %}disabled{% endunless %}>
-            {{ 'products.buy_it_now' | t }}
-          </button>
+                  <div class="pt-pdp-pickup" data-pdp-pickup data-product-url="{{ product.url }}"></div>
+                </div>
 
-          {%- if section.settings.show_dynamic_checkout -%}
-            <div class="pt-pdp-dynamic" data-pdp-dynamic {% unless current_variant.available %}hidden{% endunless %}>
-              {{ form | payment_button }}
-            </div>
-          {%- endif -%}
+              {%- when 'description' -%}
+                {%- if product.description != blank -%}
+                  <div class="pt-pdp-p pt-pdp-desc-block" {{ block.shopify_attributes }}>{{ product.description }}</div>
+                {%- endif -%}
 
-          {%- for block in section.blocks -%}
-            {%- if block.type == '@app' -%}
-              <div class="pt-pdp-app-block" {{ block.shopify_attributes }}>
-                {%- render block -%}
-              </div>
-            {%- endif -%}
+              {%- when 'perk' -%}
+                {%- if block.settings.text != blank -%}
+                  <div class="pt-pdp-perk" {{ block.shopify_attributes }}>
+                    <span class="pt-pdp-perk-ic">&#10022;</span>{{ block.settings.text | escape }}
+                  </div>
+                {%- endif -%}
+
+              {%- when '@app' -%}
+                <div class="pt-pdp-app-block" {{ block.shopify_attributes }}>
+                  {%- render block -%}
+                </div>
+            {%- endcase -%}
           {%- endfor -%}
 
           {%- liquid
@@ -300,13 +382,6 @@
           {%- endif -%}
         {%- endform -%}
 
-        <ul class="pt-pdp-perks">
-          <li><span class="pt-pdp-perk-ic">&#10022;</span>{{ 'products.perk_tarnish_free' | t }}</li>
-          <li><span class="pt-pdp-perk-ic">&#8635;</span>{{ 'products.perk_returns' | t }}</li>
-          <li><span class="pt-pdp-perk-ic">&#8595;</span>{{ 'products.perk_free_shipping' | t }}</li>
-          <li><span class="pt-pdp-perk-ic">&#9825;</span>{{ 'products.perk_gift_wrapped' | t }}</li>
-        </ul>
-
         {%- if section.settings.show_share -%}
           <div class="pt-pdp-share">
             <span class="pt-pdp-share-lbl">{{ 'products.share_label' | t }}</span>
@@ -334,15 +409,12 @@
     endfor
     assign highlight_lines = section.settings.highlights | newline_to_br | split: '<br />'
   -%}
-  {%- if product.description != blank or has_accordion or section.settings.highlights != blank -%}
+  {%- if has_accordion or section.settings.highlights != blank -%}
     <section class="pt-pdp-sec">
       <div class="pt-pdp-desc-grid">
         <div>
           {%- if section.settings.details_heading != blank -%}
             <h2 class="pt-pdp-h">{{ section.settings.details_heading | escape }}</h2>
-          {%- endif -%}
-          {%- if product.description != blank -%}
-            <div class="pt-pdp-p">{{ product.description }}</div>
           {%- endif -%}
           {%- if highlight_lines.size > 0 -%}
             <ul class="pt-pdp-highlights">
@@ -363,6 +435,7 @@
           <div class="pt-pdp-acc" data-pdp-acc>
             {%- for block in section.blocks -%}
               {%- if block.type == 'accordion_item' -%}
+                {%- if block.settings.content == blank and request.design_mode != true -%}{%- continue -%}{%- endif -%}
                 <div class="pt-pdp-acc-item" data-pdp-acc-item data-open="0" {{ block.shopify_attributes }}>
                   <button type="button" class="pt-pdp-acc-q" data-pdp-acc-toggle aria-expanded="false">
                     {{ block.settings.title | escape }}
@@ -382,74 +455,6 @@
     </section>
   {%- endif -%}
 
-  {%- if related_source and related_count -%}
-    {%- assign related_shown = 0 -%}
-    <section class="pt-pdp-sec pt-pdp-related">
-      <div class="pt-sec-head pt-sec-head--center">
-        <span class="pt-eyebrow">
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
-          {{ section.settings.related_eyebrow | escape }}
-        </span>
-        <h2 class="pt-pdp-h pt-pdp-h--center">{{ section.settings.related_heading | escape }}</h2>
-      </div>
-      <div class="pt-prod-grid">
-        {%- for related in related_source.products -%}
-          {%- if related.id == product.id -%}
-            {%- continue -%}
-          {%- endif -%}
-          {%- if related_shown >= related_count -%}
-            {%- break -%}
-          {%- endif -%}
-          {%- liquid
-            assign related_shown = related_shown | plus: 1
-            assign related_variant = related.first_available_variant
-            assign related_on_sale = false
-            if related.compare_at_price > related.price
-              assign related_on_sale = true
-            endif
-            assign related_savings_pct = related.compare_at_price | minus: related.price | times: 100 | divided_by: related.compare_at_price
-          -%}
-          <div class="pt-card">
-            <div class="pt-card-media">
-              <div class="pt-ph">
-                {%- if related.featured_image -%}
-                  {{ related.featured_image | image_url: width: 600 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: related.featured_image.alt | default: related.title }}
-                {%- endif -%}
-              </div>
-              {%- if related.tags contains 'bestseller' or related.tags contains 'Bestseller' -%}
-                <span class="pt-card-tag">{{ 'products.tag_bestseller' | t }}</span>
-              {%- elsif related.tags contains 'new' or related.tags contains 'New' -%}
-                <span class="pt-card-tag">{{ 'products.tag_new' | t }}</span>
-              {%- endif -%}
-              <button class="pt-wish pt-wish-btn" data-product-handle="{{ related.handle }}" data-on="0" aria-label="{{ 'products.save_to_wishlist' | t }}">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-                  <path d="M12 21C12 21 4 14.5 4 9.5C4 6.8 6.2 4.5 9 4.5C10.5 4.5 11.6 5.2 12 6.3C12.4 5.2 13.5 4.5 15 4.5C17.8 4.5 20 6.8 20 9.5C20 14.5 12 21 12 21Z" stroke-linejoin="round"/>
-                </svg>
-              </button>
-              {%- if related_variant.available -%}
-                <button class="pt-add pt-add-btn" data-variant-id="{{ related_variant.id }}" data-product-title="{{ related.title | escape }}">
-                  {{ 'products.add_to_cart' | t }}
-                </button>
-              {%- else -%}
-                <span class="pt-add pt-add--soldout">{{ 'products.sold_out' | t }}</span>
-              {%- endif -%}
-            </div>
-            <div class="pt-card-info">
-              <span class="pt-card-cat">{{ related.type | escape }}</span>
-              <h3 class="pt-card-name"><a href="{{ related.url }}">{{ related.title | escape }}</a></h3>
-              <div class="pt-card-price">
-                <span class="pt-price-now">{{ related.price | money }}</span>
-                {%- if related_on_sale -%}
-                  <span class="pt-price-was">{{ related.compare_at_price | money }}</span>
-                  <span class="pt-price-save">{{ 'products.save_pct' | t: pct: related_savings_pct }}</span>
-                {%- endif -%}
-              </div>
-            </div>
-          </div>
-        {%- endfor -%}
-      </div>
-    </section>
-  {%- endif -%}
 </div>
 
 <div class="pt-pdp-sticky" data-pdp-sticky>
@@ -503,9 +508,6 @@
   .pt-pdp-vendor { display: block; font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--pt-accent-deep); margin-bottom: 8px; }
   .pt-pdp-info .pt-card-cat { display: block; margin-top: 4px; }
   .pt-pdp-title { font-family: var(--pt-font-head); font-size: clamp(2.2rem, 3.4vw, 3rem); line-height: 1.08; letter-spacing: -.01em; margin-top: 6px; }
-  .pt-rating-line { display: flex; width: fit-content; align-items: center; gap: 8px; margin-top: 14px; font-size: 13.5px; color: var(--pt-ink-soft); border: none; background: none; padding: 0; font-family: inherit; cursor: pointer; }
-  .pt-rating-line:hover { color: var(--pt-accent-deep); text-decoration: underline; }
-  .pt-rating-line strong { color: var(--pt-ink); }
   .pt-pdp-price { display: flex; align-items: center; gap: 11px; margin-top: 18px; }
   .pt-pdp-price .pt-price-now { font-size: 26px; font-weight: 800; color: var(--pt-ink); }
   .pt-pdp-price .pt-price-was { font-size: 16px; color: var(--pt-ink-faint); text-decoration: line-through; }
@@ -539,12 +541,36 @@
   .pt-pdp-qty span { min-width: 30px; font-size: 15px; }
   .pt-pdp-add { flex: 1; }
   .pt-pdp-add[disabled] { opacity: .55; cursor: not-allowed; transform: none !important; }
-  .pt-pdp-wish { width: 50px; height: 44px; flex: none; border-radius: 999px; border: 1px solid var(--pt-line); background: #fff; color: var(--pt-ink-soft); display: grid; place-items: center; cursor: pointer; transition: all .2s; }
-  .pt-pdp-wish:hover { border-color: var(--pt-accent); color: var(--pt-accent-deep); }
-  .pt-pdp-wish[data-on="1"] { color: var(--pt-accent); border-color: var(--pt-accent); background: var(--pt-accent-soft); }
-  .pt-pdp-buynow { width: 100%; margin-top: 10px; }
-  .pt-pdp-buynow[disabled] { opacity: .55; cursor: not-allowed; transform: none !important; }
+  .pt-pdp-vendor-row { display: flex; gap: 10px; align-items: center; }
+  .pt-pdp-desc-block { margin-top: 16px; }
+  .pt-pdp-perk { display: flex; align-items: center; gap: 9px; font-size: 13px; color: var(--pt-ink-soft); font-family: var(--pt-font-body); margin-top: 8px; }
+  .pt-pdp-perk .pt-pdp-perk-ic { color: var(--pt-accent); }
+  .pt-pdp-plans { margin-top: 14px; }
+  .pt-pdp-plan-select, .pt-pdp-noscript-select { display: block; width: 100%; margin-top: 8px; font-family: var(--pt-font-body); font-size: 14px; color: var(--pt-ink); border: 1px solid var(--pt-line); background: #fff; border-radius: 12px; padding: 11px 14px; }
+  .pt-gift-recipient { margin-top: 16px; font-family: var(--pt-font-body); }
+  .pt-gift-toggle { position: absolute; opacity: 0; }
+  .pt-gift-label { display: inline-flex; align-items: center; gap: 9px; font-size: 13.5px; font-weight: 600; color: var(--pt-ink); cursor: pointer; }
+  .pt-gift-label::before { content: ''; width: 18px; height: 18px; border: 1.5px solid var(--pt-line); border-radius: 5px; background: #fff; transition: all .15s; flex: none; }
+  .pt-gift-toggle:checked + .pt-gift-label::before { background: var(--pt-accent); border-color: var(--pt-accent); box-shadow: inset 0 0 0 3px #fff; }
+  .pt-gift-toggle:focus-visible + .pt-gift-label::before { outline: 2px solid var(--pt-accent); outline-offset: 2px; }
+  .pt-gift-fields { display: none; margin-top: 12px; flex-direction: column; gap: 10px; }
+  .pt-gift-toggle:checked ~ .pt-gift-fields { display: flex; }
+  .pt-gift-fields label { font-size: 12.5px; font-weight: 600; color: var(--pt-ink-soft); display: flex; flex-direction: column; gap: 5px; }
+  .pt-gift-fields input, .pt-gift-fields textarea { border: 1px solid var(--pt-line); border-radius: 10px; background: #fff; font-family: var(--pt-font-body); font-size: 13.5px; color: var(--pt-ink); padding: 10px 12px; }
+  .pt-gift-fields input:focus, .pt-gift-fields textarea:focus { outline: none; border-color: var(--pt-accent); }
+  .pt-gift-errors { color: #b3261e; font-size: 12.5px; }
   .pt-pdp-dynamic { margin-top: 12px; }
+  .pt-pickup { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; font-family: var(--pt-font-body); }
+  .pt-pickup-loc { display: flex; gap: 10px; align-items: flex-start; }
+  .pt-pickup-ic { flex: none; margin-top: 2px; }
+  .pt-pickup-ic--ok { color: #2e7d32; }
+  .pt-pickup-ic--no { color: var(--pt-ink-faint); }
+  .pt-pickup-txt { display: flex; flex-direction: column; gap: 2px; font-size: 12.5px; color: var(--pt-ink-soft); }
+  .pt-pickup-txt b { color: var(--pt-ink); font-size: 13px; }
+  .pt-pdp-dynamic .shopify-payment-button__button--unbranded { background: transparent; border: 1.5px solid var(--pt-accent); color: var(--pt-accent-deep); font-family: var(--pt-font-body); font-weight: 700; font-size: 14px; border-radius: 999px; padding: 13px 24px; width: 100%; transition: background .2s, color .2s; }
+  .pt-pdp-dynamic .shopify-payment-button__button--unbranded:hover { background: var(--pt-accent); color: var(--pt-accent-contrast, #fff); }
+  .pt-pdp-dynamic .shopify-payment-button__button--branded { border-radius: 999px; overflow: hidden; }
+  .pt-pdp-dynamic .shopify-payment-button__more-options { font-family: var(--pt-font-body); color: var(--pt-ink-soft); }
   .pt-pdp-app-block { margin-top: 12px; }
   .pt-pdp-shake { animation: ptPdpShake .4s; }
   @keyframes ptPdpShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
@@ -598,14 +624,10 @@
   .pt-pdp-highlights li { display: flex; align-items: flex-start; gap: 10px; font-size: 14.5px; color: var(--pt-ink); }
   .pt-pdp-highlights svg { margin-top: 3px; flex: none; }
 
-  .pt-pdp-related .pt-sec-head { margin-bottom: 32px; }
   .pt-prod-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px 22px; margin-top: 8px; }
   .pt-card { position: relative; }
   .pt-card-media { position: relative; border-radius: var(--pt-radius); overflow: hidden; aspect-ratio: 1/1; box-shadow: var(--pt-shadow-sm); }
   .pt-card-tag { position: absolute; top: 12px; left: 12px; z-index: 3; background: rgba(255,255,255,.94); color: var(--pt-accent-deep); font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; padding: 5px 10px; border-radius: 999px; font-family: var(--pt-font-body); }
-  .pt-wish { position: absolute; top: 10px; right: 10px; z-index: 3; width: 34px; height: 34px; border: none; display: grid; place-items: center; background: rgba(255,255,255,.9); color: var(--pt-ink-soft); border-radius: 50%; cursor: pointer; transition: color .2s, transform .2s, background .2s; }
-  .pt-wish:hover { transform: scale(1.1); }
-  .pt-wish[data-on="1"] { color: var(--pt-accent); background: #fff; }
   .pt-add { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 3; border: none; background: rgba(255,255,255,.96); color: var(--pt-ink); font-family: var(--pt-font-body); font-weight: 700; font-size: 13px; padding: 12px; border-radius: 999px; cursor: pointer; box-shadow: var(--pt-shadow-sm); opacity: 0; transform: translateY(12px); transition: opacity .3s, transform .3s, background .25s, color .25s; text-align: center; }
   .pt-card-media:hover .pt-add { opacity: 1; transform: translateY(0); }
   .pt-add:hover { background: linear-gradient(135deg, var(--pt-accent), var(--pt-accent-deep)); color: #fff; }
@@ -666,7 +688,6 @@
       var thumbs = Array.prototype.slice.call(pdp.querySelectorAll('[data-pdp-thumb]'));
       var priceEl = pdp.querySelector('[data-pdp-price]');
       var addBtn = pdp.querySelector('[data-pdp-add]');
-      var buyNowBtn = pdp.querySelector('[data-pdp-buynow]');
       var dynamicWrap = pdp.querySelector('[data-pdp-dynamic]');
       var qtyEl = pdp.querySelector('[data-pdp-qty]');
       var qtyDec = pdp.querySelector('[data-pdp-qty-dec]');
@@ -696,7 +717,9 @@
         sizeLabel: pdp.dataset.iSizeLabel,
         lengthLabel: pdp.dataset.iLengthLabel,
         stockLowHtml: pdp.dataset.iStockLowHtml,
-        copied: pdp.dataset.iCopied
+        copied: pdp.dataset.iCopied,
+        addedToBag: pdp.dataset.iAddedToBag,
+        addError: pdp.dataset.iAddError
       };
 
       var selected = variantSelect
@@ -705,7 +728,7 @@
       var qtyVal = 1;
 
       function money(cents) {
-        return '$' + (cents / 100).toFixed(2).replace(/\.00$/, '');
+        return window.ptMoney ? window.ptMoney(cents) : '$' + (cents / 100).toFixed(2);
       }
 
       function findVariant() {
@@ -730,7 +753,6 @@
           btn.disabled = !available;
           btn.textContent = available ? i18n.addToCart + ' · ' + money(variant.price * qtyVal) : i18n.soldOut;
         });
-        if (buyNowBtn) buyNowBtn.disabled = !available;
       }
 
       function updateStock(variant) {
@@ -788,6 +810,20 @@
           url.searchParams.set('variant', variant.id);
           window.history.replaceState({}, '', url);
         }
+
+        updatePickup(variant.id);
+      }
+
+      var pickupWrap = pdp.querySelector('[data-pdp-pickup]');
+      function updatePickup(variantId) {
+        if (!pickupWrap || !variantId) return;
+        var url = pickupWrap.dataset.productUrl + '?variant=' + variantId + '&section_id=pickup-availability';
+        fetch(url).then(function (r) { return r.text(); }).then(function (text) {
+          var holder = document.createElement('div');
+          holder.innerHTML = text;
+          var fresh = holder.querySelector('.pt-pickup');
+          pickupWrap.innerHTML = fresh ? fresh.outerHTML : '';
+        }).catch(function () {});
       }
 
       function setMainImage(src, mediaId) {
@@ -838,55 +874,58 @@
         });
       });
 
-      if (qtyDec) qtyDec.addEventListener('click', function () {
-        qtyVal = Math.max(1, qtyVal - 1);
-        qtyEl.textContent = qtyVal;
+      function setQty(v) {
+        qtyVal = Math.max(1, v);
+        if (qtyEl) qtyEl.value = qtyVal;
         updateAddButtons(findVariant());
-      });
-      if (qtyInc) qtyInc.addEventListener('click', function () {
-        qtyVal += 1;
-        qtyEl.textContent = qtyVal;
-        updateAddButtons(findVariant());
-      });
+      }
+      if (qtyDec) qtyDec.addEventListener('click', function () { setQty(qtyVal - 1); });
+      if (qtyInc) qtyInc.addEventListener('click', function () { setQty(qtyVal + 1); });
+      if (qtyEl) qtyEl.addEventListener('change', function () { setQty(parseInt(qtyEl.value, 10) || 1); });
 
-      function addToCart(triggerBtn, redirectToCheckout) {
+      var formEl = pdp.querySelector('form[action*="/cart/add"]');
+
+      function addToCart(triggerBtn) {
         var variant = findVariant();
-        if (!variant || !variant.available) return;
-        [addBtn, stickyAdd, buyNowBtn].forEach(function (b) { if (b) b.disabled = true; });
+        if (!variant || !variant.available || !formEl) return;
+        [addBtn, stickyAdd].forEach(function (b) { if (b) b.disabled = true; });
         var original = triggerBtn.textContent;
         triggerBtn.textContent = '…';
 
-        var items = [{ id: variant.id, quantity: qtyVal }];
-        pdp.querySelectorAll('[data-pdp-addon-check]:checked').forEach(function (cb) {
-          var wrap = cb.closest('[data-pdp-addon]');
-          items.push({ id: parseInt(wrap.dataset.variantId, 10), quantity: 1 });
-        });
+        var body = new FormData(formEl);
+        body.set('id', variant.id);
+        body.set('quantity', qtyVal);
 
-        fetch('/cart/add.js', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items: items })
-        }).then(function (r) {
+        fetch('/cart/add.js', { method: 'POST', body: body }).then(function (r) {
           return r.json().then(function (data) {
-            if (!r.ok) throw new Error(data.message || data.description || 'Could not add to bag');
-            if (redirectToCheckout) {
-              window.location.href = pdp.dataset.checkoutUrl;
-              return;
-            }
-            if (window.ptShowToast) window.ptShowToast(pdp.dataset.productTitle + ' added to bag');
-            if (window.ptOpenCart) window.ptOpenCart();
-            updateAddButtons(variant);
+            if (!r.ok) throw new Error(data.message || data.description || i18n.addError);
           });
+        }).then(function () {
+          var addonItems = [];
+          pdp.querySelectorAll('[data-pdp-addon-check]:checked').forEach(function (cb) {
+            var wrap = cb.closest('[data-pdp-addon]');
+            addonItems.push({ id: parseInt(wrap.dataset.variantId, 10), quantity: 1 });
+          });
+          if (addonItems.length === 0) return;
+          return fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: addonItems })
+          });
+        }).then(function () {
+          if (window.ptShowToast) window.ptShowToast(i18n.addedToBag.replace('%%TITLE%%', pdp.dataset.productTitle));
+          if (window.ptOpenCart) window.ptOpenCart();
+          updateAddButtons(variant);
         }).catch(function (err) {
           updateAddButtons(variant);
           triggerBtn.textContent = original;
-          if (window.ptShowToast) window.ptShowToast(err.message || 'Could not add to bag');
+          if (window.ptShowToast) window.ptShowToast(err.message || i18n.addError);
         });
       }
 
-      if (addBtn) addBtn.addEventListener('click', function () { addToCart(addBtn); });
+      if (formEl) formEl.addEventListener('submit', function (e) { e.preventDefault(); addToCart(addBtn || stickyAdd); });
+      if (variantSelect) updatePickup(variantSelect.value);
       if (stickyAdd) stickyAdd.addEventListener('click', function () { addToCart(stickyAdd); });
-      if (buyNowBtn) buyNowBtn.addEventListener('click', function () { addToCart(buyNowBtn, true); });
 
       var acc = pdp.querySelector('[data-pdp-acc]') || document.querySelector('[data-pdp-acc]');
       if (acc) {
@@ -900,15 +939,6 @@
         });
       }
 
-      var reviewsJump = pdp.querySelector('[data-pdp-reviews-jump]');
-      if (reviewsJump) {
-        reviewsJump.addEventListener('click', function () {
-          var el = document.getElementById('reviews');
-          if (!el) return;
-          var top = el.getBoundingClientRect().top + window.scrollY - 80;
-          window.scrollTo({ top: top, behavior: 'smooth' });
-        });
-      }
 
       var stickyJump = sticky ? sticky.querySelector('[data-pdp-sticky-jump]') : null;
       if (stickyJump) {
@@ -953,41 +983,16 @@
       "id": "media_position",
       "label": "t:labels.media_position",
       "options": [
-        { "value": "left", "label": "t:options.media_position.left" },
-        { "value": "right", "label": "t:options.media_position.right" }
+        {
+          "value": "left",
+          "label": "t:options.media_position.left"
+        },
+        {
+          "value": "right",
+          "label": "t:options.media_position.right"
+        }
       ],
       "default": "left"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_vendor",
-      "label": "t:labels.show_vendor",
-      "default": false
-    },
-    {
-      "type": "checkbox",
-      "id": "show_rating",
-      "label": "t:labels.show_rating",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "rating",
-      "label": "t:labels.rating",
-      "default": "4.9"
-    },
-    {
-      "type": "text",
-      "id": "review_count",
-      "label": "t:labels.review_count",
-      "default": "218"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_dynamic_checkout",
-      "label": "t:labels.show_dynamic_checkout",
-      "info": "t:labels.show_dynamic_checkout_info",
-      "default": true
     },
     {
       "type": "checkbox",
@@ -1026,39 +1031,63 @@
       "type": "textarea",
       "id": "highlights",
       "label": "t:labels.highlights",
-      "info": "t:labels.highlights_info",
-      "default": "Nickel-free & hypoallergenic\n14k gold plating over brass or stainless steel\nWaterproof, sweat-proof, everyday-proof\nPacked in a ribboned gift pouch"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_related",
-      "label": "t:labels.show_related",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "related_eyebrow",
-      "label": "t:labels.eyebrow",
-      "default": "Styled together"
-    },
-    {
-      "type": "text",
-      "id": "related_heading",
-      "label": "t:labels.related_heading",
-      "default": "Complete the look"
-    },
-    {
-      "type": "range",
-      "id": "related_count",
-      "label": "t:labels.products_count",
-      "min": 2,
-      "max": 8,
-      "step": 1,
-      "default": 4
+      "info": "t:labels.highlights_info"
     }
   ],
   "blocks": [
-    { "type": "@app" },
+    {
+      "type": "vendor",
+      "name": "t:blocks.vendor",
+      "limit": 1
+    },
+    {
+      "type": "title",
+      "name": "t:blocks.title",
+      "limit": 1
+    },
+    {
+      "type": "price",
+      "name": "t:blocks.price",
+      "limit": 1
+    },
+    {
+      "type": "variant_picker",
+      "name": "t:blocks.variant_picker",
+      "limit": 1
+    },
+    {
+      "type": "buy_buttons",
+      "name": "t:blocks.buy_buttons",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_dynamic_checkout",
+          "label": "t:labels.show_dynamic_checkout",
+          "info": "t:labels.show_dynamic_checkout_info",
+          "default": true
+        }
+      ]
+    },
+    {
+      "type": "description",
+      "name": "t:blocks.description",
+      "limit": 1
+    },
+    {
+      "type": "perk",
+      "name": "t:blocks.perk",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "t:labels.text"
+        }
+      ]
+    },
+    {
+      "type": "@app"
+    },
     {
       "type": "accordion_item",
       "name": "t:sections.product.blocks.accordion_item.name",
@@ -1095,27 +1124,52 @@
       "name": "t:general.product",
       "blocks": [
         {
+          "type": "vendor"
+        },
+        {
+          "type": "title"
+        },
+        {
+          "type": "price"
+        },
+        {
+          "type": "variant_picker"
+        },
+        {
+          "type": "buy_buttons"
+        },
+        {
+          "type": "description"
+        },
+        {
           "type": "accordion_item",
           "settings": {
-            "title": "Shipping & returns",
-            "content": "<p>Most orders ship within 1–2 business days and arrive in 3–6 business days. Free returns and exchanges within 30 days of delivery, as long as the piece is unworn.</p>"
+            "title": "Shipping & returns"
           }
         },
         {
           "type": "accordion_item",
           "settings": {
-            "title": "Materials & care",
-            "content": "<p>Crafted from brass and stainless-steel bases with 14k gold or rhodium plating — nickel-free and gentle on sensitive skin. Avoid perfume, lotion, and swimming pools to keep the shine going longer.</p>"
+            "title": "Materials & care"
           }
         },
-        { "type": "addon" },
-        { "type": "addon" },
-        { "type": "addon" }
+        {
+          "type": "addon"
+        },
+        {
+          "type": "addon"
+        },
+        {
+          "type": "addon"
+        }
       ]
     }
   ],
   "disabled_on": {
-    "groups": ["header", "footer"]
+    "groups": [
+      "header",
+      "footer"
+    ]
   }
 }
 {% endschema %}

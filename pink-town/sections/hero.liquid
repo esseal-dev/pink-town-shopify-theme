@@ -17,9 +17,15 @@
     </div>
     {% if section.settings.show_stats %}
       <div class="pt-hero-stats">
-        <div class="pt-stat"><strong>{{ section.settings.stat_1_value | escape }}</strong><span>{{ section.settings.stat_1_label | escape }}</span></div>
-        <div class="pt-stat"><strong>{{ section.settings.stat_2_value | escape }}</strong><span>{{ section.settings.stat_2_label | escape }}</span></div>
-        <div class="pt-stat"><strong>{{ section.settings.stat_3_value | escape }}</strong><span>{{ section.settings.stat_3_label | escape }}</span></div>
+        {%- if section.settings.stat_1_value != blank -%}
+          <div class="pt-stat"><strong>{{ section.settings.stat_1_value | escape }}</strong><span>{{ section.settings.stat_1_label | escape }}</span></div>
+        {%- endif -%}
+        {%- if section.settings.stat_2_value != blank -%}
+          <div class="pt-stat"><strong>{{ section.settings.stat_2_value | escape }}</strong><span>{{ section.settings.stat_2_label | escape }}</span></div>
+        {%- endif -%}
+        {%- if section.settings.stat_3_value != blank -%}
+          <div class="pt-stat"><strong>{{ section.settings.stat_3_value | escape }}</strong><span>{{ section.settings.stat_3_label | escape }}</span></div>
+        {%- endif -%}
       </div>
     {% endif %}
   </div>
@@ -79,9 +85,15 @@
     </div>
     {% if section.settings.show_stats %}
       <div class="pt-hero-stats">
-        <div class="pt-stat"><strong>{{ section.settings.stat_1_value | escape }}</strong><span>{{ section.settings.stat_1_label | escape }}</span></div>
-        <div class="pt-stat"><strong>{{ section.settings.stat_2_value | escape }}</strong><span>{{ section.settings.stat_2_label | escape }}</span></div>
-        <div class="pt-stat"><strong>{{ section.settings.stat_3_value | escape }}</strong><span>{{ section.settings.stat_3_label | escape }}</span></div>
+        {%- if section.settings.stat_1_value != blank -%}
+          <div class="pt-stat"><strong>{{ section.settings.stat_1_value | escape }}</strong><span>{{ section.settings.stat_1_label | escape }}</span></div>
+        {%- endif -%}
+        {%- if section.settings.stat_2_value != blank -%}
+          <div class="pt-stat"><strong>{{ section.settings.stat_2_value | escape }}</strong><span>{{ section.settings.stat_2_label | escape }}</span></div>
+        {%- endif -%}
+        {%- if section.settings.stat_3_value != blank -%}
+          <div class="pt-stat"><strong>{{ section.settings.stat_3_value | escape }}</strong><span>{{ section.settings.stat_3_label | escape }}</span></div>
+        {%- endif -%}
       </div>
     {% endif %}
   </div>
@@ -94,16 +106,20 @@
         <span class="pt-ph-lbl">{{ 'sections.hero.image_placeholder' | t }}</span>
       {% endif %}
     </div>
-    <div class="pt-hero-chip pt-hero-chip--a">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
-      {{ 'sections.hero.from_price' | t }}
-    </div>
-    <div class="pt-hero-chip pt-hero-chip--b">
-      <span class="pt-stars" aria-hidden="true">
-        {%- for i in (1..5) -%}<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.4"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8L3.5 9.7l5.9-.9L12 3.5z" stroke-linejoin="round"/></svg>{%- endfor -%}
-      </span>
-      {{ 'sections.hero.reviews_count' | t }}
-    </div>
+    {%- if section.settings.chip_1_text != blank -%}
+      <div class="pt-hero-chip pt-hero-chip--a">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+        {{ section.settings.chip_1_text | escape }}
+      </div>
+    {%- endif -%}
+    {%- if section.settings.chip_2_text != blank -%}
+      <div class="pt-hero-chip pt-hero-chip--b">
+        <span class="pt-stars" aria-hidden="true">
+          {%- for i in (1..5) -%}<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.4"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8L3.5 9.7l5.9-.9L12 3.5z" stroke-linejoin="round"/></svg>{%- endfor -%}
+        </span>
+        {{ section.settings.chip_2_text | escape }}
+      </div>
+    {%- endif -%}
   </div>
 </section>
 
@@ -232,38 +248,42 @@
     {
       "type": "text",
       "id": "stat_1_value",
-      "label": "t:labels.stat_1_value",
-      "default": "70%"
+      "label": "t:labels.stat_1_value"
     },
     {
       "type": "text",
       "id": "stat_1_label",
-      "label": "t:labels.stat_1_label",
-      "default": "less than the real thing"
+      "label": "t:labels.stat_1_label"
     },
     {
       "type": "text",
       "id": "stat_2_value",
-      "label": "t:labels.stat_2_value",
-      "default": "4.9★"
+      "label": "t:labels.stat_2_value"
     },
     {
       "type": "text",
       "id": "stat_2_label",
-      "label": "t:labels.stat_2_label",
-      "default": "12k+ happy reviews"
+      "label": "t:labels.stat_2_label"
     },
     {
       "type": "text",
       "id": "stat_3_value",
-      "label": "t:labels.stat_3_value",
-      "default": "∞"
+      "label": "t:labels.stat_3_value"
     },
     {
       "type": "text",
       "id": "stat_3_label",
-      "label": "t:labels.stat_3_label",
-      "default": "tarnish-free shine"
+      "label": "t:labels.stat_3_label"
+    },
+    {
+      "type": "text",
+      "id": "chip_1_text",
+      "label": "t:labels.chip_1_text"
+    },
+    {
+      "type": "text",
+      "id": "chip_2_text",
+      "label": "t:labels.chip_2_text"
     }
   ],
   "presets": [

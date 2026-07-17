@@ -37,7 +37,7 @@
       <svg width="28" height="28" viewBox="0 0 24 24" fill="var(--pt-accent)" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
       <h3>{{ 'sections.search.empty_heading' | t }}</h3>
       <p>{{ 'sections.search.empty_text' | t }}</p>
-      <a href="{{ routes.all_products_collection_url }}" class="pt-btn pt-btn--solid" style="margin-top:18px">{{ 'sections.wishlist.start_browsing' | t }}</a>
+      <a href="{{ routes.all_products_collection_url }}" class="pt-btn pt-btn--solid" style="margin-top:18px">{{ 'sections.search.start_browsing' | t }}</a>
     </div>
 
   {%- else -%}
@@ -190,7 +190,11 @@
                     <h3 class="pt-card-name">{{ result.title | escape }}</h3>
                     <div class="pt-card-price">
                       <span class="pt-price-now">{{ result.price | money }}</span>
+                      {%- if result.compare_at_price > result.price -%}
+                        <span class="pt-price-was">{{ result.compare_at_price | money }}</span>
+                      {%- endif -%}
                     </div>
+                    {%- render 'unit-price', item: result.selected_or_first_available_variant -%}
                   </div>
                 </a>
               {%- else -%}

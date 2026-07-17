@@ -11,12 +11,12 @@
         "cta_secondary_text": "Explore looks",
         "editorial_tag": "Spring drop — ‘Soft Focus’",
         "show_stats": true,
-        "stat_1_value": "70%",
-        "stat_1_label": "less than the real thing",
-        "stat_2_value": "4.9★",
-        "stat_2_label": "12k+ happy reviews",
-        "stat_3_value": "∞",
-        "stat_3_label": "tarnish-free shine"
+        "stat_1_value": "",
+        "stat_1_label": "",
+        "stat_2_value": "",
+        "stat_2_label": "",
+        "stat_3_value": "",
+        "stat_3_label": ""
       }
     },
     "featured-collections": {
@@ -41,32 +41,39 @@
         "review-1": {
           "type": "review",
           "settings": {
-            "name": "Mia R.",
-            "handle": "@miawears",
+            "name": "",
+            "handle": "",
             "stars": 5,
-            "text": "Genuinely cannot believe these are under $30. The pearl drops look like the designer pair I saved for and never bought."
+            "text": "",
+            "verified": false
           }
         },
         "review-2": {
           "type": "review",
           "settings": {
-            "name": "Sofía L.",
-            "handle": "@sof.jpg",
+            "name": "",
+            "handle": "",
             "stars": 5,
-            "text": "Wore the charm bracelet every single day for two months — showered, swam, the whole thing. Still sparkling. Obsessed."
+            "text": "",
+            "verified": false
           }
         },
         "review-3": {
           "type": "review",
           "settings": {
-            "name": "Hana K.",
-            "handle": "@hanakoto",
+            "name": "",
+            "handle": "",
             "stars": 5,
-            "text": "Bought a stack for my little sister’s birthday and now we’re both hooked. Packaging is so cute it’s gift-ready."
+            "text": "",
+            "verified": false
           }
         }
       },
-      "block_order": ["review-1", "review-2", "review-3"],
+      "block_order": [
+        "review-1",
+        "review-2",
+        "review-3"
+      ],
       "settings": {
         "eyebrow": "The reviews are in",
         "heading": "Worn & adored",
@@ -77,14 +84,51 @@
     "instagram": {
       "type": "instagram",
       "blocks": {
-        "post-1": { "type": "post", "settings": { "likes": "2.4k" } },
-        "post-2": { "type": "post", "settings": { "likes": "1.9k" } },
-        "post-3": { "type": "post", "settings": { "likes": "3.1k" } },
-        "post-4": { "type": "post", "settings": { "likes": "982" } },
-        "post-5": { "type": "post", "settings": { "likes": "4.6k" } },
-        "post-6": { "type": "post", "settings": { "likes": "1.2k" } }
+        "post-1": {
+          "type": "post",
+          "settings": {
+            "likes": "2.4k"
+          }
+        },
+        "post-2": {
+          "type": "post",
+          "settings": {
+            "likes": "1.9k"
+          }
+        },
+        "post-3": {
+          "type": "post",
+          "settings": {
+            "likes": "3.1k"
+          }
+        },
+        "post-4": {
+          "type": "post",
+          "settings": {
+            "likes": "982"
+          }
+        },
+        "post-5": {
+          "type": "post",
+          "settings": {
+            "likes": "4.6k"
+          }
+        },
+        "post-6": {
+          "type": "post",
+          "settings": {
+            "likes": "1.2k"
+          }
+        }
       },
-      "block_order": ["post-1", "post-2", "post-3", "post-4", "post-5", "post-6"],
+      "block_order": [
+        "post-1",
+        "post-2",
+        "post-3",
+        "post-4",
+        "post-5",
+        "post-6"
+      ],
       "settings": {
         "hashtag": "#PinkTownGirls",
         "heading": "Tag us & get featured",

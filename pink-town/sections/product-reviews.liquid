@@ -1,303 +1,38 @@
 {% comment %}
-  Rich product-reviews section ("Loved by N customers"): rating summary with a
-  star-distribution breakdown, plus a filterable/sortable list of review cards
-  (avatar, verified badge, date, title, body, optional photos, helpful votes).
-
-  Distribution bars and the "Show all N reviews" count are computed from the
-  merchant-entered review blocks themselves (real data). The headline rating/
-  review-count/recommend % are separate settings, matching this theme's existing
-  convention elsewhere (e.g. sections/reviews.liquid) of a curated sample of
-  reviews standing in for an aggregate marketing number.
-
-  "Write a review" links to the Contact page (no review-submission backend
-  exists in a base Shopify store without a reviews app). "Helpful" votes are
-  local to the shopper's browser (localStorage), not a shared server count.
+  Product reviews host section. Reviews come from a review app installed by
+  the merchant (Judge.me, Loox, Shopify Product Reviews, etc.) — the app's
+  widget is inserted here as an app block. The theme itself stores no review
+  data, so nothing misleading ships by default.
 {% endcomment %}
 
-{%- liquid
-  assign initial_count = section.settings.initial_visible_count | default: 3
-  assign total_reviews = section.blocks.size
-
-  assign star5 = 0
-  assign star4 = 0
-  assign star3 = 0
-  assign star2 = 0
-  assign star1 = 0
-  for block in section.blocks
-    case block.settings.stars
-      when 5
-        assign star5 = star5 | plus: 1
-      when 4
-        assign star4 = star4 | plus: 1
-      when 3
-        assign star3 = star3 | plus: 1
-      when 2
-        assign star2 = star2 | plus: 1
-      when 1
-        assign star1 = star1 | plus: 1
-    endcase
-  endfor
-
-  assign has_any_photo = false
-  for block in section.blocks
-    if block.settings.photo_1 or block.settings.photo_2 or block.settings.photo_3
-      assign has_any_photo = true
-    endif
-  endfor
--%}
-
-<section class="pt-pdp-sec pt-pdp-sec--tint full-width" id="reviews" data-pdp-reviews
-         data-initial-count="{{ initial_count }}"
-         data-product-id="{{ product.id }}"
-         data-i-helpful="{{ 'products.helpful_label' | t }}">
-  <h2 class="pt-pdp-h pt-pdp-h--center">{{ 'products.loved_by_customers_html' | t: count: section.settings.review_count }}</h2>
-
-  <div class="pt-rv-wrap">
-    <aside class="pt-rv-summary">
-      <div class="pt-rv-avg">{{ section.settings.rating }}</div>
-      <span class="pt-stars" aria-hidden="true" style="color:var(--pt-accent)">
-        {%- for i in (1..5) -%}<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.4"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8L3.5 9.7l5.9-.9L12 3.5z" stroke-linejoin="round"/></svg>{%- endfor -%}
-      </span>
-      <span class="pt-rv-avg-ct">{{ 'products.based_on_reviews_html' | t: count: section.settings.review_count }}</span>
-
-      {%- if total_reviews > 0 -%}
-        <div class="pt-rv-bars">
-          {%- assign star_rows = '5,' | append: star5 | append: '|4,' | append: star4 | append: '|3,' | append: star3 | append: '|2,' | append: star2 | append: '|1,' | append: star1 -%}
-          {%- assign star_row_list = star_rows | split: '|' -%}
-          {%- for row in star_row_list -%}
-            {%- assign row_parts = row | split: ',' -%}
-            {%- assign star_n = row_parts | first -%}
-            {%- assign star_count = row_parts | last -%}
-            {%- assign star_pct = star_count | times: 100 | divided_by: total_reviews -%}
-            <div class="pt-rv-bar">
-              <span class="pt-rv-bar-lbl">{{ star_n }}★</span>
-              <span class="pt-rv-bar-track"><i style="width:{{ star_pct }}%"></i></span>
-              <span class="pt-rv-bar-n">{{ star_count }}</span>
-            </div>
-          {%- endfor -%}
-        </div>
-      {%- endif -%}
-
-      <a href="{{ pages.contact.url | default: routes.root_url }}" class="pt-btn pt-btn--solid pt-btn--full">{{ 'products.write_a_review' | t }}</a>
-      {%- if section.settings.recommend_pct != blank -%}
-        <span class="pt-rv-rec">{{ 'products.would_recommend_html' | t: pct: section.settings.recommend_pct }}</span>
-      {%- endif -%}
-    </aside>
-
-    <div class="pt-rv-list" data-rv-list>
-      <div class="pt-rv-list-top">
-        {%- if has_any_photo -%}
-          <button type="button" class="pt-chip" data-rv-photo-filter data-on="0">{{ 'products.with_photos' | t }}</button>
-        {%- else -%}
-          <span></span>
-        {%- endif -%}
-        <label class="pt-sort">
-          <span>{{ 'products.sort_label' | t }}</span>
-          <select data-rv-sort>
-            <option value="recent">{{ 'products.sort_recent' | t }}</option>
-            <option value="helpful">{{ 'products.sort_helpful' | t }}</option>
-            <option value="high">{{ 'products.sort_high' | t }}</option>
-            <option value="low">{{ 'products.sort_low' | t }}</option>
-          </select>
-        </label>
-      </div>
-
+{%- if section.blocks.size > 0 -%}
+  <section class="pt-pdp-sec pt-pdp-sec--tint full-width" id="reviews">
+    {%- if section.settings.heading != blank -%}
+      <h2 class="pt-pdp-h pt-pdp-h--center">{{ section.settings.heading }}</h2>
+    {%- endif -%}
+    <div class="pt-rv-app-wrap">
       {%- for block in section.blocks -%}
-        {%- liquid
-          assign has_photo = false
-          if block.settings.photo_1 or block.settings.photo_2 or block.settings.photo_3
-            assign has_photo = true
-          endif
-        -%}
-        <article class="pt-rv-card" data-rv-card data-stars="{{ block.settings.stars }}" data-helpful-base="{{ block.settings.helpful_count }}" data-has-photo="{% if has_photo %}1{% else %}0{% endif %}" {{ block.shopify_attributes }}>
-          <div class="pt-rv-card-head">
-            <span class="pt-avatar">{{ block.settings.reviewer_name | slice: 0 }}</span>
-            <div class="pt-rv-who">
-              <b>{{ block.settings.reviewer_name | escape }}</b>
-              {%- if block.settings.verified -%}<span class="pt-verified">{{ 'products.verified_buyer' | t }}</span>{%- endif -%}
-            </div>
-            <span class="pt-rv-date">{{ block.settings.date | escape }}</span>
-          </div>
-          <div class="pt-rv-card-stars">
-            <span class="pt-stars" role="img" aria-label="{{ block.settings.stars }} {{ 'sections.reviews.stars_label' | t }}" style="color:var(--pt-accent)">
-              {%- for i in (1..5) -%}
-                {%- if i <= block.settings.stars -%}
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.4"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8L3.5 9.7l5.9-.9L12 3.5z" stroke-linejoin="round"/></svg>
-                {%- else -%}
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8L3.5 9.7l5.9-.9L12 3.5z" stroke-linejoin="round"/></svg>
-                {%- endif -%}
-              {%- endfor -%}
-            </span>
-          </div>
-          {%- if block.settings.title != blank -%}<h3 class="pt-rv-title">{{ block.settings.title | escape }}</h3>{%- endif -%}
-          <p class="pt-rv-text">{{ block.settings.text | escape }}</p>
-          {%- if has_photo -%}
-            <div class="pt-rv-photos">
-              {%- if block.settings.photo_1 -%}
-                <div class="pt-rv-photo">{{ block.settings.photo_1 | image_url: width: 200 | image_tag: loading: 'lazy', alt: block.settings.title | escape }}</div>
-              {%- endif -%}
-              {%- if block.settings.photo_2 -%}
-                <div class="pt-rv-photo">{{ block.settings.photo_2 | image_url: width: 200 | image_tag: loading: 'lazy', alt: block.settings.title | escape }}</div>
-              {%- endif -%}
-              {%- if block.settings.photo_3 -%}
-                <div class="pt-rv-photo">{{ block.settings.photo_3 | image_url: width: 200 | image_tag: loading: 'lazy', alt: block.settings.title | escape }}</div>
-              {%- endif -%}
-            </div>
-          {%- endif -%}
-          <button type="button" class="pt-rv-helpful" data-rv-helpful data-on="0" data-block-id="{{ block.id }}">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
-              <path d="M7 11v9H4v-9h3zm0 0l5-8a2 2 0 0 1 2 2v3h5a2 2 0 0 1 2 2.3l-1.3 7A2 2 0 0 1 19.7 20H7" stroke-linejoin="round"/>
-            </svg>
-            {{ 'products.helpful_label' | t }} (<span data-rv-helpful-count>{{ block.settings.helpful_count }}</span>)
-          </button>
-        </article>
+        <div class="pt-rv-app-block" {{ block.shopify_attributes }}>
+          {%- render block -%}
+        </div>
       {%- endfor -%}
-
-      {%- if total_reviews > initial_count -%}
-        <button type="button" class="pt-btn pt-btn--ghost pt-rv-more" data-rv-show-all>{{ 'products.show_all_reviews_html' | t: count: total_reviews }}</button>
-      {%- endif -%}
     </div>
-  </div>
-</section>
+  </section>
+{%- elsif request.design_mode -%}
+  <section class="pt-pdp-sec pt-pdp-sec--tint full-width" id="reviews">
+    <div class="pt-rv-app-empty">
+      <h2 class="pt-pdp-h pt-pdp-h--center">{{ 'sections.product_reviews.placeholder_heading' | t }}</h2>
+      <p>{{ 'sections.product_reviews.placeholder_text' | t }}</p>
+    </div>
+  </section>
+{%- endif -%}
 
 {% stylesheet %}
-  .pt-rv-wrap { display: grid; grid-template-columns: 300px 1fr; gap: 48px; align-items: start; margin-top: 36px; }
-  .pt-rv-summary { position: sticky; top: 88px; display: flex; flex-direction: column; align-items: center; text-align: center; background: var(--pt-card); border: 1px solid var(--pt-line); border-radius: var(--pt-radius); padding: 30px 26px; font-family: var(--pt-font-body); }
-  .pt-rv-avg { font-family: var(--pt-font-head); font-size: 64px; line-height: 1; color: var(--pt-accent-deep); }
-  .pt-rv-avg-ct { font-size: 12.5px; color: var(--pt-ink-soft); margin: 8px 0 18px; }
-  .pt-rv-bars { width: 100%; display: flex; flex-direction: column; gap: 7px; margin-bottom: 22px; }
-  .pt-rv-bar { display: flex; align-items: center; gap: 9px; font-size: 12px; color: var(--pt-ink-soft); }
-  .pt-rv-bar-lbl { width: 22px; text-align: right; font-variant-numeric: tabular-nums; }
-  .pt-rv-bar-track { flex: 1; height: 7px; border-radius: 999px; background: var(--pt-accent-soft); overflow: hidden; }
-  .pt-rv-bar-track i { display: block; height: 100%; background: var(--pt-accent); border-radius: 999px; }
-  .pt-rv-bar-n { width: 26px; text-align: right; font-variant-numeric: tabular-nums; }
-  .pt-rv-rec { font-size: 12.5px; color: var(--pt-ink-soft); margin-top: 14px; }
-
-  .pt-rv-list { min-width: 0; font-family: var(--pt-font-body); }
-  .pt-rv-list-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 22px; }
-  .pt-chip { border: 1px solid var(--pt-line); background: #fff; color: var(--pt-ink-soft); font-family: var(--pt-font-body); font-size: 13px; font-weight: 600; padding: 8px 16px; border-radius: 999px; cursor: pointer; transition: all .18s; }
-  .pt-chip:hover { border-color: var(--pt-accent); }
-  .pt-chip[data-on="1"] { background: var(--pt-accent-deep); color: #fff; border-color: var(--pt-accent-deep); }
-  .pt-sort { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--pt-ink-soft); }
-  .pt-sort select { font-family: var(--pt-font-body); font-size: 13px; font-weight: 600; color: var(--pt-ink); border: 1px solid var(--pt-line); background: #fff; border-radius: 999px; padding: 8px 30px 8px 14px; cursor: pointer; -webkit-appearance: none; appearance: none; background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'><path fill='%239a5460' d='M0 0h10L5 6z'/></svg>"); background-repeat: no-repeat; background-position: right 12px center; }
-
-  .pt-rv-card { padding: 24px 0; border-bottom: 1px solid var(--pt-line); }
-  .pt-rv-card-head { display: flex; align-items: center; gap: 11px; }
-  .pt-avatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--pt-accent-soft); color: var(--pt-accent-deep); font-family: var(--pt-font-head); font-size: 16px; font-weight: 600; flex: none; }
-  .pt-rv-who { display: flex; align-items: center; gap: 9px; flex: 1; }
-  .pt-rv-who b { font-size: 14px; }
-  .pt-verified { font-size: 10.5px; font-weight: 700; letter-spacing: .04em; color: var(--pt-accent-deep); background: var(--pt-accent-soft); padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
-  .pt-rv-date { font-size: 12px; color: var(--pt-ink-faint); }
-  .pt-rv-card-stars { margin-top: 12px; }
-  .pt-rv-title { font-family: var(--pt-font-head); font-size: 19px; margin: 8px 0 4px; }
-  .pt-rv-text { font-size: 14px; line-height: 1.6; color: var(--pt-ink-soft); margin: 0; }
-  .pt-rv-photos { display: flex; gap: 8px; margin-top: 14px; }
-  .pt-rv-photo { position: relative; width: 72px; aspect-ratio: 1/1; border-radius: 10px; overflow: hidden; box-shadow: 0 0 0 1px var(--pt-line); }
-  .pt-rv-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .pt-rv-helpful { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; border: 1px solid var(--pt-line); background: #fff; color: var(--pt-ink-soft); font-family: var(--pt-font-body); font-size: 12.5px; font-weight: 600; padding: 7px 13px; border-radius: 999px; cursor: pointer; transition: all .2s; }
-  .pt-rv-helpful:hover { border-color: var(--pt-accent); color: var(--pt-accent-deep); }
-  .pt-rv-helpful[data-on="1"] { background: var(--pt-accent-soft); color: var(--pt-accent-deep); border-color: var(--pt-accent-soft); }
-  .pt-rv-more { margin-top: 26px; width: 100%; }
-
-  @media (max-width: 920px) {
-    .pt-rv-wrap { grid-template-columns: 1fr; gap: 28px; }
-    .pt-rv-summary { position: static; }
-  }
+  .pt-rv-app-wrap { max-width: var(--pt-wrap); margin: 36px auto 0; font-family: var(--pt-font-body); }
+  .pt-rv-app-block { min-width: 0; }
+  .pt-rv-app-empty { max-width: 560px; margin: 0 auto; text-align: center; font-family: var(--pt-font-body); }
+  .pt-rv-app-empty p { font-size: 14px; line-height: 1.6; color: var(--pt-ink-soft); margin-top: 14px; }
 {% endstylesheet %}
-
-{% javascript %}
-  (function () {
-    document.querySelectorAll('[data-pdp-reviews]').forEach(function (section) {
-      var list = section.querySelector('[data-rv-list]');
-      var cards = Array.prototype.slice.call(section.querySelectorAll('[data-rv-card]'));
-      var moreBtn = section.querySelector('[data-rv-show-all]');
-      var photoFilterBtn = section.querySelector('[data-rv-photo-filter]');
-      var sortSelect = section.querySelector('[data-rv-sort]');
-      var initialCount = parseInt(section.dataset.initialCount, 10) || 3;
-      var productId = section.dataset.productId;
-      var expanded = false;
-      var photoOnly = false;
-
-      function storageKey(blockId) {
-        return 'pt_review_helpful_' + productId + '_' + blockId;
-      }
-
-      cards.forEach(function (card) {
-        var btn = card.querySelector('[data-rv-helpful]');
-        if (!btn) return;
-        var liked = false;
-        try { liked = localStorage.getItem(storageKey(btn.dataset.blockId)) === '1'; } catch (e) {}
-        if (liked) {
-          btn.dataset.on = '1';
-          var countEl = btn.querySelector('[data-rv-helpful-count]');
-          if (countEl) countEl.textContent = parseInt(card.dataset.helpfulBase, 10) + 1;
-        }
-      });
-
-      function currentHelpful(card) {
-        var countEl = card.querySelector('[data-rv-helpful-count]');
-        return countEl ? parseInt(countEl.textContent, 10) : parseInt(card.dataset.helpfulBase, 10);
-      }
-
-      function applyVisibility() {
-        var visibleCount = 0;
-        var domCards = Array.prototype.slice.call(list.querySelectorAll('[data-rv-card]'));
-        var eligible = domCards.filter(function (c) { return !photoOnly || c.dataset.hasPhoto === '1'; });
-        domCards.forEach(function (card) {
-          var passesPhoto = !photoOnly || card.dataset.hasPhoto === '1';
-          if (!passesPhoto) { card.hidden = true; return; }
-          if (!expanded && visibleCount >= initialCount) { card.hidden = true; return; }
-          card.hidden = false;
-          visibleCount += 1;
-        });
-        if (moreBtn) moreBtn.hidden = expanded || eligible.length <= initialCount;
-      }
-
-      if (photoFilterBtn) {
-        photoFilterBtn.addEventListener('click', function () {
-          photoOnly = photoFilterBtn.dataset.on !== '1';
-          photoFilterBtn.dataset.on = photoOnly ? '1' : '0';
-          applyVisibility();
-        });
-      }
-
-      if (moreBtn) {
-        moreBtn.addEventListener('click', function () {
-          expanded = true;
-          applyVisibility();
-        });
-      }
-
-      if (sortSelect) {
-        sortSelect.addEventListener('change', function () {
-          var mode = sortSelect.value;
-          var sorted = cards.slice();
-          if (mode === 'helpful') sorted.sort(function (a, b) { return currentHelpful(b) - currentHelpful(a); });
-          else if (mode === 'high') sorted.sort(function (a, b) { return (b.dataset.stars | 0) - (a.dataset.stars | 0); });
-          else if (mode === 'low') sorted.sort(function (a, b) { return (a.dataset.stars | 0) - (b.dataset.stars | 0); });
-          else sorted = cards.slice();
-          sorted.forEach(function (card) { list.insertBefore(card, moreBtn || null); });
-          applyVisibility();
-        });
-      }
-
-      list.addEventListener('click', function (e) {
-        var btn = e.target.closest('[data-rv-helpful]');
-        if (!btn) return;
-        var card = btn.closest('[data-rv-card]');
-        var base = parseInt(card.dataset.helpfulBase, 10);
-        var countEl = btn.querySelector('[data-rv-helpful-count]');
-        var liked = btn.dataset.on === '1';
-        liked = !liked;
-        btn.dataset.on = liked ? '1' : '0';
-        if (countEl) countEl.textContent = liked ? base + 1 : base;
-        try { localStorage.setItem(storageKey(btn.dataset.blockId), liked ? '1' : '0'); } catch (e) {}
-      });
-
-      applyVisibility();
-    });
-  })();
-{% endjavascript %}
 
 {% schema %}
 {
@@ -305,144 +40,18 @@
   "settings": [
     {
       "type": "text",
-      "id": "rating",
-      "label": "t:labels.rating",
-      "default": "4.9"
-    },
-    {
-      "type": "text",
-      "id": "review_count",
-      "label": "t:labels.review_count",
-      "default": "218"
-    },
-    {
-      "type": "text",
-      "id": "recommend_pct",
-      "label": "t:labels.recommend_pct",
-      "default": "98%"
-    },
-    {
-      "type": "range",
-      "id": "initial_visible_count",
-      "label": "t:labels.initial_visible_count",
-      "min": 1,
-      "max": 10,
-      "step": 1,
-      "default": 3
+      "id": "heading",
+      "label": "t:labels.heading"
     }
   ],
   "blocks": [
     {
-      "type": "review",
-      "name": "t:sections.product_reviews.blocks.review.name",
-      "settings": [
-        {
-          "type": "text",
-          "id": "reviewer_name",
-          "label": "t:labels.reviewer_name",
-          "default": "Mia R."
-        },
-        {
-          "type": "checkbox",
-          "id": "verified",
-          "label": "t:labels.verified",
-          "default": true
-        },
-        {
-          "type": "text",
-          "id": "date",
-          "label": "t:labels.review_date",
-          "default": "2 weeks ago"
-        },
-        {
-          "type": "range",
-          "id": "stars",
-          "label": "t:labels.stars",
-          "min": 1,
-          "max": 5,
-          "step": 1,
-          "default": 5
-        },
-        {
-          "type": "text",
-          "id": "title",
-          "label": "t:labels.review_title",
-          "default": "Gorgeous and comfortable"
-        },
-        {
-          "type": "textarea",
-          "id": "text",
-          "label": "t:labels.text",
-          "default": "Genuinely cannot believe this was under $30. Looks like the designer piece I saved for and never bought."
-        },
-        {
-          "type": "image_picker",
-          "id": "photo_1",
-          "label": "t:labels.photo_1"
-        },
-        {
-          "type": "image_picker",
-          "id": "photo_2",
-          "label": "t:labels.photo_2"
-        },
-        {
-          "type": "image_picker",
-          "id": "photo_3",
-          "label": "t:labels.photo_3"
-        },
-        {
-          "type": "range",
-          "id": "helpful_count",
-          "label": "t:labels.helpful_count",
-          "min": 0,
-          "max": 100,
-          "step": 1,
-          "default": 12
-        }
-      ]
+      "type": "@app"
     }
   ],
   "presets": [
     {
-      "name": "t:sections.product_reviews.name",
-      "blocks": [
-        {
-          "type": "review",
-          "settings": {
-            "reviewer_name": "Mia R.",
-            "verified": true,
-            "date": "2 weeks ago",
-            "stars": 5,
-            "title": "Gorgeous and comfortable",
-            "text": "Genuinely cannot believe this was under $30. Looks like the designer piece I saved for and never bought.",
-            "helpful_count": 24
-          }
-        },
-        {
-          "type": "review",
-          "settings": {
-            "reviewer_name": "Sofía L.",
-            "verified": true,
-            "date": "1 month ago",
-            "stars": 5,
-            "title": "Wore it every single day",
-            "text": "Showered, swam, the whole thing — still sparkling. Obsessed with how sturdy it feels.",
-            "helpful_count": 18
-          }
-        },
-        {
-          "type": "review",
-          "settings": {
-            "reviewer_name": "Hana K.",
-            "verified": true,
-            "date": "1 month ago",
-            "stars": 4,
-            "title": "Cute, shipping ran a little long",
-            "text": "Packaging is so cute it's gift-ready. Took a few extra days to arrive but worth the wait.",
-            "helpful_count": 9
-          }
-        }
-      ]
+      "name": "t:sections.product_reviews.name"
     }
   ],
   "disabled_on": {

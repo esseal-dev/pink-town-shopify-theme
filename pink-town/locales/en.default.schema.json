@@ -48,26 +48,11 @@
     "custom_liquid": "Liquid code",
     "custom_liquid_info": "Add app snippets, custom HTML, or third-party embeds. Learn more about [Liquid](https://shopify.dev/docs/api/liquid).",
     "product": "Product",
-    "favicon": "Favicon image",
-    "favicon_info": "Displayed in browser tabs and bookmarks. Use a square image, at least 32 x 32px.",
-    "heading_font": "Heading font",
-    "body_font": "Body font",
-    "color_page": "Page",
-    "text_color": "Text",
-    "border_color": "Borders",
-    "color_accent": "Accent",
-    "accent_background": "Accent background",
-    "accent_text": "Accent text",
-    "color_inputs": "Inputs",
     "background": "Background",
-    "foreground": "Foreground",
-    "input_corner_radius": "Input corner radius",
     "layout_direction": "Layout direction",
     "menu": "Menu",
     "customer_account_menu": "Customer account menu",
     "padding": "Padding",
-    "page_margin": "Page margin",
-    "page_width": "Page width",
     "show_payment_icons": "Show payment icons",
     "text_style": "Text style",
     "text": "Text",
@@ -121,11 +106,6 @@
     "grid_columns": "Grid columns",
     "products_per_page": "Products per page",
     "collections_per_page": "Collections per page",
-    "show_promo": "Show promo banner",
-    "promo_position": "Promo banner position",
-    "promo_eyebrow": "Promo eyebrow",
-    "promo_heading": "Promo heading",
-    "promo_text": "Promo text",
     "promo_badge": "Promo badge text",
     "subject_options": "Subject options (comma-separated)",
     "thanks_heading": "Thank-you heading",
@@ -166,16 +146,37 @@
     "details_heading": "Details section heading",
     "highlights": "Highlights",
     "highlights_info": "One per line.",
-    "recommend_pct": "Recommend percentage",
-    "initial_visible_count": "Reviews shown before \"Show all\"",
-    "reviewer_name": "Name",
     "verified": "Verified buyer",
-    "review_date": "Date",
-    "review_title": "Review title",
-    "photo_1": "Photo 1",
-    "photo_2": "Photo 2",
-    "photo_3": "Photo 3",
-    "helpful_count": "Helpful votes (starting count)"
+    "chip_1_text": "Floating chip text",
+    "chip_2_text": "Floating review chip text",
+    "favicon": "Favicon image",
+    "favicon_info": "Displayed in browser tabs and bookmarks. Use a square image, at least 32 x 32px.",
+    "heading_font": "Heading font",
+    "body_font": "Body font",
+    "color_page": "Page",
+    "text_color": "Text",
+    "border_color": "Borders",
+    "color_accent": "Accent",
+    "accent_background": "Accent background",
+    "accent_text": "Accent text",
+    "color_inputs": "Inputs",
+    "foreground": "Foreground",
+    "input_corner_radius": "Input corner radius",
+    "page_margin": "Page margin",
+    "page_width": "Page width",
+    "promo_banner": "Promo banner",
+    "promo_position": "Position in product grid",
+    "show_cart_note": "Show order note field",
+    "free_shipping_threshold": "Free shipping threshold",
+    "free_shipping_threshold_info": "Shows a progress bar toward free shipping. Set only if your store offers free shipping over this amount, in your store currency. Leave empty to hide.",
+    "delivery_note": "Delivery note",
+    "recommendation_intent": "Recommendation type",
+    "intent_related": "Related products",
+    "intent_complementary": "Complementary products",
+    "products_to_show": "Products to show",
+    "show_country_selector": "Show country/region selector",
+    "show_locale_selector": "Show language selector",
+    "show_follow_on_shop": "Show Follow on Shop button"
   },
   "options": {
     "alignment": {
@@ -267,9 +268,6 @@
     "newsletter": {
       "name": "Newsletter"
     },
-    "wishlist": {
-      "name": "Wishlist"
-    },
     "contact": {
       "hero_name": "Contact hero",
       "form_name": "Contact form"
@@ -308,12 +306,7 @@
       }
     },
     "product_reviews": {
-      "name": "Loved by customers",
-      "blocks": {
-        "review": {
-          "name": "Review"
-        }
-      }
+      "name": "Loved by customers"
     },
     "store_locations": {
       "name": "Store locations",
@@ -329,6 +322,24 @@
           "name": "Link column"
         }
       }
+    },
+    "product_recommendations": {
+      "name": "Product recommendations"
+    },
+    "predictive_search": {
+      "name": "Predictive search"
+    },
+    "pickup_availability": {
+      "name": "Pickup availability"
     }
+  },
+  "blocks": {
+    "vendor": "Vendor & type",
+    "title": "Title",
+    "price": "Price",
+    "variant_picker": "Variant picker",
+    "buy_buttons": "Buy buttons",
+    "description": "Description",
+    "perk": "Highlight line"
   }
 }

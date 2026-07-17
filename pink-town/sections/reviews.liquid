@@ -5,13 +5,6 @@
       {{ section.settings.eyebrow | escape }}
     </span>
     <h2 class="pt-h2">{{ section.settings.heading | escape }}</h2>
-    <div class="pt-rating-line">
-      <span class="pt-stars" aria-hidden="true">
-        {%- for i in (1..5) -%}<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.4"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.6 1-5.8L3.5 9.7l5.9-.9L12 3.5z" stroke-linejoin="round"/></svg>{%- endfor -%}
-      </span>
-      <strong>{{ section.settings.rating }}</strong>
-      {{ 'sections.reviews.from_count' | t: count: section.settings.review_count }}
-    </div>
   </div>
 
   <div class="pt-rev-stage">
@@ -20,6 +13,7 @@
     </button>
     <div class="pt-rev-track">
       {%- for block in section.blocks -%}
+        {%- if block.settings.text == blank and request.design_mode != true -%}{%- continue -%}{%- endif -%}
         <figure class="pt-rev" {{ block.shopify_attributes }}>
           <span class="pt-stars" role="img" aria-label="{{ block.settings.stars }} {{ 'sections.reviews.stars_label' | t }}">
             {%- for i in (1..5) -%}
@@ -37,7 +31,7 @@
               <b>{{ block.settings.name | escape }}</b>
               <i>{{ block.settings.handle | escape }}</i>
             </span>
-            <span class="pt-verified">{{ 'sections.reviews.verified' | t }}</span>
+            {%- if block.settings.verified -%}<span class="pt-verified">{{ 'sections.reviews.verified' | t }}</span>{%- endif -%}
           </figcaption>
         </figure>
       {%- endfor -%}
@@ -136,18 +130,6 @@
       "id": "heading",
       "label": "t:labels.heading",
       "default": "Worn & adored"
-    },
-    {
-      "type": "text",
-      "id": "rating",
-      "label": "t:labels.rating",
-      "default": "4.9"
-    },
-    {
-      "type": "text",
-      "id": "review_count",
-      "label": "t:labels.review_count",
-      "default": "12,400+"
     }
   ],
   "blocks": [
@@ -158,14 +140,12 @@
         {
           "type": "text",
           "id": "name",
-          "label": "t:labels.author_name",
-          "default": "Mia R."
+          "label": "t:labels.author_name"
         },
         {
           "type": "text",
           "id": "handle",
-          "label": "t:labels.author_handle",
-          "default": "@miawears"
+          "label": "t:labels.author_handle"
         },
         {
           "type": "range",
@@ -179,8 +159,13 @@
         {
           "type": "textarea",
           "id": "text",
-          "label": "t:labels.text",
-          "default": "Genuinely cannot believe these are under $30. The pearl drops look like the designer pair I saved for and never bought."
+          "label": "t:labels.text"
+        },
+        {
+          "type": "checkbox",
+          "id": "verified",
+          "label": "t:labels.verified",
+          "default": false
         }
       ]
     }
@@ -189,33 +174,9 @@
     {
       "name": "t:sections.reviews.name",
       "blocks": [
-        {
-          "type": "review",
-          "settings": {
-            "name": "Mia R.",
-            "handle": "@miawears",
-            "stars": 5,
-            "text": "Genuinely cannot believe these are under $30. The pearl drops look like the designer pair I saved for and never bought."
-          }
-        },
-        {
-          "type": "review",
-          "settings": {
-            "name": "Sofía L.",
-            "handle": "@sof.jpg",
-            "stars": 5,
-            "text": "Wore the charm bracelet every single day for two months — showered, swam, the whole thing. Still sparkling. Obsessed."
-          }
-        },
-        {
-          "type": "review",
-          "settings": {
-            "name": "Hana K.",
-            "handle": "@hanakoto",
-            "stars": 5,
-            "text": "Bought a stack for my little sister's birthday and now we're both hooked. Packaging is so cute it's gift-ready."
-          }
-        }
+        { "type": "review" },
+        { "type": "review" },
+        { "type": "review" }
       ]
     }
   ]

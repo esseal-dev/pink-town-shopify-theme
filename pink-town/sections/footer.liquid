@@ -33,6 +33,42 @@
     </div>
   </div>
 
+  <div class="pt-footer-utils">
+    {%- if section.settings.show_country_selector and localization.available_countries.size > 1 -%}
+      {%- form 'localization', id: 'pt-country-form', class: 'pt-loc-form' -%}
+        <label for="pt-country-select">{{ 'general.localization.country_label' | t }}</label>
+        <select id="pt-country-select" name="country_code" data-loc-select>
+          {%- for country in localization.available_countries -%}
+            <option value="{{ country.iso_code }}" {% if country.iso_code == localization.country.iso_code %}selected{% endif %}>
+              {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+            </option>
+          {%- endfor -%}
+        </select>
+        <noscript><button type="submit" class="pt-loc-apply">{{ 'general.localization.apply' | t }}</button></noscript>
+      {%- endform -%}
+    {%- endif -%}
+
+    {%- if section.settings.show_locale_selector and localization.available_languages.size > 1 -%}
+      {%- form 'localization', id: 'pt-locale-form', class: 'pt-loc-form' -%}
+        <label for="pt-locale-select">{{ 'general.localization.language_label' | t }}</label>
+        <select id="pt-locale-select" name="locale_code" data-loc-select>
+          {%- for language in localization.available_languages -%}
+            <option value="{{ language.iso_code }}" {% if language.iso_code == localization.language.iso_code %}selected{% endif %}>
+              {{ language.endonym_name | capitalize }}
+            </option>
+          {%- endfor -%}
+        </select>
+        <noscript><button type="submit" class="pt-loc-apply">{{ 'general.localization.apply' | t }}</button></noscript>
+      {%- endform -%}
+    {%- endif -%}
+
+    {%- if section.settings.show_follow_on_shop -%}
+      <div class="pt-follow-shop">
+        {{ shop | login_button: action: 'follow' }}
+      </div>
+    {%- endif -%}
+  </div>
+
   <div class="pt-footer-bottom">
     <div class="pt-footer-bottom-row">
       <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright_text | escape }}</span>
@@ -55,6 +91,14 @@
 </footer>
 
 {% stylesheet %}
+  .pt-footer-utils { max-width: var(--pt-wrap); margin: 40px auto 0; display: flex; flex-wrap: wrap; align-items: flex-end; gap: 22px; padding-top: 28px; border-top: 1px solid var(--pt-line); }
+  .pt-loc-form { display: flex; flex-direction: column; gap: 6px; }
+  .pt-loc-form label { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--pt-ink-faint); }
+  .pt-loc-form select { font-family: var(--pt-font-body); font-size: 13px; color: var(--pt-ink); border: 1px solid var(--pt-line); background: #fff; border-radius: 10px; padding: 9px 12px; max-width: 230px; }
+  .pt-loc-form select:focus { outline: 2px solid var(--pt-accent); outline-offset: 1px; }
+  .pt-loc-apply { margin-top: 6px; font-size: 12px; }
+  .pt-follow-shop { margin-left: auto; }
+
   .pt-footer { background: #fff; border-top: 1px solid var(--pt-line); padding: 64px 32px 32px; font-family: var(--pt-font-body); }
   .pt-footer-top { max-width: var(--pt-wrap); margin: 0 auto; display: grid; grid-template-columns: 1.4fr 2fr; gap: 48px; }
   .pt-logo--foot { font-size: 26px; }
@@ -117,6 +161,24 @@
       "id": "show_payment_icons",
       "label": "t:labels.show_payment_icons",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_country_selector",
+      "label": "t:labels.show_country_selector",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_locale_selector",
+      "label": "t:labels.show_locale_selector",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_follow_on_shop",
+      "label": "t:labels.show_follow_on_shop",
+      "default": true
     }
   ],
   "blocks": [
@@ -142,9 +204,24 @@
     {
       "name": "t:general.footer",
       "blocks": [
-        { "type": "link_column", "settings": { "heading": "Shop" } },
-        { "type": "link_column", "settings": { "heading": "Help" } },
-        { "type": "link_column", "settings": { "heading": "About" } }
+        {
+          "type": "link_column",
+          "settings": {
+            "heading": "Shop"
+          }
+        },
+        {
+          "type": "link_column",
+          "settings": {
+            "heading": "Help"
+          }
+        },
+        {
+          "type": "link_column",
+          "settings": {
+            "heading": "About"
+          }
+        }
       ]
     }
   ]

@@ -4,7 +4,7 @@
     "theme_name": "TriSoul Pink",
     "theme_version": "0.1.0",
     "theme_author": "TriSoul Digital",
-    "theme_documentation_url": "https://wwww.themes.trisouldigital.com/trisoul-pink",
+    "theme_documentation_url": "https://www.themes.trisouldigital.com/trisoul-pink",
     "theme_support_url": "https://www.support.trisouldigital.com"
   },
   {
@@ -124,6 +124,17 @@
         "unit": "px",
         "label": "t:labels.input_corner_radius",
         "default": 4
+      }
+    ]
+  },
+  {
+    "name": "t:general.cart",
+    "settings": [
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "t:labels.free_shipping_threshold",
+        "info": "t:labels.free_shipping_threshold_info"
       }
     ]
   }

@@ -173,7 +173,7 @@ a.pt-page-num:hover { background: var(--pt-accent-soft); color: var(--pt-accent-
 .pt-page-link.is-disabled { opacity: .4; pointer-events: none; }
 
 /** Breadcrumb, centered page header, and empty-state — shared across the
- * collection, wishlist, and other standalone pages. */
+ * collection, and other standalone pages. */
 .pt-crumb { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--pt-ink-faint); margin-bottom: 18px; font-family: var(--pt-font-body); }
 .pt-crumb a:hover { color: var(--pt-accent-deep); }
 .pt-crumb b { color: var(--pt-ink); font-weight: 600; white-space: nowrap; }

@@ -16,8 +16,7 @@
     "your_bag": "Your bag",
     "empty_message": "Your bag is feeling a little plain.",
     "start_shopping": "Start shopping",
-    "delivery_estimate": "Estimated delivery in 3–6 days",
-    "secure_note": "🔒 Secure checkout · 30-day happy returns",
+    "secure_note": "🔒 Secure checkout",
     "promo_placeholder": "Promo or gift code",
     "promo_code": "Promo code",
     "apply": "Apply",
@@ -34,7 +33,16 @@
     "count_singular": "item",
     "count_plural": "items",
     "ready_suffix": "ready for checkout.",
-    "empty_blurb": "Nothing here yet — let's fix that."
+    "empty_blurb": "Nothing here yet — let's fix that.",
+    "quantity_label": "Quantity",
+    "free_ship_remaining_html": "You’re <b>{{ amount }}</b> away from <b>free shipping</b>",
+    "free_ship_unlocked_html": "✨ You’ve unlocked free shipping",
+    "update_error": "Could not update your bag",
+    "update_bag": "Update bag",
+    "note_label": "Order note",
+    "note_placeholder": "Add delivery instructions or a gift message",
+    "taxes_included": "Tax included. Shipping calculated at checkout.",
+    "taxes_at_checkout": "Taxes and shipping calculated at checkout."
   },
   "customers": {
     "login": {
@@ -62,7 +70,6 @@
       "account": "Account",
       "search": "Search",
       "submenu": "{{ title }} submenu",
-      "wishlist": "Wishlist",
       "nav_left": "Main navigation",
       "nav_right": "Secondary navigation",
       "legal": "Legal",
@@ -77,6 +84,11 @@
       "next": "Next",
       "page": "Page {{ page }}",
       "current_page": "Page {{ page }}, current page"
+    },
+    "localization": {
+      "country_label": "Country/region",
+      "language_label": "Language",
+      "apply": "Update"
     }
   },
   "newsletter": {
@@ -90,26 +102,17 @@
   },
   "products": {
     "add_to_cart": "Add to bag",
-    "buy_it_now": "Buy it now",
     "sold_out": "Sold out",
     "save_pct": "Save {{ pct }}%",
     "tag_bestseller": "Bestseller",
     "tag_new": "New",
-    "save_to_wishlist": "Save to wishlist",
-    "remove_from_wishlist": "Remove from wishlist",
     "quick_view": "Quick view",
-    "quantity": "Quantity",
     "please_select": "please select",
     "size": "Size",
     "length": "Length",
     "finish_html": "Finish — <b>{{ value }}</b>",
     "size_selected_html": "{{ label }} — <b>{{ value }}</b>",
-    "size_unselected_html": "{{ label }} <i>· please select</i>",
     "view_full_details": "View full details",
-    "perk_tarnish_free": "Tarnish-free & nickel-free",
-    "perk_free_shipping": "Free shipping over $35",
-    "perk_returns": "30-day happy returns",
-    "perk_gift_wrapped": "Comes gift-wrapped",
     "reviews_count": "({{ count }})",
     "stock_low_html": "Only <b>{{ count }}</b> left — selling fast",
     "share_label": "Share",
@@ -119,24 +122,31 @@
     "share_facebook": "Share on Facebook",
     "share_email": "Share via email",
     "savings_caption_html": "You're saving <b>{{ amount }}</b> compared to the original price.",
-    "loved_by_customers_html": "Loved by {{ count }} customers",
-    "based_on_reviews_html": "Based on {{ count }} reviews",
-    "would_recommend_html": "{{ pct }} would recommend",
-    "write_a_review": "Write a review",
-    "with_photos": "With photos",
-    "sort_label": "Sort",
-    "sort_recent": "Most recent",
-    "sort_helpful": "Most helpful",
-    "sort_high": "Highest rated",
-    "sort_low": "Lowest rated",
-    "verified_buyer": "Verified buyer",
-    "helpful_label": "Helpful",
-    "show_all_reviews_html": "Show all {{ count }} reviews"
+    "unit_price_per": "per",
+    "variant_label": "Variant",
+    "purchase_options": "Purchase options",
+    "one_time_purchase": "One-time purchase",
+    "gift_recipient_label": "I want to send this as a gift",
+    "gift_recipient_email": "Recipient email",
+    "gift_recipient_name": "Recipient name (optional)",
+    "gift_recipient_message": "Message (optional)",
+    "gift_recipient_send_on": "Send on (optional)",
+    "added_to_bag_html": "{{ title }} added to bag",
+    "add_error": "Could not add to bag",
+    "tag_sale": "Sale",
+    "pickup_available_at": "Pickup available at {{ location }}",
+    "pickup_unavailable_at": "Pickup currently unavailable at {{ location }}",
+    "pickup_ready_in": "Usually ready in {{ time }}"
   },
   "search": {
-    "title": "Search",
     "placeholder": "Search articles, pages, or products",
     "submit": "Search",
+    "suggestions": "Suggestions",
+    "products_label": "Products",
+    "more_label": "Pages & collections",
+    "no_predictive_results": "No results for “{{ terms }}”",
+    "see_all_results": "See all results for “{{ terms }}”",
+    "title": "Search",
     "no_results_html": "No results found for {{ terms }}",
     "results_for_html": "{{ count }} results found for {{ terms }}",
     "result": "result",
@@ -147,9 +157,7 @@
       "pick_product": "Select a product to feature in section settings."
     },
     "hero": {
-      "image_placeholder": "Product image",
-      "from_price": "From $18",
-      "reviews_count": "12k reviews"
+      "image_placeholder": "Product image"
     },
     "featured_collections": {
       "pieces": "pieces",
@@ -189,7 +197,6 @@
       "onboarding_was_4": "$60"
     },
     "reviews": {
-      "from_count": "from {{ count }} reviews",
       "stars_label": "out of 5 stars",
       "verified": "Verified"
     },
@@ -217,16 +224,8 @@
       "no_results_text": "Try loosening a filter or two — there's magic in here somewhere.",
       "empty_heading": "This collection is empty",
       "empty_text": "Check back soon — new pieces are on the way.",
-      "toggle_filters": "Toggle filters"
-    },
-    "wishlist": {
-      "eyebrow": "Saved for later",
-      "heading": "Your Wishlist",
-      "blurb_empty": "Everything you save shows up here.",
-      "blurb_suffix": "you’re dreaming about.",
-      "empty_heading": "Nothing saved yet",
-      "empty_text": "Tap the heart on any piece to keep it here for later.",
-      "start_browsing": "Start browsing"
+      "toggle_filters": "Toggle filters",
+      "promo_placeholder": "Add promo banner text in the theme editor"
     },
     "collections_index": {
       "breadcrumb": "Collections",
@@ -297,10 +296,15 @@
       "type_article": "Journal",
       "type_page": "Page",
       "no_filtered_results_heading": "Nothing matches those filters",
-      "no_filtered_results_text": "Try loosening a filter or two — there's magic in here somewhere."
+      "no_filtered_results_text": "Try loosening a filter or two — there's magic in here somewhere.",
+      "start_browsing": "Start browsing"
     },
     "password": {
       "admin_link": "Are you the store owner? Log in here"
+    },
+    "product_reviews": {
+      "placeholder_heading": "Product reviews",
+      "placeholder_text": "Install a product reviews app and add its reviews widget here as an app block to collect and display real customer reviews."
     }
   }
 }

@@ -1,37 +1,52 @@
 {%- comment -%}
-  Blocks are a flat list of Q&A pairs, each tagged with a group label. This
-  loop breaks the flat list into visual groups by detecting when the group
-  label changes between consecutive blocks — merchants control grouping just
-  by keeping same-group questions next to each other in the block list.
+  Blocks are a flat list of Q&A pairs, each tagged with a group label.
+  Questions sharing a group label are rendered together under one heading,
+  in the order their group first appears in the block list.
 {%- endcomment -%}
 
 <div class="pt-faq-wrap full-width" data-faq-wrap
      data-i-no-match="{{ 'sections.faq.no_match_html' | t | escape }}"
      data-i-contact-text="{{ 'sections.faq.contact_link_text' | t | escape }}"
      data-i-contact-url="{{ routes.root_url | append: 'pages/contact' | escape }}">
-  {%- assign last_group = '' -%}
-  {%- for block in section.blocks -%}
-    {%- if block.settings.group != last_group -%}
-      {%- unless forloop.first -%}</div>{%- endunless -%}
-      <div class="pt-faq-group" data-faq-group data-group-name="{{ block.settings.group | escape }}">
-        <h2 class="pt-faq-group-title">{{ block.settings.group | escape }}</h2>
-      {%- assign last_group = block.settings.group -%}
-    {%- endif -%}
-    <div class="pt-faq-item" data-faq-item data-open="{% if forloop.first %}1{% else %}0{% endif %}" {{ block.shopify_attributes }}
-         data-q="{{ block.settings.question | escape | downcase }}" data-a="{{ block.settings.answer | escape | downcase }}">
-      <button type="button" class="pt-faq-q" data-faq-toggle aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}">
-        {{ block.settings.question | escape }}
-        <span class="pt-faq-q-ic">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
-        </span>
-      </button>
-      <div class="pt-faq-a-wrap">
-        <div class="pt-faq-a-inner">
-          <p class="pt-faq-a">{{ block.settings.answer | escape }}</p>
-        </div>
-      </div>
+  {%- liquid
+    assign group_names = ''
+    for block in section.blocks
+      assign gname = block.settings.group
+      assign seen = group_names | split: '||'
+      unless seen contains gname
+        if group_names == ''
+          assign group_names = gname
+        else
+          assign group_names = group_names | append: '||' | append: gname
+        endif
+      endunless
+    endfor
+    assign groups = group_names | split: '||'
+    assign item_count = 0
+  -%}
+  {%- for gname in groups -%}
+    <div class="pt-faq-group" data-faq-group data-group-name="{{ gname | escape }}">
+      <h2 class="pt-faq-group-title">{{ gname | escape }}</h2>
+      {%- for block in section.blocks -%}
+        {%- if block.settings.group == gname -%}
+          {%- assign item_count = item_count | plus: 1 -%}
+          <div class="pt-faq-item" data-faq-item data-open="{% if item_count == 1 %}1{% else %}0{% endif %}" {{ block.shopify_attributes }}
+               data-q="{{ block.settings.question | escape | downcase }}" data-a="{{ block.settings.answer | escape | downcase }}">
+            <button type="button" class="pt-faq-q" data-faq-toggle aria-expanded="{% if item_count == 1 %}true{% else %}false{% endif %}">
+              {{ block.settings.question | escape }}
+              <span class="pt-faq-q-ic">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+              </span>
+            </button>
+            <div class="pt-faq-a-wrap">
+              <div class="pt-faq-a-inner">
+                <p class="pt-faq-a">{{ block.settings.answer | escape }}</p>
+              </div>
+            </div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
     </div>
-    {%- if forloop.last -%}</div>{%- endif -%}
   {%- endfor -%}
 
   <div class="pt-faq-empty" data-faq-empty hidden></div>

@@ -1,12 +1,28 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
-  "current": {}
+  "current": {
+    "type_heading_font": "cormorant_n5",
+    "type_body_font": "muli_n4",
+    "max_page_width": "90rem",
+    "min_page_margin": 20,
+    "color_background": "#FFFAFB",
+    "color_text": "#4B3138",
+    "color_border": "#F1DDE4",
+    "color_accent": "#B76E79",
+    "color_accent_text": "#FFFFFF",
+    "input_corner_radius": 4
+  },
+  "presets": {
+    "TriSoul Pink": {
+      "type_heading_font": "cormorant_n5",
+      "type_body_font": "muli_n4",
+      "max_page_width": "90rem",
+      "min_page_margin": 20,
+      "color_background": "#FFFAFB",
+      "color_text": "#4B3138",
+      "color_border": "#F1DDE4",
+      "color_accent": "#B76E79",
+      "color_accent_text": "#FFFFFF",
+      "input_corner_radius": 4
+    }
+  }
 }

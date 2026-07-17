@@ -1,0 +1,21 @@
+{% doc %}
+  Renders the unit price ("$4.50 / 100ml") for a variant or cart line item
+  when the merchant has set a unit price measurement. Renders nothing otherwise.
+
+  @param {object} item - A variant or line_item with unit_price fields
+
+  @example
+  {% render 'unit-price', item: current_variant %}
+{% enddoc %}
+
+{%- if item.unit_price_measurement -%}
+  <span class="pt-unit-price">
+    {{- item.unit_price | money -}}
+    <span aria-hidden="true">/</span>
+    <span class="pt-visually-hidden">{{ 'products.unit_price_per' | t }}</span>
+    {%- if item.unit_price_measurement.reference_value != 1 -%}
+      {{- item.unit_price_measurement.reference_value -}}
+    {%- endif -%}
+    {{- item.unit_price_measurement.reference_unit -}}
+  </span>
+{%- endif -%}

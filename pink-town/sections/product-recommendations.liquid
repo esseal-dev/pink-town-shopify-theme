@@ -1,0 +1,130 @@
+{% comment %}
+  Product recommendations powered by Shopify's recommendations API.
+  Supports both intents: "related" (You may also like) and "complementary"
+  (Pairs well with). The section re-renders itself via the Section Rendering
+  API once the recommendations endpoint has results.
+
+  https://shopify.dev/docs/storefronts/themes/product-merchandising/recommendations
+{% endcomment %}
+
+<div class="pt-pdp-sec pt-recs full-width" data-recommendations
+     data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.count }}&intent={{ section.settings.intent }}">
+  {%- if recommendations.performed and recommendations.products_count > 0 -%}
+    <div class="pt-sec-head pt-sec-head--center">
+      {%- if section.settings.eyebrow != blank -%}
+        <span class="pt-eyebrow">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c.6 4.8 2.6 6.8 7.4 7.4C14.6 10 12.6 12 12 16.8 11.4 12 9.4 10 4.6 9.4 9.4 8.8 11.4 6.8 12 2Z"/></svg>
+          {{ section.settings.eyebrow | escape }}
+        </span>
+      {%- endif -%}
+      {%- if section.settings.heading != blank -%}
+        <h2 class="pt-pdp-h pt-pdp-h--center">{{ section.settings.heading | escape }}</h2>
+      {%- endif -%}
+    </div>
+    <div class="pt-prod-grid pt-recs-grid">
+      {%- for rec in recommendations.products -%}
+        {%- liquid
+          assign rec_variant = rec.selected_or_first_available_variant
+          assign rec_on_sale = false
+          if rec.compare_at_price > rec.price
+            assign rec_on_sale = true
+          endif
+        -%}
+        <div class="pt-card">
+          <div class="pt-card-media">
+            <div class="pt-ph">
+              {%- if rec.featured_image -%}
+                {{ rec.featured_image | image_url: width: 600 | image_tag: class: 'pt-ph-img', loading: 'lazy', alt: rec.featured_image.alt | default: rec.title }}
+              {%- endif -%}
+            </div>
+            {%- if rec_on_sale -%}
+              <span class="pt-card-tag">{{ 'products.tag_sale' | t }}</span>
+            {%- endif -%}
+          </div>
+          <div class="pt-card-info">
+            {%- if rec.type != blank -%}
+              <span class="pt-card-cat">{{ rec.type | escape }}</span>
+            {%- endif -%}
+            <h3 class="pt-card-name"><a href="{{ rec.url }}">{{ rec.title | escape }}</a></h3>
+            <div class="pt-card-price">
+              <span class="pt-price-now">{{ rec.price | money }}</span>
+              {%- if rec_on_sale -%}
+                <span class="pt-price-was">{{ rec.compare_at_price | money }}</span>
+              {%- endif -%}
+            </div>
+            {%- render 'unit-price', item: rec_variant -%}
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% stylesheet %}
+  .pt-recs { max-width: var(--pt-wrap); margin: 0 auto; }
+  .pt-recs .pt-sec-head { margin-bottom: 32px; }
+  .pt-recs:empty { display: none; }
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    document.querySelectorAll('[data-recommendations]').forEach(function (section) {
+      var url = section.dataset.url;
+      if (!url || section.querySelector('.pt-prod-grid')) return;
+      fetch(url).then(function (r) { return r.text(); }).then(function (text) {
+        var html = document.createElement('div');
+        html.innerHTML = text;
+        var fresh = html.querySelector('[data-recommendations]');
+        if (fresh && fresh.innerHTML.trim().length) {
+          section.innerHTML = fresh.innerHTML;
+        }
+      }).catch(function () {});
+    });
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "t:sections.product_recommendations.name",
+  "settings": [
+    {
+      "type": "select",
+      "id": "intent",
+      "label": "t:labels.recommendation_intent",
+      "options": [
+        { "value": "related", "label": "t:labels.intent_related" },
+        { "value": "complementary", "label": "t:labels.intent_complementary" }
+      ],
+      "default": "related"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "t:labels.eyebrow"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:labels.heading",
+      "default": "You may also like"
+    },
+    {
+      "type": "range",
+      "id": "count",
+      "label": "t:labels.products_to_show",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.product_recommendations.name"
+    }
+  ],
+  "enabled_on": {
+    "templates": ["product"]
+  }
+}
+{% endschema %}

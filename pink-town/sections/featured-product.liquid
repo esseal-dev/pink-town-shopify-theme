@@ -82,6 +82,7 @@
               <span class="pt-price-was">{{ current_variant.compare_at_price | money }}</span>
             {%- endif -%}
           </div>
+          {%- render 'unit-price', item: current_variant -%}
 
           {%- unless product.has_only_default_variant -%}
             <div class="pt-fp-options">

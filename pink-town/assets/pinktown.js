@@ -1,14 +1,91 @@
 // PinkTown theme — global JS
 
+// Formats cents using the shop's money format (set on window by theme.liquid),
+// so JS-rendered prices match Liquid-rendered ones in any currency.
+window.ptMoney = function (cents) {
+  var format = window.PT_MONEY_FORMAT || '${{amount}}';
+  var value = '';
+  function delimit(num, precision, thousands, decimal) {
+    var parts = (num / 100).toFixed(precision).split('.');
+    var whole = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousands);
+    return parts[1] ? whole + decimal + parts[1] : whole;
+  }
+  var match = format.match(/\{\{\s*(\w+)\s*\}\}/);
+  var key = match ? match[1] : 'amount';
+  switch (key) {
+    case 'amount_no_decimals': value = delimit(cents, 0, ',', '.'); break;
+    case 'amount_with_comma_separator': value = delimit(cents, 2, '.', ','); break;
+    case 'amount_no_decimals_with_comma_separator': value = delimit(cents, 0, '.', ','); break;
+    case 'amount_with_apostrophe_separator': value = delimit(cents, 2, "'", '.'); break;
+    default: value = delimit(cents, 2, ',', '.');
+  }
+  return format.replace(/\{\{\s*\w+\s*\}\}/, value);
+};
+
 document.addEventListener('DOMContentLoaded', function () {
   initAnnouncement();
   initNav();
   initMobileNav();
   initCartDrawer();
   initAddToCart();
-  initWishlist();
   initProductFilters();
+  initPredictiveSearch();
+  document.querySelectorAll('[data-loc-select]').forEach(function (sel) {
+    sel.addEventListener('change', function () { sel.form.submit(); });
+  });
 });
+
+// ── Predictive search overlay ─────────────────────────────────────────────────
+function initPredictiveSearch() {
+  var overlay = document.querySelector('[data-search-overlay]');
+  if (!overlay) return;
+  var input = overlay.querySelector('[data-search-input]');
+  var results = overlay.querySelector('[data-search-results]');
+  var openBtns = document.querySelectorAll('[data-search-open]');
+  var closeBtn = overlay.querySelector('[data-search-close]');
+  var timer = null;
+  var lastQuery = '';
+
+  function open() {
+    overlay.dataset.on = '1';
+    overlay.setAttribute('aria-hidden', 'false');
+    overlay.removeAttribute('inert');
+    setTimeout(function () { input.focus(); }, 120);
+    document.addEventListener('keydown', onKey);
+  }
+  function close() {
+    overlay.dataset.on = '0';
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.setAttribute('inert', '');
+    document.removeEventListener('keydown', onKey);
+  }
+  function onKey(e) { if (e.key === 'Escape') close(); }
+
+  openBtns.forEach(function (btn) {
+    btn.addEventListener('click', function (e) { e.preventDefault(); open(); });
+  });
+  if (closeBtn) closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
+
+  input.addEventListener('input', function () {
+    var q = input.value.trim();
+    clearTimeout(timer);
+    if (q.length < 2) { results.innerHTML = ''; lastQuery = ''; return; }
+    timer = setTimeout(function () {
+      if (q === lastQuery) return;
+      lastQuery = q;
+      var url = results.dataset.url + '?q=' + encodeURIComponent(q) +
+        '&resources[limit]=8&resources[limit_scope]=each&section_id=predictive-search';
+      fetch(url).then(function (r) { return r.text(); }).then(function (text) {
+        if (input.value.trim() !== q) return;
+        var holder = document.createElement('div');
+        holder.innerHTML = text;
+        var fresh = holder.querySelector('.pt-ps-results');
+        results.innerHTML = fresh ? fresh.outerHTML : '';
+      }).catch(function () {});
+    }, 250);
+  });
+}
 
 // ── Announcement bar rotation ─────────────────────────────────────────────────
 function initAnnouncement() {
@@ -76,10 +153,8 @@ function initMobileNav() {
 }
 
 // ── Cart drawer ───────────────────────────────────────────────────────────────
-var FREE_SHIP_CENTS = 3500;
-
 function formatMoney(cents) {
-  return '$' + (cents / 100).toFixed(2).replace(/\.00$/, '');
+  return window.ptMoney ? window.ptMoney(cents) : '$' + (cents / 100).toFixed(2);
 }
 
 function fetchCart() {
@@ -115,16 +190,19 @@ function renderCartItems(cart) {
   if (emptyEl) emptyEl.style.display = 'none';
   if (shipEl) {
     shipEl.style.display = '';
-    var remaining = Math.max(0, FREE_SHIP_CENTS - cart.total_price);
-    var pct = Math.min(100, (cart.total_price / FREE_SHIP_CENTS) * 100);
-    var msgEl = shipEl.querySelector('.pt-ship-msg');
-    var barFill = shipEl.querySelector('.pt-ship-bar i');
-    if (msgEl) {
-      msgEl.innerHTML = remaining > 0
-        ? "You're <b>" + formatMoney(remaining) + '</b> away from <b>free shipping</b>'
-        : "✨ You've unlocked free shipping";
+    var freeShipCents = parseInt(shipEl.dataset.freeShipCents, 10) || 0;
+    if (freeShipCents > 0) {
+      var remaining = Math.max(0, freeShipCents - cart.total_price);
+      var pct = Math.min(100, (cart.total_price / freeShipCents) * 100);
+      var msgEl = shipEl.querySelector('.pt-ship-msg');
+      var barFill = shipEl.querySelector('.pt-ship-bar i');
+      if (msgEl) {
+        msgEl.innerHTML = remaining > 0
+          ? shipEl.dataset.iRemainingHtml.replace('%%AMOUNT%%', '<b>' + formatMoney(remaining) + '</b>')
+          : '<span class="pt-ship-win">' + shipEl.dataset.iUnlockedHtml + '</span>';
+      }
+      if (barFill) barFill.style.width = pct + '%';
     }
-    if (barFill) barFill.style.width = pct + '%';
   }
   if (itemsEl) {
     itemsEl.style.display = '';
@@ -275,55 +353,6 @@ function initAddToCart() {
       });
     });
   });
-}
-
-// ── Wishlist (localStorage) ───────────────────────────────────────────────────
-var PT_WISHLIST_KEY = 'pt_wishlist';
-
-function ptLoadWishlist() {
-  try { return JSON.parse(localStorage.getItem(PT_WISHLIST_KEY)) || []; } catch (e) { return []; }
-}
-function ptSaveWishlist(list) {
-  try { localStorage.setItem(PT_WISHLIST_KEY, JSON.stringify(list)); } catch (e) {}
-  window.dispatchEvent(new CustomEvent('pt:wishlist-change', { detail: list }));
-}
-
-function ptSyncWishlistBadge() {
-  var badge = document.querySelector('.pt-nav-wish-badge');
-  if (!badge) return;
-  var count = ptLoadWishlist().length;
-  badge.textContent = count;
-  badge.style.display = count > 0 ? '' : 'none';
-}
-
-function initWishlist() {
-  var list = ptLoadWishlist();
-
-  function syncButtons() {
-    document.querySelectorAll('.pt-wish-btn').forEach(function (btn) {
-      var handle = btn.dataset.productHandle;
-      btn.dataset.on = list.includes(handle) ? '1' : '0';
-      var svg = btn.querySelector('svg');
-      if (svg) svg.setAttribute('fill', list.includes(handle) ? 'currentColor' : 'none');
-    });
-    ptSyncWishlistBadge();
-  }
-
-  document.addEventListener('click', function (e) {
-    var btn = e.target.closest('.pt-wish-btn');
-    if (!btn) return;
-    var handle = btn.dataset.productHandle;
-    if (!handle) return;
-    if (list.includes(handle)) {
-      list = list.filter(function (x) { return x !== handle; });
-    } else {
-      list = list.concat([handle]);
-    }
-    ptSaveWishlist(list);
-    syncButtons();
-  });
-
-  syncButtons();
 }
 
 // ── Product collection filters ────────────────────────────────────────────────

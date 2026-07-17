@@ -46,6 +46,7 @@
 
     {% sections 'footer-group' %}
 
-    {{ 'pinktown.js' | asset_url | script_tag }}
+    <script>window.PT_MONEY_FORMAT = {{ shop.money_format | json }};</script>
+    <script src="{{ 'pinktown.js' | asset_url }}" defer></script>
   </body>
 </html>

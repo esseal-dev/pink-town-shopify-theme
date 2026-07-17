@@ -13,7 +13,7 @@
 
 <div class="pt-ch-meta">
   <span><b>{{ count }}</b> {% if count == 1 %}{{ 'sections.collection.piece' | t }}{% else %}{{ 'sections.collection.pieces' | t }}{% endif %}</span>
-  {%- if show_rating -%}
+  {%- if show_rating and rating != blank -%}
     <span class="pt-ch-dot"></span>
     <span class="pt-ch-rate">
       <span class="pt-stars" aria-hidden="true">

@@ -3,90 +3,99 @@
     "main": {
       "type": "product",
       "blocks": {
+        "vendor": {
+          "type": "vendor",
+          "settings": {}
+        },
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "variant-picker": {
+          "type": "variant_picker",
+          "settings": {}
+        },
+        "buy-buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_dynamic_checkout": true
+          }
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
         "shipping": {
           "type": "accordion_item",
           "settings": {
             "title": "Shipping & returns",
-            "content": "<p>Most orders ship within 1–2 business days and arrive in 3–6 business days. Free returns and exchanges within 30 days of delivery, as long as the piece is unworn.</p>"
+            "content": ""
           }
         },
         "care": {
           "type": "accordion_item",
           "settings": {
             "title": "Materials & care",
-            "content": "<p>Crafted from brass and stainless-steel bases with 14k gold or rhodium plating — nickel-free and gentle on sensitive skin. Avoid perfume, lotion, and swimming pools to keep the shine going longer.</p>"
+            "content": ""
           }
         },
-        "addon-1": { "type": "addon", "settings": {} },
-        "addon-2": { "type": "addon", "settings": {} },
-        "addon-3": { "type": "addon", "settings": {} }
+        "addon-1": {
+          "type": "addon",
+          "settings": {}
+        },
+        "addon-2": {
+          "type": "addon",
+          "settings": {}
+        },
+        "addon-3": {
+          "type": "addon",
+          "settings": {}
+        }
       },
-      "block_order": ["shipping", "care", "addon-1", "addon-2", "addon-3"],
+      "block_order": [
+        "vendor",
+        "title",
+        "price",
+        "variant-picker",
+        "buy-buttons",
+        "description",
+        "shipping",
+        "care",
+        "addon-1",
+        "addon-2",
+        "addon-3"
+      ],
       "settings": {}
     },
     "reviews": {
       "type": "product-reviews",
-      "blocks": {
-        "review-1": {
-          "type": "review",
-          "settings": {
-            "reviewer_name": "Priya K.",
-            "verified": true,
-            "date": "3 days ago",
-            "stars": 5,
-            "title": "No tarnish, all compliments",
-            "text": "Wore this every day for three weeks straight — no tarnish, no green fingers, just compliments.",
-            "helpful_count": 31
-          }
-        },
-        "review-2": {
-          "type": "review",
-          "settings": {
-            "reviewer_name": "Grace T.",
-            "verified": true,
-            "date": "1 week ago",
-            "stars": 5,
-            "title": "Feels like a gift to myself",
-            "text": "Looks so much more expensive than it was. Packaging alone made it feel like a gift to myself.",
-            "helpful_count": 22
-          }
-        },
-        "review-3": {
-          "type": "review",
-          "settings": {
-            "reviewer_name": "Amara O.",
-            "verified": true,
-            "date": "2 weeks ago",
-            "stars": 4,
-            "title": "Beautiful, shipping ran long",
-            "text": "Beautiful piece, fits true to size. Shipping took a couple days longer than expected but worth the wait.",
-            "helpful_count": 14
-          }
-        },
-        "review-4": {
-          "type": "review",
-          "settings": {
-            "reviewer_name": "Lena V.",
-            "verified": true,
-            "date": "3 weeks ago",
-            "stars": 5,
-            "title": "Better than the designer version",
-            "text": "I compared this side-by-side with a piece ten times the price and honestly could not tell the difference.",
-            "helpful_count": 19
-          }
-        }
-      },
-      "block_order": ["review-1", "review-2", "review-3", "review-4"],
+      "settings": {}
+    },
+    "related": {
+      "type": "product-recommendations",
       "settings": {
-        "rating": "4.9",
-        "review_count": "218",
-        "recommend_pct": "98%",
-        "initial_visible_count": 3
+        "intent": "related",
+        "heading": "You may also like",
+        "count": 4
+      }
+    },
+    "complementary": {
+      "type": "product-recommendations",
+      "settings": {
+        "intent": "complementary",
+        "heading": "Pairs well with",
+        "count": 4
       }
     }
   },
   "order": [
     "main",
-    "reviews"
+    "complementary",
+    "reviews",
+    "related"
   ]
 }

@@ -1,0 +1,81 @@
+{% comment %}
+  Server-rendered predictive search results. This section is never placed in a
+  template — the header search overlay fetches it from
+  {{ routes.predictive_search_url }}?q=…&section_id=predictive-search
+  and injects the markup into the results container.
+{% endcomment %}
+
+{%- if predictive_search.performed -%}
+  <div class="pt-ps-results">
+    {%- if predictive_search.resources.queries.size > 0 -%}
+      <ul class="pt-ps-queries" role="listbox" aria-label="{{ 'search.suggestions' | t }}">
+        {%- for query in predictive_search.resources.queries -%}
+          <li>
+            <a href="{{ routes.search_url }}?q={{ query.text | url_encode }}" role="option">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg>
+              {{ query.styled_text }}
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- if predictive_search.resources.products.size > 0 -%}
+      <span class="pt-ps-label">{{ 'search.products_label' | t }}</span>
+      <ul class="pt-ps-products">
+        {%- for product in predictive_search.resources.products -%}
+          <li>
+            <a href="{{ product.url }}" class="pt-ps-product">
+              <span class="pt-ps-thumb">
+                {%- if product.featured_image -%}
+                  {{ product.featured_image | image_url: width: 120 | image_tag: loading: 'lazy', alt: product.featured_image.alt | default: product.title }}
+                {%- endif -%}
+              </span>
+              <span class="pt-ps-info">
+                <b>{{ product.title | escape }}</b>
+                <span class="pt-ps-price">
+                  {{ product.price | money }}
+                  {%- if product.compare_at_price > product.price -%}
+                    <s>{{ product.compare_at_price | money }}</s>
+                  {%- endif -%}
+                </span>
+              </span>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- assign extra_count = predictive_search.resources.collections.size | plus: predictive_search.resources.pages.size | plus: predictive_search.resources.articles.size -%}
+    {%- if extra_count > 0 -%}
+      <span class="pt-ps-label">{{ 'search.more_label' | t }}</span>
+      <ul class="pt-ps-links">
+        {%- for collection in predictive_search.resources.collections -%}
+          <li><a href="{{ collection.url }}">{{ collection.title | escape }}</a></li>
+        {%- endfor -%}
+        {%- for page in predictive_search.resources.pages -%}
+          <li><a href="{{ page.url }}">{{ page.title | escape }}</a></li>
+        {%- endfor -%}
+        {%- for article in predictive_search.resources.articles -%}
+          <li><a href="{{ article.url }}">{{ article.title | escape }}</a></li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+
+    {%- if predictive_search.resources.products.size == 0 and predictive_search.resources.queries.size == 0 and extra_count == 0 -%}
+      <p class="pt-ps-none">{{ 'search.no_predictive_results' | t: terms: predictive_search.terms }}</p>
+    {%- endif -%}
+
+    <a class="pt-ps-all" href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}">
+      {{ 'search.see_all_results' | t: terms: predictive_search.terms }}
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.predictive_search.name",
+  "settings": []
+}
+{% endschema %}
