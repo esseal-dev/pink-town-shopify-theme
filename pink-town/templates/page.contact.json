@@ -14,7 +14,7 @@
         "loc-1": {
           "type": "location",
           "settings": {
-            "name": "PinkTown SoHo",
+            "name": "SoHo",
             "code": "NY",
             "address": "148 Spring Street, New York, NY 10012",
             "hours": "Mon\u2013Sat 11\u20137, Sun 12\u20136",
@@ -26,7 +26,7 @@
         "loc-2": {
           "type": "location",
           "settings": {
-            "name": "PinkTown Melrose",
+            "name": "Melrose",
             "code": "LA",
             "address": "7421 Melrose Avenue, Los Angeles, CA 90046",
             "hours": "Mon\u2013Sat 10\u20137, Sun 11\u20136",
@@ -38,7 +38,7 @@
         "loc-3": {
           "type": "location",
           "settings": {
-            "name": "PinkTown South Congress",
+            "name": "South Congress",
             "code": "AU",
             "address": "1600 South Congress Ave, Austin, TX 78704",
             "hours": "Mon\u2013Sat 11\u20137, Sun 12\u20135",

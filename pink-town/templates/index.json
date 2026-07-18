@@ -130,16 +130,16 @@
         "post-6"
       ],
       "settings": {
-        "hashtag": "#PinkTownGirls",
+        "hashtag": "#StyledByYou",
         "heading": "Tag us & get featured",
-        "handle": "@pinktown.jewels"
+        "handle": "@yourstore"
       }
     },
     "newsletter": {
       "type": "newsletter",
       "settings": {
         "heading": "Get 15% off your first treat",
-        "subheading": "Join the PinkTown list for early drops, secret sales & a little sparkle in your inbox.",
+        "subheading": "Join the list for early drops, secret sales & a little sparkle in your inbox.",
         "button_text": "Unlock 15% off",
         "success_message": "You’re in! Check your inbox for the code HELLO15 ✨",
         "fine_print": "No spam, just sparkle. Unsubscribe anytime."

@@ -1,4 +1,4 @@
-// PinkTown theme — global JS
+// Posy theme — global JS
 
 // Formats cents using the shop's money format (set on window by theme.liquid),
 // so JS-rendered prices match Liquid-rendered ones in any currency.
