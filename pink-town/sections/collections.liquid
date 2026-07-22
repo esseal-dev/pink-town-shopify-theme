@@ -47,7 +47,7 @@
             {%- endif -%}
             <div class="pt-coll-scrim"></div>
             <div class="pt-coll-body">
-              <span class="pt-coll-count">{{ collection.products_count }} {{ 'sections.featured_collections.pieces' | t }}</span>
+              <span class="pt-coll-count">{{ collection.products_count }} {% if collection.products_count == 1 %}{{ 'sections.featured_collections.piece' | t }}{% else %}{{ 'sections.featured_collections.pieces' | t }}{% endif %}</span>
               <h3 class="pt-coll-name">{{ collection.title | escape }}</h3>
               {%- if collection.description != blank -%}
                 <p class="pt-coll-blurb">{{ collection.description | strip_html | truncate: 80 }}</p>
@@ -78,7 +78,7 @@
       "type": "text",
       "id": "eyebrow",
       "label": "t:labels.eyebrow",
-      "default": "Shop by mood"
+      "default": "Shop by ritual"
     },
     {
       "type": "text",

@@ -15,36 +15,41 @@
           "type": "value",
           "settings": {
             "icon": "heart",
-            "title": "Made to last",
-            "text": "Tarnish-free, waterproof, hypoallergenic finishes — wear every piece every day, no babying required."
+            "title": "Formulated simply",
+            "text": "Short ingredient lists and plant-derived actives — nothing added for the sake of the label."
           }
         },
         "val-2": {
           "type": "value",
           "settings": {
             "icon": "check",
-            "title": "Priced honestly",
-            "text": "No mined stones, no markup games — just the look you want at roughly 70% off the real thing."
+            "title": "Tested gently",
+            "text": "Dermatologist-tested and made for sensitive skin, without synthetic fragrance or harsh alcohols."
           }
         },
         "val-3": {
           "type": "value",
           "settings": {
             "icon": "sparkle",
-            "title": "Designed in-house",
-            "text": "Every collection is sketched, sampled and finished by our own small design team, drop by drop."
+            "title": "Made in small batches",
+            "text": "Blended in small runs so every bottle reaches you fresh, potent, and exactly as intended."
           }
         },
         "val-4": {
           "type": "value",
           "settings": {
             "icon": "gift",
-            "title": "Gift-ready always",
-            "text": "Every order ships in a ribboned pouch — free gift wrap and a handwritten note whenever you want one."
+            "title": "Packaged with care",
+            "text": "Recyclable glass and paper, minimal filler, and refills for the bottles worth keeping."
           }
         }
       },
-      "block_order": ["val-1", "val-2", "val-3", "val-4"],
+      "block_order": [
+        "val-1",
+        "val-2",
+        "val-3",
+        "val-4"
+      ],
       "settings": {}
     },
     "reviews": {
@@ -53,32 +58,39 @@
         "rev-1": {
           "type": "review",
           "settings": {
-            "name": "Mia R.",
-            "handle": "@miawears",
+            "name": "",
+            "handle": "",
             "stars": 5,
-            "text": "Genuinely cannot believe these are under $30. The pearl drops look like the designer pair I saved for and never bought."
+            "text": "",
+            "verified": false
           }
         },
         "rev-2": {
           "type": "review",
           "settings": {
-            "name": "Sofía L.",
-            "handle": "@sof.jpg",
+            "name": "",
+            "handle": "",
             "stars": 5,
-            "text": "Wore the charm bracelet every single day for two months — showered, swam, the whole thing. Still sparkling. Obsessed."
+            "text": "",
+            "verified": false
           }
         },
         "rev-3": {
           "type": "review",
           "settings": {
-            "name": "Hana K.",
-            "handle": "@hanakoto",
+            "name": "",
+            "handle": "",
             "stars": 5,
-            "text": "Bought a stack for my little sister's birthday and now we're both hooked. Packaging is so cute it's gift-ready."
+            "text": "",
+            "verified": false
           }
         }
       },
-      "block_order": ["rev-1", "rev-2", "rev-3"],
+      "block_order": [
+        "rev-1",
+        "rev-2",
+        "rev-3"
+      ],
       "settings": {}
     },
     "newsletter": {
@@ -86,5 +98,11 @@
       "settings": {}
     }
   },
-  "order": ["hero", "story", "values", "reviews", "newsletter"]
+  "order": [
+    "hero",
+    "story",
+    "values",
+    "reviews",
+    "newsletter"
+  ]
 }

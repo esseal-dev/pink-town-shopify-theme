@@ -4,12 +4,12 @@
       "type": "hero",
       "settings": {
         "layout": "split",
-        "eyebrow": "Imitation fine jewelry",
-        "heading": "Little luxuries, <em>big</em> sparkle.",
-        "subheading": "Unique, dreamy jewelry that looks like a fortune and costs like a treat. Wear it everywhere — it won’t tarnish, fade, or fuss.",
-        "cta_primary_text": "Shop the collection",
-        "cta_secondary_text": "Explore looks",
-        "editorial_tag": "Spring drop — ‘Soft Focus’",
+        "eyebrow": "A holistic approach to skincare",
+        "heading": "Pure ingredients. <em>Mindful</em> rituals.",
+        "subheading": "Transform your daily routine into a restorative moment of calm. Clean, plant-powered formulas and considered tools, made to nourish your skin and settle your mind.",
+        "cta_primary_text": "Shop the rituals",
+        "cta_secondary_text": "Our philosophy",
+        "editorial_tag": "New — the evening ritual",
         "show_stats": true,
         "stat_1_value": "",
         "stat_1_label": "",
@@ -22,17 +22,17 @@
     "featured-collections": {
       "type": "featured-collections",
       "settings": {
-        "eyebrow": "Shop by mood",
-        "heading": "Collections to fall for"
+        "eyebrow": "Shop by ritual",
+        "heading": "Curated for calm"
       }
     },
     "best-sellers": {
       "type": "best-sellers",
       "settings": {
-        "eyebrow": "Loved by thousands",
+        "eyebrow": "Quietly beloved",
         "heading": "Best sellers",
         "products_count": 8,
-        "view_all_text": "View all jewelry"
+        "view_all_text": "View all products"
       }
     },
     "reviews": {
@@ -75,10 +75,8 @@
         "review-3"
       ],
       "settings": {
-        "eyebrow": "The reviews are in",
-        "heading": "Worn & adored",
-        "rating": "4.9",
-        "review_count": "12,400+"
+        "eyebrow": "In their words",
+        "heading": "Kept on the shelf"
       }
     },
     "instagram": {
@@ -87,37 +85,37 @@
         "post-1": {
           "type": "post",
           "settings": {
-            "likes": "2.4k"
+            "likes": ""
           }
         },
         "post-2": {
           "type": "post",
           "settings": {
-            "likes": "1.9k"
+            "likes": ""
           }
         },
         "post-3": {
           "type": "post",
           "settings": {
-            "likes": "3.1k"
+            "likes": ""
           }
         },
         "post-4": {
           "type": "post",
           "settings": {
-            "likes": "982"
+            "likes": ""
           }
         },
         "post-5": {
           "type": "post",
           "settings": {
-            "likes": "4.6k"
+            "likes": ""
           }
         },
         "post-6": {
           "type": "post",
           "settings": {
-            "likes": "1.2k"
+            "likes": ""
           }
         }
       },
@@ -130,19 +128,19 @@
         "post-6"
       ],
       "settings": {
-        "hashtag": "#StyledByYou",
-        "heading": "Tag us & get featured",
+        "hashtag": "#TheQuietRitual",
+        "heading": "Share your ritual",
         "handle": "@yourstore"
       }
     },
     "newsletter": {
       "type": "newsletter",
       "settings": {
-        "heading": "Get 15% off your first treat",
-        "subheading": "Join the list for early drops, secret sales & a little sparkle in your inbox.",
-        "button_text": "Unlock 15% off",
-        "success_message": "You’re in! Check your inbox for the code HELLO15 ✨",
-        "fine_print": "No spam, just sparkle. Unsubscribe anytime."
+        "heading": "Join the quiet list",
+        "subheading": "Considered notes on skin, new formulas, and early access to what we make next.",
+        "button_text": "Subscribe",
+        "success_message": "Thank you — please check your inbox to confirm.",
+        "fine_print": "No spam. Unsubscribe anytime."
       }
     }
   },

@@ -80,19 +80,19 @@
       {
         "type": "color",
         "id": "color_background",
-        "default": "#FFFAFB",
+        "default": "#FCFAFF",
         "label": "t:labels.background"
       },
       {
         "type": "color",
         "id": "color_text",
-        "default": "#4B3138",
+        "default": "#3F3552",
         "label": "t:labels.text_color"
       },
       {
         "type": "color",
         "id": "color_border",
-        "default": "#F1DDE4",
+        "default": "#E8E0F1",
         "label": "t:labels.border_color"
       },
       {
@@ -102,7 +102,7 @@
       {
         "type": "color",
         "id": "color_accent",
-        "default": "#B76E79",
+        "default": "#7E68A6",
         "label": "t:labels.accent_background"
       },
       {

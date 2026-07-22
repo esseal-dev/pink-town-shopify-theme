@@ -16,11 +16,11 @@
       "blocks": {
         "msg-1": {
           "type": "message",
-          "settings": { "text": "Fantasy looks at a fraction of the price" }
+          "settings": { "text": "Clean formulas, considered rituals" }
         },
         "msg-2": {
           "type": "message",
-          "settings": { "text": "Tarnish-free, nickel-free & always sparkling" }
+          "settings": { "text": "Dermatologist-tested & cruelty-free" }
         },
         "msg-3": {
           "type": "message",
